@@ -1,5 +1,30 @@
 package com.iem.FilmRentalStore.entity;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Entity @Data
+@Table(name = "store")
 public class Store {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "store_id", columnDefinition = "TINYINT UNSIGNED")
+    private Integer storeId;
+
+    @Column(name = "manager_staff_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Integer managerStaffId;
+
+    @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
+    private Integer addressId;
+
+    @Column(name = "last_update", insertable = false, updatable = false)
+    private LocalDateTime lastUpdate;
 }
