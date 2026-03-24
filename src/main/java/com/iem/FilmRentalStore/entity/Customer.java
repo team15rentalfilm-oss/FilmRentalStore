@@ -1,8 +1,11 @@
 package com.iem.FilmRentalStore.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "customer")
 public class Customer {
