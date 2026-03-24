@@ -2,7 +2,15 @@ package com.iem.FilmRentalStore.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Entity @Data
 @Table(name = "store")
 public class Store {
 
@@ -19,20 +27,4 @@ public class Store {
 
     @Column(name = "last_update", insertable = false, updatable = false)
     private LocalDateTime lastUpdate;
-
-    // Default Constructor
-    public Store() {}
-
-    // Getters and Setters
-    public Integer getStoreId() { return storeId; }
-    public void setStoreId(Integer storeId) { this.storeId = storeId; }
-
-    public Integer getManagerStaffId() { return managerStaffId; }
-    public void setManagerStaffId(Integer managerStaffId) { this.managerStaffId = managerStaffId; }
-
-    public Integer getAddressId() { return addressId; }
-    public void setAddressId(Integer addressId) { this.addressId = addressId; }
-
-    public LocalDateTime getLastUpdate() { return lastUpdate; }
-    public void setLastUpdate(LocalDateTime lastUpdate) { this.lastUpdate = lastUpdate; }
 }
