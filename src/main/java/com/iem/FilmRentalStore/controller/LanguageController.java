@@ -1,54 +1,54 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.ActorDTO;
-import com.iem.FilmRentalStore.service.ActorService;
+import com.iem.FilmRentalStore.dto.LanguageDTO;
+import com.iem.FilmRentalStore.service.LanguageService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/actors")
-public class ActorController {
+@RequestMapping("/languages")
+public class LanguageController {
 
-    private final ActorService service;
+    private final LanguageService service;
 
-    public ActorController(ActorService service) {
+    public LanguageController(LanguageService service) {
         this.service = service;
     }
 
     // GET ALL
     @GetMapping
-    public List<ActorDTO> getAll() {
+    public List<LanguageDTO> getAll() {
         return service.getAll();
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    public ActorDTO getById(@PathVariable int id) {
+    public LanguageDTO getById(@PathVariable int id) {
         return service.getById(id);
     }
 
     // GET BY FIELD
     @GetMapping("/search")
-    public List<ActorDTO> getByName(@RequestParam String name) {
-        return service.getByFirstName(name);
+    public List<LanguageDTO> getByName(@RequestParam String name) {
+        return service.getByName(name);
     }
 
     // POST
     @PostMapping
-    public ActorDTO create(@RequestBody ActorDTO dto) {
+    public LanguageDTO create(@RequestBody LanguageDTO dto) {
         return service.create(dto);
     }
 
     // PUT
     @PutMapping("/{id}")
-    public ActorDTO update(@PathVariable int id, @RequestBody ActorDTO dto) {
+    public LanguageDTO update(@PathVariable int id, @RequestBody LanguageDTO dto) {
         return service.update(id, dto);
     }
 
     // PATCH
     @PatchMapping("/{id}")
-    public ActorDTO patch(@PathVariable int id, @RequestBody ActorDTO dto) {
+    public LanguageDTO patch(@PathVariable int id, @RequestBody LanguageDTO dto) {
         return service.patch(id, dto);
     }
 
