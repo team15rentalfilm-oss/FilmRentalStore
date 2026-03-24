@@ -1,7 +1,6 @@
 package com.iem.FilmRentalStore.entity;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,8 +12,11 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+
+
 @Entity
 @Table(name = "store")
 public class Store {
@@ -36,4 +38,7 @@ public class Store {
     @Column(name = "manager_staff_id")
     private Byte managerStaffId;
 
+
+    @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
+    private Integer addressId;
 }

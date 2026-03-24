@@ -1,5 +1,9 @@
 package com.iem.FilmRentalStore.repository;
+import com.iem.FilmRentalStore.entity.Staff;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-public class StaffRepository {
-
+@Repository
+public interface StaffRepository extends JpaRepository<Staff, Integer>, JpaSpecificationExecutor<Staff> {
 }
