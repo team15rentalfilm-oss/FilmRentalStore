@@ -1,5 +1,11 @@
 package com.iem.FilmRentalStore.repository;
 
-public class StoreRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.iem.FilmRentalStore.entity.Store;
+
+@Repository
+public interface StoreRepository extends JpaRepository<Store, Byte> {
 
 }
