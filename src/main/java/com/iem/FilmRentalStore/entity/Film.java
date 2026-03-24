@@ -10,20 +10,22 @@ public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "film_id")
-    private Long filmId;
+    @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
+    private Integer filmId;
 
+    @Column(nullable = false, length = 128)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "release_year")
+    @Column(name = "release_year", columnDefinition = "YEAR")
     private Integer releaseYear;
 
     @Column(name = "rental_duration")
     private Integer rentalDuration;
 
-    @Column(name = "rental_rate")
+    @Column(name = "rental_rate", precision = 4, scale = 2)
     private BigDecimal rentalRate;
 
     private Integer length;
@@ -38,7 +40,7 @@ public class Film {
     @JoinColumn(name = "language_id")
     private Language language;
 
-    // 🔗 MANY-TO-MANY → Category (via film_category)
+    // 🔗 MANY-TO-MANY → Category
     @ManyToMany
     @JoinTable(
             name = "film_category",
@@ -47,7 +49,7 @@ public class Film {
     )
     private List<Category> categories;
 
-    // 🎭 MANY-TO-MANY → Actor (via film_actor)
+    // 🎭 MANY-TO-MANY → Actor
     @ManyToMany
     @JoinTable(
             name = "film_actor",
@@ -56,15 +58,10 @@ public class Film {
     )
     private List<Actor> actors;
 
-    // 🧾 ONE-TO-ONE → FilmText
-    @OneToOne
-    @JoinColumn(name = "film_id", referencedColumnName = "film_id")
-    private FilmText filmText;
-
     // ================= GETTERS & SETTERS =================
 
-    public Long getFilmId() { return filmId; }
-    public void setFilmId(Long filmId) { this.filmId = filmId; }
+    public Integer getFilmId() { return filmId; }
+    public void setFilmId(Integer filmId) { this.filmId = filmId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -98,7 +95,4 @@ public class Film {
 
     public List<Actor> getActors() { return actors; }
     public void setActors(List<Actor> actors) { this.actors = actors; }
-
-    public FilmText getFilmText() { return filmText; }
-    public void setFilmText(FilmText filmText) { this.filmText = filmText; }
 }
