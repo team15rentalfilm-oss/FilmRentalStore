@@ -66,7 +66,7 @@ public class StaffServiceImpl implements StaffService {
         staff.setFirstName(staffDetails.getFirstName());
         staff.setLastName(staffDetails.getLastName());
         staff.setAddressId(staffDetails.getAddressId());
-        staff.setPicture(staffDetails.getPicture());
+//        staff.setPicture(staffDetails.getPicture());
         staff.setEmail(staffDetails.getEmail());
         staff.setStoreId(staffDetails.getStoreId());
         staff.setActive(staffDetails.getActive());
