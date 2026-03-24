@@ -21,8 +21,10 @@ public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="store_id")
     private Byte storeId;
 
+    @Column(name="last_update")
     private LocalDateTime lastUpdate;
 
     // Store has one address
