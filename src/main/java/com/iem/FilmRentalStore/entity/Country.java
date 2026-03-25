@@ -26,7 +26,7 @@ public class Country {
     @Column(name="country_id")
     private Short countryId;
 
-    @Column(name="county")
+    @Column(name="country")
     private String country;
 
     @Column(name="last_update")
