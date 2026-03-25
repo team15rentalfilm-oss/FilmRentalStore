@@ -1,16 +1,16 @@
 package com.iem.FilmRentalStore.entity;
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity @Data
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "store")
 public class Store {
 

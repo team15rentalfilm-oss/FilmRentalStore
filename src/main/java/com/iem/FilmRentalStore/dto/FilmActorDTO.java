@@ -1,13 +1,12 @@
 package com.iem.FilmRentalStore.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class FilmActorDTO {
 
     private int actorId;
     private int filmId;
-
-    public int getActorId() { return actorId; }
-    public void setActorId(int actorId) { this.actorId = actorId; }
-
-    public int getFilmId() { return filmId; }
-    public void setFilmId(int filmId) { this.filmId = filmId; }
 }
