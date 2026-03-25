@@ -21,6 +21,16 @@ public class FilmActor {
     @JoinColumn(name = "film_id", referencedColumnName = "film_id", insertable = false, updatable = false)
     private Film film;
 
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
+
+    @PrePersist
+    public void prePersist() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdate = LocalDateTime.now();
+    }
 }

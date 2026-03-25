@@ -25,6 +25,16 @@ public class Store {
     @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
     private Integer addressId;
 
-    @Column(name = "last_update", insertable = false, updatable = false)
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
+
+    @PrePersist
+    public void prePersist() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdate = LocalDateTime.now();
+    }
 }

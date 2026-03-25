@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class ActorDTO {
 
-    private int actorId;
+    //private int actorId;
 
     @NotBlank(message = "First name is mandatory")
     @Size(max = 45, message = "First name cannot exceed 45 characters")

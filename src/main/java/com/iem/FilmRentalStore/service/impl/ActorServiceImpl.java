@@ -20,7 +20,7 @@ public class ActorServiceImpl implements ActorService {
 
     private ActorDTO mapToDTO(Actor actor) {
         ActorDTO dto = new ActorDTO();
-        dto.setActorId(actor.getActorId());
+        //dto.setActorId(actor.getActorId());
         dto.setFirstName(actor.getFirstName());
         dto.setLastName(actor.getLastName());
         return dto;
@@ -28,7 +28,7 @@ public class ActorServiceImpl implements ActorService {
 
     private Actor mapToEntity(ActorDTO dto) {
         Actor actor = new Actor();
-        actor.setActorId(dto.getActorId());
+        //actor.setActorId(dto.getActorId());
         actor.setFirstName(dto.getFirstName());
         actor.setLastName(dto.getLastName());
         return actor;

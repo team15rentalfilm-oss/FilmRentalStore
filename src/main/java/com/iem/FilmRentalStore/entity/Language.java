@@ -22,8 +22,18 @@ public class Language {
     @Column(name = "name", columnDefinition = "CHAR(20)")
     private String name;
 
-    @Column(name = "last_update")
+
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @PrePersist
+    public void prePersist() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdate = LocalDateTime.now();
+    }
 
 }

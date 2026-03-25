@@ -47,6 +47,16 @@ public class Staff {
     @Column(name = "password", length = 40)
     private String password;
 
-    @Column(name = "last_update", insertable = false, updatable = false)
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
+
+    @PrePersist
+    public void prePersist() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdate = LocalDateTime.now();
+    }
 }

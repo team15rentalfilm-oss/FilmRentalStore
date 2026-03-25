@@ -21,8 +21,18 @@ public class FilmCategory {
     @Column(name = "category_id")
     private Byte categoryId;
 
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
+
+    @PrePersist
+    public void prePersist() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdate = LocalDateTime.now();
+    }
 
     @Getter
     @Setter
