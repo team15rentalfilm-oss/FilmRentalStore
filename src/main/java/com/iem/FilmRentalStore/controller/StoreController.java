@@ -3,51 +3,59 @@ package com.iem.FilmRentalStore.controller;
 import com.iem.FilmRentalStore.entity.Store;
 import com.iem.FilmRentalStore.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/stores")
+import java.util.List;
+
+@RestController // Returns JSON instead of HTML views
+@RequestMapping("/api/stores") // Best practice to prefix API routes
+@CrossOrigin(origins = "http://localhost:3000") // Allow your frontend to access this
 public class StoreController {
 
     @Autowired
     private StoreRepository storeRepository;
 
-    // Read: Show all stores
-    @GetMapping("getAll")
-    public String listStores(Model model) {
-        model.addAttribute("stores", storeRepository.findAll());
-        return "stores/list";
+    // GET: Fetch all stores
+    @GetMapping
+    public List<Store> getAllStores() {
+        return storeRepository.findAll();
     }
 
-    // Create: Show the blank form
-    @GetMapping("/new")
-    public String createStoreForm(Model model) {
-        model.addAttribute("store", new Store());
-        return "stores/form";
+    // GET: Fetch a single store by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Store> getStoreById(@PathVariable Integer id) {
+        return storeRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Create/Update: Save the data from the form
+    // POST: Create a new store
     @PostMapping
-    public String saveStore(@ModelAttribute("store") Store store) {
-        storeRepository.save(store);
-        return "redirect:/stores"; // Refresh the list page
+    public Store createStore(@RequestBody Store store) {
+        return storeRepository.save(store);
     }
 
-    // Update: Show the form with existing data pre-filled
-    @GetMapping("/edit/{id}")
-    public String editStoreForm(@PathVariable Integer id, Model model) {
-        Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid store Id:" + id));
-        model.addAttribute("store", store);
-        return "stores/form";
+    // PUT: Update an existing store
+    @PutMapping("/{id}")
+    public ResponseEntity<Store> updateStore(@PathVariable Integer id, @RequestBody Store storeDetails) {
+        return storeRepository.findById(id)
+                .map(store -> {
+                    // Update fields here (example: store.setName(storeDetails.getName());)
+                    // Assuming Store entity has appropriate setters
+                    storeDetails.setAddressId(id);
+                    return ResponseEntity.ok(storeRepository.save(storeDetails));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // Delete: Remove a store
-    @GetMapping("/delete/{id}")
-    public String deleteStore(@PathVariable Integer id) {
-        storeRepository.deleteById(id);
-        return "redirect:/stores";
+    // DELETE: Remove a store
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStore(@PathVariable Integer id) {
+        if (storeRepository.existsById(id)) {
+            storeRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

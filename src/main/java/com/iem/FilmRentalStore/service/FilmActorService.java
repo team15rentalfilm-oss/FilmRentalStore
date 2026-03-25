@@ -1,6 +1,8 @@
 package com.iem.FilmRentalStore.service;
 
 import com.iem.FilmRentalStore.dto.FilmActorDTO;
+import com.iem.FilmRentalStore.dto.FilmActorDetailsDTO;
+
 import java.util.List;
 
 public interface FilmActorService {
@@ -10,4 +12,6 @@ public interface FilmActorService {
     FilmActorDTO create(FilmActorDTO dto);
 
     void delete(int actorId, int filmId);
+
+    List<FilmActorDetailsDTO> getFilmActorDetails();
 }

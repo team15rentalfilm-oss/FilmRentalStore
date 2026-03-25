@@ -1,6 +1,7 @@
 package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.FilmActorDTO;
+import com.iem.FilmRentalStore.dto.FilmActorDetailsDTO;
 import com.iem.FilmRentalStore.entity.FilmActor;
 import com.iem.FilmRentalStore.entity.FilmActorId;
 import com.iem.FilmRentalStore.repository.FilmActorRepository;
@@ -19,6 +20,7 @@ public class FilmActorServiceImpl implements FilmActorService {
         this.repo = repo;
     }
 
+    @Override
     public List<FilmActorDTO> getAll() {
         return repo.findAll().stream().map(fa -> {
             FilmActorDTO dto = new FilmActorDTO();
@@ -28,6 +30,7 @@ public class FilmActorServiceImpl implements FilmActorService {
         }).collect(Collectors.toList());
     }
 
+    @Override
     public FilmActorDTO create(FilmActorDTO dto) {
         FilmActorId id = new FilmActorId();
         id.setActorId(dto.getActorId());
@@ -40,11 +43,19 @@ public class FilmActorServiceImpl implements FilmActorService {
         return dto;
     }
 
+    @Override
     public void delete(int actorId, int filmId) {
         FilmActorId id = new FilmActorId();
         id.setActorId(actorId);
         id.setFilmId(filmId);
 
         repo.deleteById(id);
+    }
+
+    @Override
+    public List<FilmActorDetailsDTO> getFilmActorDetails() {
+        return repo.findAll().stream()
+                .map(fa -> new FilmActorDetailsDTO())
+                .collect(Collectors.toList());
     }
 }
