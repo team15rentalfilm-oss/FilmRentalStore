@@ -17,6 +17,10 @@ public class FilmActor {
     @EmbeddedId
     private FilmActorId id;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "film_id", referencedColumnName = "film_id", insertable = false, updatable = false)
+    private Film film;
+
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/languages")
+@RequestMapping("/api/languages")
 public class LanguageController {
 
     private final LanguageService service;
