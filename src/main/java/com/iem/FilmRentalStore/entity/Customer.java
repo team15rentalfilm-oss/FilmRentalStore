@@ -1,14 +1,19 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "customer")
@@ -40,6 +45,24 @@ public class Customer {
 
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", insertable = false, updatable = false)
+    private Store store;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", insertable = false, updatable = false)
+    private Address address;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private List<Payment> payments = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private List<Rental> rentals = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

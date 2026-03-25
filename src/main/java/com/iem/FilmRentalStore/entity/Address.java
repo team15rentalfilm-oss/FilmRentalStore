@@ -1,7 +1,6 @@
 package com.iem.FilmRentalStore.entity;
 
-import java.time.LocalDateTime;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,12 +8,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -43,4 +49,16 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "address")
+    private List<Customer> customers = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "address")
+    private List<Staff> staffMembers = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "address")
+    private List<Store> stores = new ArrayList<>();
 }

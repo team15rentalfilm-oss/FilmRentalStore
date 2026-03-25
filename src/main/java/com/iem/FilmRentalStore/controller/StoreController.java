@@ -36,15 +36,13 @@ public class StoreController {
         return storeRepository.save(store);
     }
 
-    // PUT: Update an existing store
     @PutMapping("/{id}")
     public ResponseEntity<Store> updateStore(@PathVariable Integer id, @RequestBody Store storeDetails) {
         return storeRepository.findById(id)
                 .map(store -> {
-                    // Update fields here (example: store.setName(storeDetails.getName());)
-                    // Assuming Store entity has appropriate setters
-                    storeDetails.setAddressId(id);
-                    return ResponseEntity.ok(storeRepository.save(storeDetails));
+                    store.setManagerStaffId(storeDetails.getManagerStaffId());
+                    store.setAddressId(storeDetails.getAddressId());
+                    return ResponseEntity.ok(storeRepository.save(store));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

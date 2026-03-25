@@ -1,17 +1,22 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "staff")
-@Data // Generates Getters, Setters, toString, equals, hashCode, and RequiredArgsConstructor
+@Getter
+@Setter
 public class Staff {
 
     @Id
@@ -49,4 +54,26 @@ public class Staff {
 
     @Column(name = "last_update", insertable = false, updatable = false)
     private LocalDateTime lastUpdate;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", insertable = false, updatable = false)
+    private Address address;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", insertable = false, updatable = false)
+    private Store store;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "staff")
+    private List<Payment> payments = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "staff")
+    private List<Rental> rentals = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "managerStaff")
+    private Store managedStore;
 }

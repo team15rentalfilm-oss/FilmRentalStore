@@ -39,7 +39,7 @@ public class FilmServiceImpl implements FilmService {
         Film savedFilm = filmRepository.save(film);
 
         // Map back to DTO
-        return new FilmDTO(savedFilm.getId(), savedFilm.getTitle(),
+        return new FilmDTO(savedFilm.getFilmId(), savedFilm.getTitle(),
                 savedFilm.getDescription(),
                 savedFilm.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
     }
@@ -50,7 +50,7 @@ public class FilmServiceImpl implements FilmService {
         Film film = filmRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
 
-        return new FilmDTO(film.getId(), film.getTitle(),
+        return new FilmDTO(film.getFilmId(), film.getTitle(),
                 film.getDescription(),
                 film.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
     }
@@ -59,7 +59,7 @@ public class FilmServiceImpl implements FilmService {
     @Transactional(readOnly = true)
     public List<FilmDTO> getAllFilms() {
         return filmRepository.findAll().stream().map(film ->
-                new FilmDTO(film.getId(), film.getTitle(), film.getDescription(),
+                new FilmDTO(film.getFilmId(), film.getTitle(), film.getDescription(),
                         film.getCategories().stream().map(Category::getId).collect(Collectors.toSet()))
         ).collect(Collectors.toList());
     }
@@ -77,7 +77,7 @@ public class FilmServiceImpl implements FilmService {
 
         Film updatedFilm = filmRepository.save(film);
 
-        return new FilmDTO(updatedFilm.getId(), updatedFilm.getTitle(), updatedFilm.getDescription(),
+        return new FilmDTO(updatedFilm.getFilmId(), updatedFilm.getTitle(), updatedFilm.getDescription(),
                 updatedFilm.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
     }
 
@@ -104,7 +104,7 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return films.stream().map(film ->
-                new FilmDTO(film.getId(), film.getTitle(), film.getDescription(),
+                new FilmDTO(film.getFilmId(), film.getTitle(), film.getDescription(),
                         film.getCategories().stream()
                                 .map(Category::getId)
                                 .collect(Collectors.toSet()))
@@ -134,7 +134,7 @@ public class FilmServiceImpl implements FilmService {
 
         Film updatedFilm = filmRepository.save(film);
 
-        return new FilmDTO(updatedFilm.getId(), updatedFilm.getTitle(),
+        return new FilmDTO(updatedFilm.getFilmId(), updatedFilm.getTitle(),
                 updatedFilm.getDescription(),
                 updatedFilm.getCategories().stream()
                         .map(Category::getId)

@@ -1,16 +1,21 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "film_text")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FilmText {
@@ -24,4 +29,9 @@ public class FilmText {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "film_id", referencedColumnName = "film_id", insertable = false, updatable = false)
+    private Film film;
 }

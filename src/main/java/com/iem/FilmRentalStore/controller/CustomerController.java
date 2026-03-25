@@ -32,7 +32,7 @@ public class CustomerController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
-            @RequestParam(required = false) short storeId
+            @RequestParam(required = false) Byte storeId
     ) {
         return service.search(firstName, lastName, email, storeId);
     }

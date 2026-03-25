@@ -30,8 +30,8 @@ public class FilmActorServiceImpl implements FilmActorService {
 
     public FilmActorDTO create(FilmActorDTO dto) {
         FilmActorId id = new FilmActorId();
-        id.setActorId(dto.getActorId());
-        id.setFilmId(dto.getFilmId());
+        id.setActorId((short) dto.getActorId());
+        id.setFilmId((short) dto.getFilmId());
 
         FilmActor fa = new FilmActor();
         fa.setId(id);
@@ -42,8 +42,8 @@ public class FilmActorServiceImpl implements FilmActorService {
 
     public void delete(int actorId, int filmId) {
         FilmActorId id = new FilmActorId();
-        id.setActorId(actorId);
-        id.setFilmId(filmId);
+        id.setActorId((short) actorId);
+        id.setFilmId((short) filmId);
 
         repo.deleteById(id);
     }

@@ -1,15 +1,20 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "actor")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Actor {
@@ -27,4 +32,8 @@ public class Actor {
 
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "actor")
+    private Set<FilmActor> filmActors = new HashSet<>();
 }
