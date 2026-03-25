@@ -1,5 +1,7 @@
 package com.iem.FilmRentalStore.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +9,11 @@ import lombok.Setter;
 @Setter
 public class FilmActorDTO {
 
-    private int actorId;
-    private int filmId;
+    @NotNull(message = "Actor ID is mandatory")
+    @Positive(message = "Actor ID must be greater than 0")
+    private Integer actorId;
+
+    @NotNull(message = "Film ID is mandatory")
+    @Positive(message = "Film ID must be greater than 0")
+    private Integer filmId;
 }

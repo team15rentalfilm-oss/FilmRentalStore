@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.FilmActorDTO;
 import com.iem.FilmRentalStore.service.FilmActorService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class FilmActorController {
 
     // POST
     @PostMapping
-    public FilmActorDTO create(@RequestBody FilmActorDTO dto) {
+    public FilmActorDTO create(@Valid @RequestBody FilmActorDTO dto) {
         return service.create(dto);
     }
 
