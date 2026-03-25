@@ -12,38 +12,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "customer")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "customer")
 public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", columnDefinition = "SMALLINT UNSIGNED")
     private Short customerId;
 
-    @Column(name = "store_id")
+    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Byte storeId;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false, length = 45)
     private String lastName;
 
+    @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "address_id")
+    @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
     private Short addressId;
 
+    @Column(name = "active")
     private Boolean active;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private LocalDateTime createDate;
 
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
     @JsonIgnore
@@ -57,11 +59,11 @@ public class Customer {
     private Address address;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Payment> payments = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Rental> rentals = new ArrayList<>();
 
     @PrePersist
@@ -69,10 +71,10 @@ public class Customer {
         if (createDate == null) {
             createDate = LocalDateTime.now();
         }
-        lastUpdate = LocalDateTime.now();
         if (active == null) {
             active = true;
         }
+        lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate

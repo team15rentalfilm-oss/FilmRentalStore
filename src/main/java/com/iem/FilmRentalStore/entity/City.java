@@ -1,48 +1,54 @@
 package com.iem.FilmRentalStore.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "city")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="city_id")
+    @Column(name = "city_id", columnDefinition = "SMALLINT UNSIGNED")
     private Short cityId;
 
-    @Column(name="city")
+    @Column(name = "city", nullable = false, length = 50)
     private String city;
+
+    @Column(name = "country_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
+    private Short countryId;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id", insertable = false, updatable = false)
+    private Country country;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
+    private List<Address> addresses = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
-
-    // Many cities belong to one country
-    @ManyToOne
-    @JoinColumn(name = "country_id", nullable = false)
-    private Country country;
-
-    // One city has many addresses
-    @OneToMany(mappedBy = "city")
-    private List<Address> addresses;
-
 }

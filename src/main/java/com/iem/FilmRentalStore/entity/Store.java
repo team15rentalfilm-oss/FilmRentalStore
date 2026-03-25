@@ -1,17 +1,34 @@
 package com.iem.FilmRentalStore.entity;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Data
+@Table(name = "store")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "store")
 public class Store {
 
     @Id
@@ -28,13 +45,35 @@ public class Store {
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_staff_id", insertable = false, updatable = false)
+    private Staff managerStaff;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", insertable = false, updatable = false)
+    private Address address;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private List<Customer> customers = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private List<Staff> staffMembers = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    private List<Inventory> inventories = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 }

@@ -24,8 +24,8 @@ public class FilmActorServiceImpl implements FilmActorService {
     public List<FilmActorDTO> getAll() {
         return repo.findAll().stream().map(fa -> {
             FilmActorDTO dto = new FilmActorDTO();
-            dto.setActorId(fa.getId().getActorId());
-            dto.setFilmId(fa.getId().getFilmId());
+            dto.setActorId(fa.getId().getActorId().intValue());
+            dto.setFilmId(fa.getId().getFilmId().intValue());
             return dto;
         }).collect(Collectors.toList());
     }
@@ -33,8 +33,8 @@ public class FilmActorServiceImpl implements FilmActorService {
     @Override
     public FilmActorDTO create(FilmActorDTO dto) {
         FilmActorId id = new FilmActorId();
-        id.setActorId(dto.getActorId());
-        id.setFilmId(dto.getFilmId());
+        id.setActorId(dto.getActorId().shortValue());
+        id.setFilmId(dto.getFilmId().shortValue());
 
         FilmActor fa = new FilmActor();
         fa.setId(id);
@@ -46,8 +46,8 @@ public class FilmActorServiceImpl implements FilmActorService {
     @Override
     public void delete(int actorId, int filmId) {
         FilmActorId id = new FilmActorId();
-        id.setActorId(actorId);
-        id.setFilmId(filmId);
+        id.setActorId((short) actorId);
+        id.setFilmId((short) filmId);
 
         repo.deleteById(id);
     }
@@ -55,7 +55,13 @@ public class FilmActorServiceImpl implements FilmActorService {
     @Override
     public List<FilmActorDetailsDTO> getFilmActorDetails() {
         return repo.findAll().stream()
-                .map(fa -> new FilmActorDetailsDTO())
+                .map(fa -> new FilmActorDetailsDTO(
+                        fa.getId().getActorId().intValue(),
+                        fa.getActor() != null ? fa.getActor().getFirstName() : null,
+                        fa.getActor() != null ? fa.getActor().getLastName() : null,
+                        fa.getId().getFilmId().intValue(),
+                        fa.getFilm() != null ? fa.getFilm().getTitle() : null
+                ))
                 .collect(Collectors.toList());
     }
 }

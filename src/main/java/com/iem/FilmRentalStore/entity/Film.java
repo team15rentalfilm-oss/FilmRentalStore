@@ -13,11 +13,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "film")
 @Getter
 @Setter
-@Table(name = "film")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Film {
 
     @Id
@@ -25,33 +25,31 @@ public class Film {
     @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
     private Short filmId;
 
-    @Column(nullable = false, length = 128)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    // MySQL 'YEAR' type maps best to Integer in Java 
-    // but we must tell Hibernate the column type
     @Column(name = "release_year", columnDefinition = "YEAR")
     private Integer releaseYear;
 
-    @Column(name = "language_id", columnDefinition = "TINYINT UNSIGNED")
+    @Column(name = "language_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Byte languageId;
 
     @Column(name = "original_language_id", columnDefinition = "TINYINT UNSIGNED")
     private Byte originalLanguageId;
 
-    @Column(name = "rental_duration")
+    @Column(name = "rental_duration", nullable = false)
     private Short rentalDuration;
 
-    @Column(name = "rental_rate", precision = 4, scale = 2)
+    @Column(name = "rental_rate", nullable = false, precision = 4, scale = 2)
     private BigDecimal rentalRate;
 
     @Column(name = "length")
     private Short length;
 
-    @Column(name = "replacement_cost", precision = 5, scale = 2)
+    @Column(name = "replacement_cost", nullable = false, precision = 5, scale = 2)
     private BigDecimal replacementCost;
 
     @Column(name = "rating")
@@ -60,7 +58,7 @@ public class Film {
     @Column(name = "special_features")
     private String specialFeatures;
 
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
     @JsonIgnore
@@ -74,7 +72,7 @@ public class Film {
     private Language originalLanguage;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "film_category",
             joinColumns = @JoinColumn(name = "film_id"),
@@ -83,14 +81,24 @@ public class Film {
     private Set<Category> categories = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "film")
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
     private Set<FilmActor> filmActors = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "film")
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
     private Set<Inventory> inventories = new HashSet<>();
 
     @JsonIgnore
-    @OneToOne(mappedBy = "film")
+    @OneToOne(mappedBy = "film", fetch = FetchType.LAZY)
     private FilmText filmText;
+
+    @PrePersist
+    public void prePersist() {
+        lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        lastUpdate = LocalDateTime.now();
+    }
 }

@@ -142,14 +142,14 @@ public class RentalServiceImpl implements RentalService {
     }
 
     private Rental toEntity(RentalDTO rentalDTO) {
-        return new Rental(
-                rentalDTO.getRentalId(),
-                rentalDTO.getRentalDate(),
-                rentalDTO.getInventoryId(),
-                rentalDTO.getCustomerId(),
-                rentalDTO.getReturnDate(),
-                rentalDTO.getStaffId(),
-                rentalDTO.getLastUpdate()
-        );
+        Rental rental = new Rental();
+        rental.setRentalId(rentalDTO.getRentalId());
+        rental.setRentalDate(rentalDTO.getRentalDate());
+        rental.setInventoryId(rentalDTO.getInventoryId());
+        rental.setCustomerId(rentalDTO.getCustomerId());
+        rental.setReturnDate(rentalDTO.getReturnDate());
+        rental.setStaffId(rentalDTO.getStaffId());
+        rental.setLastUpdate(rentalDTO.getLastUpdate());
+        return rental;
     }
 }

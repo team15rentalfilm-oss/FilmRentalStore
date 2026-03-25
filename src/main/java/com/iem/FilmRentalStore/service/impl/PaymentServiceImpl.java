@@ -151,14 +151,14 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Payment toEntity(PaymentDTO paymentDTO) {
-        return new Payment(
-                paymentDTO.getPaymentId(),
-                paymentDTO.getCustomerId(),
-                paymentDTO.getStaffId(),
-                paymentDTO.getRentalId(),
-                paymentDTO.getAmount(),
-                paymentDTO.getPaymentDate(),
-                paymentDTO.getLastUpdate()
-        );
+        Payment payment = new Payment();
+        payment.setPaymentId(paymentDTO.getPaymentId());
+        payment.setCustomerId(paymentDTO.getCustomerId());
+        payment.setStaffId(paymentDTO.getStaffId());
+        payment.setRentalId(paymentDTO.getRentalId());
+        payment.setAmount(paymentDTO.getAmount());
+        payment.setPaymentDate(paymentDTO.getPaymentDate());
+        payment.setLastUpdate(paymentDTO.getLastUpdate());
+        return payment;
     }
 }

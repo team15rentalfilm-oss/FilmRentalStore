@@ -1,15 +1,20 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "inventory")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Inventory {
@@ -28,13 +33,27 @@ public class Inventory {
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "film_id", insertable = false, updatable = false)
+    private Film film;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", insertable = false, updatable = false)
+    private Store store;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "inventory", fetch = FetchType.LAZY)
+    private List<Rental> rentals = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 }
