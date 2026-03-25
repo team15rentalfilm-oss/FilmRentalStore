@@ -22,10 +22,10 @@ public class Staff {
 
     @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
     private Integer addressId;
-
-    @Lob
-    @Column(name = "picture")
-    private byte[] picture;
+//
+//    @Lob
+//    @Column(name = "picture", columnDefinition = "BLOB")
+//    private byte[] picture;
 
     @Column(name = "email", length = 50)
     private String email;
