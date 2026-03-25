@@ -15,4 +15,10 @@ public interface FilmService {
     FilmDTO updateFilm(Short id, FilmDTO filmDTO);
 
     void deleteFilm(Short id);
+
+
+
+    List<FilmDTO> searchFilms(String title, Integer year);
+    FilmDTO patchFilm(Short id, FilmDTO filmDTO);
+
 }
