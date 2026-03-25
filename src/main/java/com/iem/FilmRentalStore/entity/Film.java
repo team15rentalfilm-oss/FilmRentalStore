@@ -1,42 +1,33 @@
 package com.iem.FilmRentalStore.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.math.BigDecimal;
 
-@Setter
-@Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Table(name = "film")
 public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "film_id")
-    private Short id;
+    @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
+    private Integer filmId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 128)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-            name = "film_category",
-            joinColumns = @JoinColumn(name = "film_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private Set<Category> categories = new HashSet<>();
+    // MySQL 'YEAR' type maps best to Integer in Java 
+    // but we must tell Hibernate the column type
+    @Column(name = "release_year", columnDefinition = "YEAR")
+    private Integer releaseYear;
 
-    // Constructors
-    public Film() {}
-
-    public Film(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
+    @Column(name = "rental_rate", precision = 4, scale = 2)
+    private BigDecimal rentalRate;
 }

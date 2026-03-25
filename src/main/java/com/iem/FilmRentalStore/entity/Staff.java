@@ -1,10 +1,15 @@
 package com.iem.FilmRentalStore.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "staff")
 @Data // Generates Getters, Setters, toString, equals, hashCode, and RequiredArgsConstructor
 public class Staff {

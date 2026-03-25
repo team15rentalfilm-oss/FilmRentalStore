@@ -23,7 +23,7 @@ public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="county_id")
+    @Column(name="country_id")
     private Short countryId;
 
     @Column(name="county")
