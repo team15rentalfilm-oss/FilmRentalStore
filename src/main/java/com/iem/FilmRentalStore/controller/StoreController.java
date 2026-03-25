@@ -47,7 +47,7 @@ public class StoreController {
     // Delete: Remove a store
     @GetMapping("/delete/{id}")
     public String deleteStore(@PathVariable Integer id) {
-        storeRepository.deleteById(Integer.valueOf(id));
+        storeRepository.deleteById(id);
         return "redirect:/stores";
     }
 }
