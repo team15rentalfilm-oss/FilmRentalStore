@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Utsav Sarda - Contributions</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 30px; }
+        .entity-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; border-bottom: 2px solid #bdc3c7; padding-bottom: 5px; }
+        code { background: #e8e8e8; padding: 2px 6px; border-radius: 4px; color: #d35400; font-weight: bold;}
+        .back-link { display: inline-block; margin-top: 20px; text-decoration: none; color: white; background: #007bff; padding: 10px 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<h1>Utsav Sarda</h1>
+<p><strong>Role:</strong> Backend Developer - Core Business Logic</p>
+
+<div class="entity-section">
+    <h2>Entity: Store</h2>
+    <p>Manages the physical store locations for the film rental system.</p>
+    <ul>
+        <li><code>GET /api/stores</code> - Retrieve a list of all stores</li>
+        <li><code>POST /api/stores</code> - Create a new store location</li>
+        <li><code>GET /api/stores/{id}</code> - Retrieve specific store details by ID</li>
+        <li><code>PUT /api/stores/{id}</code> - Update store information</li>
+    </ul>
+</div>
+
+<div class="entity-section">
+    <h2>Entity: Staff</h2>
+    <p>Manages the employees working at various store locations.</p>
+    <ul>
+        <li><code>GET /api/staff</code> - Retrieve all staff members</li>
+        <li><code>POST /api/staff</code> - Register a new staff member</li>
+        <li><code>GET /api/staff/{id}</code> - Retrieve staff details by ID</li>
+        <li><code>PUT /api/staff/{id}</code> - Update staff credentials/info</li>
+    </ul>
+</div>
+
+<a th:href="@{/}" class="back-link">&larr; Back to Team Page</a>
+
+</body>
+</html>

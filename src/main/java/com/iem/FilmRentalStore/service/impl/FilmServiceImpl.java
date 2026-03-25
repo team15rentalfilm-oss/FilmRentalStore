@@ -87,4 +87,57 @@ public class FilmServiceImpl implements FilmService {
                 .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
         filmRepository.delete(film);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FilmDTO> searchFilms(String title, Integer year) {
+
+        List<Film> films;
+
+        if (title != null && !title.isEmpty()) {
+            films = filmRepository.findAll().stream()
+                    .filter(f -> f.getTitle() != null &&
+                            f.getTitle().toLowerCase().contains(title.toLowerCase()))
+                    .collect(Collectors.toList());
+        } else {
+            films = filmRepository.findAll();
+        }
+
+        return films.stream().map(film ->
+                new FilmDTO(film.getId(), film.getTitle(), film.getDescription(),
+                        film.getCategories().stream()
+                                .map(Category::getId)
+                                .collect(Collectors.toSet()))
+        ).collect(Collectors.toList());
+    }
+    @Override
+    public FilmDTO patchFilm(Short id, FilmDTO filmDTO) {
+
+        Film film = filmRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
+
+        // Update only non-null fields
+        if (filmDTO.getTitle() != null) {
+            film.setTitle(filmDTO.getTitle());
+        }
+
+        if (filmDTO.getDescription() != null) {
+            film.setDescription(filmDTO.getDescription());
+        }
+
+        if (filmDTO.getCategoryIds() != null) {
+            Set<Category> categories = new HashSet<>(
+                    categoryRepository.findAllById(filmDTO.getCategoryIds())
+            );
+            film.setCategories(categories);
+        }
+
+        Film updatedFilm = filmRepository.save(film);
+
+        return new FilmDTO(updatedFilm.getId(), updatedFilm.getTitle(),
+                updatedFilm.getDescription(),
+                updatedFilm.getCategories().stream()
+                        .map(Category::getId)
+                        .collect(Collectors.toSet()));
+    }
 }
