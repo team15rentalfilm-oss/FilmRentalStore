@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Store Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; max-width: 400px; margin: auto; background-color: #f9f9f9;}
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;}
+        .btn { padding: 10px 15px; text-decoration: none; border-radius: 4px; color: white; border: none; cursor: pointer; display: inline-block;}
+        .btn-success { background-color: #28a745; }
+        .btn-secondary { background-color: #6c757d; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+<h2 th:text="${store.storeId != null} ? 'Edit Store' : 'Add New Store'"></h2>
+
+<form th:action="@{/stores}" th:object="${store}" method="post">
+
+    <input type="hidden" th:field="*{storeId}" />
+
+    <div class="form-group">
+        <label>Manager Staff ID:</label>
+        <input type="number" th:field="*{managerStaffId}" required />
+    </div>
+
+    <div class="form-group">
+        <label>Address ID:</label>
+        <input type="number" th:field="*{addressId}" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Store</button>
+    <a th:href="@{/stores}" class="btn btn-secondary">Cancel</a>
+</form>
+
+</body>
+</html>
