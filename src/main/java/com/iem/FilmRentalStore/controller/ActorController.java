@@ -2,12 +2,13 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.ActorDTO;
 import com.iem.FilmRentalStore.service.ActorService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/actors")
+@RequestMapping("/api/actors")
 public class ActorController {
 
     private final ActorService service;
@@ -36,13 +37,13 @@ public class ActorController {
 
     // POST
     @PostMapping
-    public ActorDTO create(@RequestBody ActorDTO dto) {
+    public ActorDTO create(@Valid @RequestBody ActorDTO dto) {
         return service.create(dto);
     }
 
     // PUT
     @PutMapping("/{id}")
-    public ActorDTO update(@PathVariable int id, @RequestBody ActorDTO dto) {
+    public ActorDTO update(@PathVariable int id, @Valid @RequestBody ActorDTO dto) {
         return service.update(id, dto);
     }
 

@@ -2,12 +2,13 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.LanguageDTO;
 import com.iem.FilmRentalStore.service.LanguageService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/languages")
+@RequestMapping("/api/languages")
 public class LanguageController {
 
     private final LanguageService service;
@@ -36,13 +37,13 @@ public class LanguageController {
 
     // POST
     @PostMapping
-    public LanguageDTO create(@RequestBody LanguageDTO dto) {
+    public LanguageDTO create(@Valid @RequestBody LanguageDTO dto) {
         return service.create(dto);
     }
 
     // PUT
     @PutMapping("/{id}")
-    public LanguageDTO update(@PathVariable int id, @RequestBody LanguageDTO dto) {
+    public LanguageDTO update(@PathVariable int id, @Valid @RequestBody LanguageDTO dto) {
         return service.update(id, dto);
     }
 

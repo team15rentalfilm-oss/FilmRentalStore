@@ -1,23 +1,14 @@
 package com.iem.FilmRentalStore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -32,11 +23,20 @@ public class Country {
     @Column(name="country")
     private String country;
 
-    @Column(name="last_update")
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @PrePersist
+    public void prePersist() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdate = LocalDateTime.now();
+    }
+
     // One country has many cities
-    @JsonIgnore
     @OneToMany(mappedBy = "country")
     private List<City> cities;
 
