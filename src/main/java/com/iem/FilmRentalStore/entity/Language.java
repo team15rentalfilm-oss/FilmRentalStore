@@ -24,4 +24,6 @@ public class Language {
 
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+
+
 }

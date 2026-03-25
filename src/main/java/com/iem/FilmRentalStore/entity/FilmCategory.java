@@ -1,6 +1,7 @@
 package com.iem.FilmRentalStore.entity;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,7 @@ public class FilmCategory {
 
     @Getter
     @Setter
+    @EqualsAndHashCode
     public static class FilmCategoryId implements Serializable {
         private Short filmId;
         private Byte categoryId;
