@@ -18,6 +18,7 @@ public class LanguageServiceImpl implements LanguageService {
         this.repo = repo;
     }
 
+    // DTO → Response
     private LanguageDTO mapToDTO(Language l) {
         LanguageDTO dto = new LanguageDTO();
         dto.setLanguageId(l.getLanguageId());
@@ -25,44 +26,74 @@ public class LanguageServiceImpl implements LanguageService {
         return dto;
     }
 
+    // DTO → Entity (safe mapping)
     private Language mapToEntity(LanguageDTO dto) {
         Language l = new Language();
-        l.setLanguageId(dto.getLanguageId());
         l.setName(dto.getName());
+
+        if (dto.getLanguageId() != null) {
+            l.setLanguageId(dto.getLanguageId());
+        }
+
         return l;
     }
 
+    // GET ALL
+    @Override
     public List<LanguageDTO> getAll() {
-        return repo.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+        return repo.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
+    // GET BY ID
+    @Override
     public LanguageDTO getById(int id) {
         return mapToDTO(repo.findById(id).orElseThrow());
     }
 
+    // GET BY NAME
+    @Override
     public List<LanguageDTO> getByName(String name) {
-        return repo.findByName(name).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return repo.findByName(name)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
+    // POST (CREATE)
+    @Override
     public LanguageDTO create(LanguageDTO dto) {
-        return mapToDTO(repo.save(mapToEntity(dto)));
-    }
-
-    public LanguageDTO update(int id, LanguageDTO dto) {
-        Language l = mapToEntity(dto);
-        l.setLanguageId(id);
+        Language l = new Language();
+        l.setName(dto.getName());   // ignore ID
         return mapToDTO(repo.save(l));
     }
 
-    public LanguageDTO patch(int id, LanguageDTO dto) {
+    // PUT (FULL UPDATE)
+    @Override
+    public LanguageDTO update(int id, LanguageDTO dto) {
         Language existing = repo.findById(id).orElseThrow();
 
-        if (dto.getName() != null)
-            existing.setName(dto.getName());
+        existing.setName(dto.getName());
 
         return mapToDTO(repo.save(existing));
     }
 
+    // PATCH (PARTIAL UPDATE)
+    @Override
+    public LanguageDTO patch(int id, LanguageDTO dto) {
+        Language existing = repo.findById(id).orElseThrow();
+
+        if (dto.getName() != null) {
+            existing.setName(dto.getName());
+        }
+
+        return mapToDTO(repo.save(existing));
+    }
+
+    // DELETE
+    @Override
     public void delete(int id) {
         repo.deleteById(id);
     }

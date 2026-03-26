@@ -14,6 +14,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,27 +39,33 @@ public class Staff {
     private Integer staffId;
 
     @Column(name = "first_name", nullable = false, length = 45)
+    @NotBlank
     private String firstName;
 
     @Column(name = "last_name", nullable = false, length = 45)
+    @NotBlank
     private String lastName;
 
     @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
+    @NotNull
     private Integer addressId;
 
     @Column(name = "email", length = 50)
     private String email;
 
     @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    @NotNull
     private Integer storeId;
 
     @Column(name = "active", nullable = false)
     private Boolean active = true;
 
     @Column(name = "username", nullable = false, length = 16)
+    @NotBlank
     private String username;
 
     @Column(name = "password", length = 40)
+    @JsonIgnore
     private String password;
 
     @Column(name = "last_update", nullable = false)

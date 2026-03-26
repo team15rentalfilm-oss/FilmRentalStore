@@ -2,6 +2,8 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.entity.Customer;
 import com.iem.FilmRentalStore.service.CustomerService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +34,8 @@ public class CustomerController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email,
+
+            @Parameter(schema = @Schema(type = "integer", format = "int32"))
             @RequestParam(required = false) Byte storeId
     ) {
         return service.search(firstName, lastName, email, storeId);
