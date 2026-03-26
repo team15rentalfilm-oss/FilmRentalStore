@@ -1,16 +1,23 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.entity.Inventory;
+import com.iem.FilmRentalStore.dto.InventoryDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface InventoryService {
-    List<Inventory> getAllInventories();
-    List<Inventory> getInventoriesByFields(Map<String, String> searchParams);
-    Inventory getInventoryById(Integer id);
-    Inventory createInventory(Inventory inventory);
-    Inventory updateInventory(Integer id, Inventory inventoryDetails);
-    Inventory patchInventory(Integer id, Map<String, Object> updates);
+
+    List<InventoryDTO> getAllInventories();
+
+    List<InventoryDTO> getInventoriesByFields(Map<String, String> searchParams);
+
+    InventoryDTO getInventoryById(Integer id);
+
+    InventoryDTO createInventory(InventoryDTO inventoryDTO);
+
+    InventoryDTO updateInventory(Integer id, InventoryDTO inventoryDTO);
+
+    InventoryDTO patchInventory(Integer id, Map<String, Object> updates);
+
     void deleteInventory(Integer id);
 }

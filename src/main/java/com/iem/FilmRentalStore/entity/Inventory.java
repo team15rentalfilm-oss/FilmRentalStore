@@ -25,10 +25,10 @@ public class Inventory {
     private Integer inventoryId;
 
     @Column(name = "film_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private Integer filmId;
+    private Short filmId;
 
     @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Integer storeId;
+    private Byte storeId;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;

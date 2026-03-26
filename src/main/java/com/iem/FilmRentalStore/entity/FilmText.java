@@ -17,7 +17,7 @@ public class FilmText {
 
     @Id
     @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer filmId;
+    private Short filmId;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;

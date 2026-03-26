@@ -1,9 +1,8 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.entity.Inventory;
+import com.iem.FilmRentalStore.dto.InventoryDTO;
 import com.iem.FilmRentalStore.service.InventoryService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,30 +19,32 @@ public class InventoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Inventory>> getInventories(@RequestParam Map<String, String> searchParams) {
-        if (searchParams.isEmpty()) {
+    public ResponseEntity<List<InventoryDTO>> getInventories(@RequestParam Map<String, String> params) {
+        if (params.isEmpty())
             return ResponseEntity.ok(inventoryService.getAllInventories());
-        }
-        return ResponseEntity.ok(inventoryService.getInventoriesByFields(searchParams));
+
+        return ResponseEntity.ok(inventoryService.getInventoriesByFields(params));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Inventory> getInventoryById(@PathVariable Integer id) {
+    public ResponseEntity<InventoryDTO> getInventoryById(@PathVariable Integer id) {
         return ResponseEntity.ok(inventoryService.getInventoryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Inventory> createInventory(@RequestBody Inventory inventory) {
-        return new ResponseEntity<>(inventoryService.createInventory(inventory), HttpStatus.CREATED);
+    public ResponseEntity<InventoryDTO> createInventory(@RequestBody InventoryDTO dto) {
+        return new ResponseEntity<>(inventoryService.createInventory(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Inventory> updateInventory(@PathVariable Integer id, @RequestBody Inventory inventory) {
-        return ResponseEntity.ok(inventoryService.updateInventory(id, inventory));
+    public ResponseEntity<InventoryDTO> updateInventory(@PathVariable Integer id,
+                                                        @RequestBody InventoryDTO dto) {
+        return ResponseEntity.ok(inventoryService.updateInventory(id, dto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Inventory> patchInventory(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<InventoryDTO> patchInventory(@PathVariable Integer id,
+                                                       @RequestBody Map<String, Object> updates) {
         return ResponseEntity.ok(inventoryService.patchInventory(id, updates));
     }
 

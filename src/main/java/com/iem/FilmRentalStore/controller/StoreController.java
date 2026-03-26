@@ -1,59 +1,50 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.entity.Store;
-import com.iem.FilmRentalStore.repository.StoreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.iem.FilmRentalStore.dto.StoreDTO;
+import com.iem.FilmRentalStore.service.StoreService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Returns JSON instead of HTML views
-@RequestMapping("/api/stores") // Best practice to prefix API routes
-@CrossOrigin(origins = "http://localhost:3000") // Allow your frontend to access this
+@RestController
+@RequestMapping("/api/stores")
+@CrossOrigin(origins = "http://localhost:3000")
 public class StoreController {
 
-    @Autowired
-    private StoreRepository storeRepository;
+    private final StoreService storeService;
 
-    // GET: Fetch all stores
+    public StoreController(StoreService storeService) {
+        this.storeService = storeService;
+    }
+
     @GetMapping
-    public List<Store> getAllStores() {
-        return storeRepository.findAll();
+    public ResponseEntity<List<StoreDTO>> getAllStores() {
+        return ResponseEntity.ok(storeService.getAllStores());
     }
 
-    // GET: Fetch a single store by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Store> getStoreById(@PathVariable Integer id) {
-        return storeRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<StoreDTO> getStoreById(@PathVariable Integer id) {
+        return ResponseEntity.ok(storeService.getStoreById(id.byteValue()));
     }
 
-    // POST: Create a new store
     @PostMapping
-    public Store createStore(@RequestBody Store store) {
-        return storeRepository.save(store);
+    public ResponseEntity<StoreDTO> createStore(@Valid @RequestBody StoreDTO storeDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(storeService.createStore(storeDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Store> updateStore(@PathVariable Integer id, @RequestBody Store storeDetails) {
-        return storeRepository.findById(id)
-                .map(store -> {
-                    store.setManagerStaffId(storeDetails.getManagerStaffId());
-                    store.setAddressId(storeDetails.getAddressId());
-                    return ResponseEntity.ok(storeRepository.save(store));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<StoreDTO> updateStore(@PathVariable Integer id,
+                                                @Valid @RequestBody StoreDTO storeDTO) {
+        return ResponseEntity.ok(storeService.updateStore(id.byteValue(), storeDTO));
     }
 
-    // DELETE: Remove a store
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStore(@PathVariable Integer id) {
-        if (storeRepository.existsById(id)) {
-            storeRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        storeService.deleteStore(id.byteValue());
+        return ResponseEntity.noContent().build();
     }
 }

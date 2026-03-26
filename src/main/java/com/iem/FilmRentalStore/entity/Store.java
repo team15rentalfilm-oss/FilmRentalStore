@@ -1,19 +1,7 @@
 package com.iem.FilmRentalStore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,13 +22,13 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", columnDefinition = "TINYINT UNSIGNED")
-    private Integer storeId;
+    private Byte storeId;
 
     @Column(name = "manager_staff_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Integer managerStaffId;
+    private Byte managerStaffId;
 
     @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private Integer addressId;
+    private Short addressId;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;

@@ -3,15 +3,12 @@ package com.iem.FilmRentalStore.service.impl;
 import com.iem.FilmRentalStore.dto.FilmDTO;
 import com.iem.FilmRentalStore.entity.Category;
 import com.iem.FilmRentalStore.entity.Film;
-import com.iem.FilmRentalStore.exception.ResourceNotFoundException;
 import com.iem.FilmRentalStore.repository.CategoryRepository;
 import com.iem.FilmRentalStore.repository.FilmRepository;
 import com.iem.FilmRentalStore.service.FilmService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,124 +17,195 @@ import java.util.stream.Collectors;
 @Transactional
 public class FilmServiceImpl implements FilmService {
 
-    @Autowired
-    private FilmRepository filmRepository;
+    private final FilmRepository filmRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    public FilmServiceImpl(FilmRepository filmRepository, CategoryRepository categoryRepository) {
+        this.filmRepository = filmRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public FilmDTO createFilm(FilmDTO filmDTO) {
         Film film = new Film();
-        film.setTitle(filmDTO.getTitle());
-        film.setDescription(filmDTO.getDescription());
+        mapDtoToEntity(filmDTO, film);
 
-        // Link categories
-        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(filmDTO.getCategoryIds()));
-        film.setCategories(categories);
+        Film saved = filmRepository.save(film);
 
-        Film savedFilm = filmRepository.save(film);
+        if (filmDTO.getCategoryIds() != null && !filmDTO.getCategoryIds().isEmpty()) {
+            Set<Category> categories = categoryRepository.findAllById(filmDTO.getCategoryIds())
+                    .stream()
+                    .collect(Collectors.toSet());
+            saved.setCategories(categories);
+            saved = filmRepository.save(saved);
+        }
 
-        // Map back to DTO
-        return new FilmDTO(savedFilm.getFilmId(), savedFilm.getTitle(),
-                savedFilm.getDescription(),
-                savedFilm.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
+        return mapEntityToDto(saved);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public FilmDTO getFilmById(Short id) {
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
-
-        return new FilmDTO(film.getFilmId(), film.getTitle(),
-                film.getDescription(),
-                film.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
+                .orElseThrow(() -> new RuntimeException("Film not found with id: " + id));
+        return mapEntityToDto(film);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<FilmDTO> getAllFilms() {
-        return filmRepository.findAll().stream().map(film ->
-                new FilmDTO(film.getFilmId(), film.getTitle(), film.getDescription(),
-                        film.getCategories().stream().map(Category::getId).collect(Collectors.toSet()))
-        ).collect(Collectors.toList());
+        return filmRepository.findAll()
+                .stream()
+                .map(this::mapEntityToDto)
+                .toList();
     }
 
     @Override
     public FilmDTO updateFilm(Short id, FilmDTO filmDTO) {
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
+                .orElseThrow(() -> new RuntimeException("Film not found with id: " + id));
 
-        film.setTitle(filmDTO.getTitle());
-        film.setDescription(filmDTO.getDescription());
+        mapDtoToEntity(filmDTO, film);
 
-        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(filmDTO.getCategoryIds()));
-        film.setCategories(categories);
+        if (filmDTO.getCategoryIds() != null) {
+            film.getCategories().clear();
 
-        Film updatedFilm = filmRepository.save(film);
+            if (!filmDTO.getCategoryIds().isEmpty()) {
+                Set<Category> categories = categoryRepository.findAllById(filmDTO.getCategoryIds())
+                        .stream()
+                        .collect(Collectors.toSet());
+                film.getCategories().addAll(categories);
+            }
+        }
 
-        return new FilmDTO(updatedFilm.getFilmId(), updatedFilm.getTitle(), updatedFilm.getDescription(),
-                updatedFilm.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
+        return mapEntityToDto(filmRepository.save(film));
     }
 
     @Override
     public void deleteFilm(Short id) {
-        Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
-        filmRepository.delete(film);
+        if (!filmRepository.existsById(id)) {
+            throw new RuntimeException("Film not found with id: " + id);
+        }
+        filmRepository.deleteById(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<FilmDTO> searchFilms(String title, Integer year) {
-
         List<Film> films;
 
-        if (title != null && !title.isEmpty()) {
-            films = filmRepository.findAll().stream()
-                    .filter(f -> f.getTitle() != null &&
-                            f.getTitle().toLowerCase().contains(title.toLowerCase()))
-                    .collect(Collectors.toList());
+        if (title != null && !title.isBlank() && year != null) {
+            films = filmRepository.findByTitleContainingIgnoreCaseAndReleaseYear(title, year);
+        } else if (title != null && !title.isBlank()) {
+            films = filmRepository.findByTitleContainingIgnoreCase(title);
+        } else if (year != null) {
+            films = filmRepository.findByReleaseYear(year);
         } else {
             films = filmRepository.findAll();
         }
 
-        return films.stream().map(film ->
-                new FilmDTO(film.getFilmId(), film.getTitle(), film.getDescription(),
-                        film.getCategories().stream()
-                                .map(Category::getId)
-                                .collect(Collectors.toSet()))
-        ).collect(Collectors.toList());
+        return films.stream()
+                .map(this::mapEntityToDto)
+                .toList();
     }
+
     @Override
     public FilmDTO patchFilm(Short id, FilmDTO filmDTO) {
-
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
+                .orElseThrow(() -> new RuntimeException("Film not found with id: " + id));
 
-        // Update only non-null fields
-        if (filmDTO.getTitle() != null) {
-            film.setTitle(filmDTO.getTitle());
-        }
-
-        if (filmDTO.getDescription() != null) {
-            film.setDescription(filmDTO.getDescription());
-        }
+        if (filmDTO.getTitle() != null) film.setTitle(filmDTO.getTitle());
+        if (filmDTO.getDescription() != null) film.setDescription(filmDTO.getDescription());
+        if (filmDTO.getReleaseYear() != null) film.setReleaseYear(filmDTO.getReleaseYear());
+        if (filmDTO.getLanguageId() != null) film.setLanguageId(filmDTO.getLanguageId());
+        if (filmDTO.getOriginalLanguageId() != null) film.setOriginalLanguageId(filmDTO.getOriginalLanguageId());
+        if (filmDTO.getRentalDuration() != null) film.setRentalDuration(filmDTO.getRentalDuration());
+        if (filmDTO.getRentalRate() != null) film.setRentalRate(filmDTO.getRentalRate());
+        if (filmDTO.getLength() != null) film.setLength(filmDTO.getLength());
+        if (filmDTO.getReplacementCost() != null) film.setReplacementCost(filmDTO.getReplacementCost());
+        if (filmDTO.getRating() != null) film.setRating(filmDTO.getRating());
+        if (filmDTO.getSpecialFeatures() != null) film.setSpecialFeatures(filmDTO.getSpecialFeatures());
 
         if (filmDTO.getCategoryIds() != null) {
-            Set<Category> categories = new HashSet<>(
-                    categoryRepository.findAllById(filmDTO.getCategoryIds())
-            );
-            film.setCategories(categories);
+            film.getCategories().clear();
+
+            if (!filmDTO.getCategoryIds().isEmpty()) {
+                Set<Category> categories = categoryRepository.findAllById(filmDTO.getCategoryIds())
+                        .stream()
+                        .collect(Collectors.toSet());
+                film.getCategories().addAll(categories);
+            }
         }
 
-        Film updatedFilm = filmRepository.save(film);
+        return mapEntityToDto(filmRepository.save(film));
+    }
 
-        return new FilmDTO(updatedFilm.getFilmId(), updatedFilm.getTitle(),
-                updatedFilm.getDescription(),
-                updatedFilm.getCategories().stream()
-                        .map(Category::getId)
-                        .collect(Collectors.toSet()));
+    private void mapDtoToEntity(FilmDTO dto, Film film) {
+        if (dto.getTitle() != null) {
+            film.setTitle(dto.getTitle());
+        }
+
+        if (dto.getDescription() != null) {
+            film.setDescription(dto.getDescription());
+        }
+
+        if (dto.getReleaseYear() != null) {
+            film.setReleaseYear(dto.getReleaseYear());
+        }
+
+        if (dto.getLanguageId() != null) {
+            film.setLanguageId(dto.getLanguageId());
+        }
+
+        if (dto.getOriginalLanguageId() != null) {
+            film.setOriginalLanguageId(dto.getOriginalLanguageId());
+        }
+
+        if (dto.getRentalDuration() != null) {
+            film.setRentalDuration(dto.getRentalDuration());
+        }
+
+        if (dto.getRentalRate() != null) {
+            film.setRentalRate(dto.getRentalRate());
+        }
+
+        if (dto.getLength() != null) {
+            film.setLength(dto.getLength());
+        }
+
+        if (dto.getReplacementCost() != null) {
+            film.setReplacementCost(dto.getReplacementCost());
+        }
+
+        if (dto.getRating() != null) {
+            film.setRating(dto.getRating());
+        }
+
+        if (dto.getSpecialFeatures() != null) {
+            film.setSpecialFeatures(dto.getSpecialFeatures());
+        }
+    }
+
+    private FilmDTO mapEntityToDto(Film film) {
+        FilmDTO dto = new FilmDTO();
+        dto.setId(film.getFilmId());
+        dto.setTitle(film.getTitle());
+        dto.setDescription(film.getDescription());
+        dto.setReleaseYear(film.getReleaseYear());
+        dto.setLanguageId(film.getLanguageId());
+        dto.setOriginalLanguageId(film.getOriginalLanguageId());
+        dto.setRentalDuration(film.getRentalDuration());
+        dto.setRentalRate(film.getRentalRate());
+        dto.setLength(film.getLength());
+        dto.setReplacementCost(film.getReplacementCost());
+        dto.setRating(film.getRating());
+        dto.setSpecialFeatures(film.getSpecialFeatures());
+
+        if (film.getCategories() != null) {
+            dto.setCategoryIds(
+                    film.getCategories().stream()
+                            .map(Category::getId)
+                            .collect(Collectors.toSet())
+            );
+        }
+
+        return dto;
     }
 }
