@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
             return repo.findByEmailContainingIgnoreCase(email);
         }
         if (storeId != null) {
-            return repo.findByStoreId(storeId);
+            return repo.findByStore_StoreId(storeId);
         }
         return repo.findAll();
     }
@@ -53,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer update(Short id, Customer c) {
         Customer existing = getById(id);
 
-        existing.setStoreId(c.getStoreId());
+        existing.setStore(c.getStoreId());
         existing.setFirstName(c.getFirstName());
         existing.setLastName(c.getLastName());
         existing.setEmail(c.getEmail());
