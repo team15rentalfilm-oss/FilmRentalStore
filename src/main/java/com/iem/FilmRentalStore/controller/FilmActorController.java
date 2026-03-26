@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping({"/api/film-actor", "/film-actor"})
+@RequestMapping("/api/film-actor")
 public class FilmActorController {
 
     private final FilmActorService service;
