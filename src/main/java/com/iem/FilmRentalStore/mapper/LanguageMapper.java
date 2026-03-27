@@ -24,7 +24,7 @@ public class LanguageMapper {
     }
 
     // 🔹 Entity → Lightweight DTO
-    public LanguageDTO toDTO(Language language) {
+    public static LanguageDTO toDTO(Language language) {
         LanguageDTO dto = new LanguageDTO();
         dto.setName(language.getName());
         return dto;
