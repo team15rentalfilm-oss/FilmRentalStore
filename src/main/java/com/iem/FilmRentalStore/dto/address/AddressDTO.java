@@ -9,7 +9,10 @@ import lombok.Setter;
 public class AddressDTO {
 
     private String address;
+    private String address2;
     private String district;
     private String postalCode;
+    private String phone;
+
     private CityDTO city;
 }

@@ -8,14 +8,14 @@ import com.iem.FilmRentalStore.entity.Language;
 
 public class LanguageMapper {
 
-    // 🔹 RequestDTO → Entity
+    //RequestDTO → Entity
     public static Language toEntity(LanguageRequestDTO dto) {
         Language language = new Language();
         language.setName(dto.getName());
         return language;
     }
 
-    // 🔹 Entity → ResponseDTO
+    // Entity → ResponseDTO
     public static LanguageResponseDTO toResponseDTO(Language language) {
         LanguageResponseDTO dto = new LanguageResponseDTO();
         dto.setLanguageId(language.getLanguageId());
@@ -23,7 +23,7 @@ public class LanguageMapper {
         return dto;
     }
 
-    // 🔹 Entity → Lightweight DTO
+    // Entity → Lightweight DTO
     public static LanguageDTO toDTO(Language language) {
         LanguageDTO dto = new LanguageDTO();
         dto.setName(language.getName());

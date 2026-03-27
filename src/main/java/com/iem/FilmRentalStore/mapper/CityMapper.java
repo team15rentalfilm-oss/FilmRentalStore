@@ -24,7 +24,7 @@ public class CityMapper {
     }
 
     // Entity → Lightweight DTO
-    public CityDTO toDTO(City city) {
+    public static CityDTO toDTO(City city) {
         CityDTO dto = new CityDTO();
         dto.setCity(city.getCity());
         dto.setCountry(CountryMapper.toDTO(city.getCountry()));

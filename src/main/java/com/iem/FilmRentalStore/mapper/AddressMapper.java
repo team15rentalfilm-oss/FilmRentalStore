@@ -20,14 +20,18 @@ public class AddressMapper {
     }
 
     // Entity → DTO
-    public AddressDTO toDTO(Address address) {
+    // Entity → DTO (RESPONSE)
+    public static AddressDTO toDTO(Address address) {
         AddressDTO dto = new AddressDTO();
+
         dto.setAddress(address.getAddress());
         dto.setAddress2(address.getAddress2());
         dto.setDistrict(address.getDistrict());
         dto.setPostalCode(address.getPostalCode());
         dto.setPhone(address.getPhone());
-        dto.setCity(CityMapper.toDTO(address.getCity())); // adjust if needed
+
+        dto.setCity(CityMapper.toDTO(address.getCity())); // ✅ now correct
+
         return dto;
     }
 }
