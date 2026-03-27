@@ -41,7 +41,7 @@ public class CustomerMapper {
     }
 
     // 🔹 Entity → Lightweight DTO
-    public static CustomerDTO toDTO(Customer customer) {
+    public CustomerDTO toDTO(Customer customer) {
         CustomerDTO dto = new CustomerDTO();
 
         dto.setFirstName(customer.getFirstName());

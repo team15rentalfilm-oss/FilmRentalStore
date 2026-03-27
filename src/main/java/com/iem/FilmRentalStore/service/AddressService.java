@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service;
 
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
+import com.iem.FilmRentalStore.entity.Address;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface AddressService {
     List<AddressDTO> getAllAddresses();
 
     AddressDTO updateAddress(Short id, AddressRequestDTO request);
+
+    Address createAndReturnEntity(AddressRequestDTO request);
 }

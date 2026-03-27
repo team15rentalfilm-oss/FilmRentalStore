@@ -1,84 +1,90 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
+import com.iem.FilmRentalStore.entity.Address;
 import com.iem.FilmRentalStore.entity.Customer;
+import com.iem.FilmRentalStore.entity.Store;
+import com.iem.FilmRentalStore.mapper.CustomerMapper;
 import com.iem.FilmRentalStore.repository.CustomerRepository;
+import com.iem.FilmRentalStore.repository.StoreRepository;
+import com.iem.FilmRentalStore.service.AddressService;
 import com.iem.FilmRentalStore.service.CustomerService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerRepository repo;
+    private final CustomerRepository customerRepository;
+    private final StoreRepository storeRepository;
+    private final AddressService addressService;
+    private final CustomerMapper customerMapper;
 
-    public CustomerServiceImpl(CustomerRepository repo) {
-        this.repo = repo;
+    @Override
+    public CustomerDTO createCustomer(CustomerRequestDTO request) {
+
+        Address address = addressService.createAndReturnEntity(request.getAddress());
+
+        Store store = storeRepository.findById(request.getStoreId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Store not found with id: " + request.getStoreId()));
+
+        Customer customer = CustomerMapper.toEntity(request, address, store);
+
+        customer.setCreateDate(LocalDateTime.now());
+
+        Customer saved = customerRepository.save(customer);
+
+        return customerMapper.toDTO(saved);
     }
 
     @Override
-    public List<Customer> getAll() {
-        return repo.findAll();
+    public CustomerDTO getCustomerById(Short id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
+
+        return customerMapper.toDTO(customer);
     }
 
     @Override
-    public Customer getById(Short id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+    public List<CustomerDTO> getAllCustomers() {
+        return customerRepository.findAll()
+                .stream()
+                .map(customerMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public List<Customer> search(String firstName, String lastName, String email, Byte storeId) {
-        if (firstName != null && !firstName.isBlank()) {
-            return repo.findByFirstNameContainingIgnoreCase(firstName);
-        }
-        if (lastName != null && !lastName.isBlank()) {
-            return repo.findByLastNameContainingIgnoreCase(lastName);
-        }
-        if (email != null && !email.isBlank()) {
-            return repo.findByEmailContainingIgnoreCase(email);
-        }
-        if (storeId != null) {
-            return repo.findByStore_StoreId(storeId);
-        }
-        return repo.findAll();
-    }
+    public CustomerDTO updateCustomer(Short id, CustomerRequestDTO request) {
 
-    @Override
-    public Customer create(Customer c) {
-        return repo.save(c);
-    }
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
 
-    @Override
-    public Customer update(Short id, Customer c) {
-        Customer existing = getById(id);
+        Address address = addressService.createAndReturnEntity(request.getAddress());
 
-        existing.setStore(c.getStoreId());
-        existing.setFirstName(c.getFirstName());
-        existing.setLastName(c.getLastName());
-        existing.setEmail(c.getEmail());
-        existing.setAddressId(c.getAddressId());
-        existing.setActive(c.getActive());
+        Store store = storeRepository.findById(request.getStoreId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Store not found with id: " + request.getStoreId()));
 
-        return repo.save(existing);
-    }
+        // 🔥 Reuse mapper for consistency
+        Customer updatedData = CustomerMapper.toEntity(request, address, store);
 
-    @Override
-    public Customer patch(Short id, Customer c) {
-        Customer existing = getById(id);
+        // Copy fields
+        customer.setFirstName(updatedData.getFirstName());
+        customer.setLastName(updatedData.getLastName());
+        customer.setEmail(updatedData.getEmail());
+        customer.setActive(updatedData.getActive());
+        customer.setAddress(updatedData.getAddress());
+        customer.setStore(updatedData.getStore());
 
-        if (c.getStoreId() != null) existing.setStoreId(c.getStoreId());
-        if (c.getFirstName() != null) existing.setFirstName(c.getFirstName());
-        if (c.getLastName() != null) existing.setLastName(c.getLastName());
-        if (c.getEmail() != null) existing.setEmail(c.getEmail());
-        if (c.getAddressId() != null) existing.setAddressId(c.getAddressId());
-        if (c.getActive() != null) existing.setActive(c.getActive());
+        Customer saved = customerRepository.save(customer);
 
-        return repo.save(existing);
-    }
-
-    @Override
-    public void delete(Short id) {
-        repo.deleteById(id);
+        return customerMapper.toDTO(saved);
     }
 }
