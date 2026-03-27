@@ -1,98 +1,104 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "film")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Film {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer filmId;
+    private Short filmId;
 
-    @Column(nullable = false, length = 128)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "release_year", columnDefinition = "YEAR")
     private Integer releaseYear;
 
-    @Column(name = "rental_duration")
-    private Integer rentalDuration;
+    @Column(name = "language_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Byte languageId;
 
-    @Column(name = "rental_rate", precision = 4, scale = 2)
+    @Column(name = "original_language_id", columnDefinition = "TINYINT UNSIGNED")
+    private Byte originalLanguageId;
+
+    @Column(name = "rental_duration", nullable = false)
+    private Short rentalDuration;
+
+    @Column(name = "rental_rate", nullable = false, precision = 4, scale = 2)
     private BigDecimal rentalRate;
 
-    private Integer length;
+    @Column(name = "length")
+    private Short length;
 
-    @Column(name = "replacement_cost")
+    @Column(name = "replacement_cost", nullable = false, precision = 5, scale = 2)
     private BigDecimal replacementCost;
 
+    @Column(name = "rating")
     private String rating;
 
-    // 🌐 MANY-TO-ONE → Language
-    @ManyToOne
-    @JoinColumn(name = "language_id")
+    @Column(name = "special_features")
+    private String specialFeatures;
+
+    @Column(name = "last_update", nullable = false)
+    private LocalDateTime lastUpdate;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id", insertable = false, updatable = false)
     private Language language;
 
-    // 🔗 MANY-TO-MANY → Category
-    @ManyToMany
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "original_language_id", insertable = false, updatable = false)
+    private Language originalLanguage;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "film_category",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private List<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
-    // 🎭 MANY-TO-MANY → Actor
-    @ManyToMany
-    @JoinTable(
-            name = "film_actor",
-            joinColumns = @JoinColumn(name = "film_id"),
-            inverseJoinColumns = @JoinColumn(name = "actor_id")
-    )
-    private List<Actor> actors;
+    @JsonIgnore
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
+    private Set<FilmActor> filmActors = new HashSet<>();
 
-    // ================= GETTERS & SETTERS =================
+    @JsonIgnore
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
+    private Set<Inventory> inventories = new HashSet<>();
 
-    public Integer getFilmId() { return filmId; }
-    public void setFilmId(Integer filmId) { this.filmId = filmId; }
+    @JsonIgnore
+    @OneToOne(mappedBy = "film", fetch = FetchType.LAZY)
+    private FilmText filmText;
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    @PrePersist
+    public void prePersist() {
+        lastUpdate = LocalDateTime.now();
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public Integer getReleaseYear() { return releaseYear; }
-    public void setReleaseYear(Integer releaseYear) { this.releaseYear = releaseYear; }
-
-    public Integer getRentalDuration() { return rentalDuration; }
-    public void setRentalDuration(Integer rentalDuration) { this.rentalDuration = rentalDuration; }
-
-    public BigDecimal getRentalRate() { return rentalRate; }
-    public void setRentalRate(BigDecimal rentalRate) { this.rentalRate = rentalRate; }
-
-    public Integer getLength() { return length; }
-    public void setLength(Integer length) { this.length = length; }
-
-    public BigDecimal getReplacementCost() { return replacementCost; }
-    public void setReplacementCost(BigDecimal replacementCost) { this.replacementCost = replacementCost; }
-
-    public String getRating() { return rating; }
-    public void setRating(String rating) { this.rating = rating; }
-
-    public Language getLanguage() { return language; }
-    public void setLanguage(Language language) { this.language = language; }
-
-    public List<Category> getCategories() { return categories; }
-    public void setCategories(List<Category> categories) { this.categories = categories; }
-
-    public List<Actor> getActors() { return actors; }
-    public void setActors(List<Actor> actors) { this.actors = actors; }
+    @PreUpdate
+    public void preUpdate() {
+        lastUpdate = LocalDateTime.now();
+    }
 }

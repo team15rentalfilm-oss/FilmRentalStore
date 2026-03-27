@@ -1,60 +1,50 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "category")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
-    private Byte categoryId;   // TINYINT → Byte
+    @Column(name = "category_id", columnDefinition = "TINYINT UNSIGNED")
+    private Byte id;
 
-    @Column(length = 25, nullable = false)
+    @Column(name = "name", nullable = false, length = 25)
     private String name;
 
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
-    // 🔗 MANY-TO-MANY (inverse side)
-    @ManyToMany(mappedBy = "categories")
-    private List<Film> films = new ArrayList<>();
+    @JsonIgnore
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    private Set<Film> films = new HashSet<>();
 
-    // ================= GETTERS & SETTERS =================
+    @JsonIgnore
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private Set<FilmCategory> filmCategories = new HashSet<>();
 
-    public Byte getCategoryId() {
-        return categoryId;
+    @PrePersist
+    public void prePersist() {
+        lastUpdate = LocalDateTime.now();
     }
 
-    public void setCategoryId(Byte categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDateTime getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(LocalDateTime lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public List<Film> getFilms() {
-        return films;
-    }
-
-    public void setFilms(List<Film> films) {
-        this.films = films;
+    @PreUpdate
+    public void preUpdate() {
+        lastUpdate = LocalDateTime.now();
     }
 }
