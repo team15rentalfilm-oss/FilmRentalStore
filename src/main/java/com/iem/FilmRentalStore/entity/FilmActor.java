@@ -1,18 +1,15 @@
 package com.iem.FilmRentalStore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "film_actor")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FilmActor {
@@ -20,14 +17,16 @@ public class FilmActor {
     @EmbeddedId
     private FilmActorId id;
 
-    @JsonIgnore
+    // Actor relationship
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "actor_id", referencedColumnName = "actor_id", insertable = false, updatable = false)
+    @MapsId("actorId")
+    @JoinColumn(name = "actor_id")
     private Actor actor;
 
-    @JsonIgnore
+    //Film relationship
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "film_id", referencedColumnName = "film_id", insertable = false, updatable = false)
+    @MapsId("filmId")
+    @JoinColumn(name = "film_id")
     private Film film;
 
     @Column(name = "last_update", nullable = false)
@@ -35,11 +34,11 @@ public class FilmActor {
 
     @PrePersist
     public void prePersist() {
-        lastUpdate = LocalDateTime.now();
+        this.lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        lastUpdate = LocalDateTime.now();
+        this.lastUpdate = LocalDateTime.now();
     }
 }
