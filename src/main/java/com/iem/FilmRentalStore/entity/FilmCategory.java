@@ -1,65 +1,44 @@
 package com.iem.FilmRentalStore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "film_category")
-@IdClass(FilmCategory.FilmCategoryId.class)
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class FilmCategory {
 
-    @Id
-    @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Short filmId;
+    @EmbeddedId
+    private FilmCategoryId id;
 
-    @Id
-    @Column(name = "category_id", columnDefinition = "TINYINT UNSIGNED")
-    private Byte categoryId;
+    // Film relationship
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("filmId")
+    @JoinColumn(name = "film_id")
+    private Film film;
+
+    // Category relationship
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("categoryId")
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "film_id", referencedColumnName = "film_id", insertable = false, updatable = false)
-    private Film film;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
-    private Category category;
-
     @PrePersist
     public void prePersist() {
-        lastUpdate = LocalDateTime.now();
+        this.lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        lastUpdate = LocalDateTime.now();
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @EqualsAndHashCode
-    public static class FilmCategoryId implements Serializable {
-        private Short filmId;
-        private Byte categoryId;
-
-        public FilmCategoryId(Short filmId, Byte categoryId) {
-            this.filmId = filmId;
-            this.categoryId = categoryId;
-        }
+        this.lastUpdate = LocalDateTime.now();
     }
 }
