@@ -2,10 +2,7 @@ package com.iem.FilmRentalStore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,22 +18,19 @@ public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "city_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "city_id")
     private Short cityId;
 
     @Column(name = "city", nullable = false, length = 50)
     private String city;
 
-    @Column(name = "country_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private Short countryId;
+    // 🔥 FIXED: Proper mapping
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id", insertable = false, updatable = false)
-    private Country country;
 
     @JsonIgnore
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)

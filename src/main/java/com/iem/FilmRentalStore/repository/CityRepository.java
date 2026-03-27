@@ -1,11 +1,12 @@
 package com.iem.FilmRentalStore.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import com.iem.FilmRentalStore.entity.City;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
+import java.util.List;
+
 public interface CityRepository extends JpaRepository<City, Short> {
+
+    List<City> findByCountry_CountryId(Short countryId);
 
 }

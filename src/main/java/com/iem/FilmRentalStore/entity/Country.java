@@ -2,10 +2,7 @@ package com.iem.FilmRentalStore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +18,7 @@ public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "country_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "country_id")
     private Short countryId;
 
     @Column(name = "country", nullable = false, length = 50)
