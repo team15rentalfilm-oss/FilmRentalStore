@@ -11,7 +11,7 @@ import lombok.Getter;
 @Setter
 public class StaffResponseDTO {
 
-    private Integer staffId;
+    private Short staffId;
     private String firstName;
     private String lastName;
     private String email;

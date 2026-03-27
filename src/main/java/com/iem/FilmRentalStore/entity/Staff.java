@@ -17,7 +17,7 @@ public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "staff_id", columnDefinition = "TINYINT UNSIGNED")
-    private Integer staffId;
+    private Short staffId;
 
     @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;

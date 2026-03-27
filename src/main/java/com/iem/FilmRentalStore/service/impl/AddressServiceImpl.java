@@ -123,4 +123,9 @@ public class AddressServiceImpl implements AddressService {
 
         return addressMapper.toDTO(updated);
     }
+
+    @Override
+    public Address createAndReturnEntity(AddressRequestDTO request) {
+        return null;
+    }
 }

@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.repository;
 
+import com.iem.FilmRentalStore.entity.Inventory;
 import com.iem.FilmRentalStore.entity.Rental;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,6 @@ public interface RentalRepository extends JpaRepository<Rental, Integer> {
     // Name-based (user search)
     List<Rental> findByCustomer_FirstNameContainingIgnoreCaseOrCustomer_LastNameContainingIgnoreCase(
             String firstName, String lastName);
+
+    boolean existsByInventoryAndReturnDateIsNull(Inventory inventory);
 }

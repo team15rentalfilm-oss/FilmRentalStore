@@ -13,8 +13,8 @@ public class RentalRequestDTO {
     private Integer inventoryId;
 
     @NotNull(message = "Customer ID is required")
-    private Integer customerId;
+    private Short customerId;
 
     // Optional (can be auto-filled from logged-in staff)
-    private Integer staffId;
+    private Short staffId;
 }

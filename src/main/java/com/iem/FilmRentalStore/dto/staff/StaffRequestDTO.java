@@ -31,7 +31,7 @@ public class StaffRequestDTO {
     private AddressRequestDTO address;
 
     @NotNull(message = "Store ID is required")
-    private Integer storeId;
+    private Short storeId;
 
     @NotBlank(message = "Username is required")
     @Size(max = 16)
@@ -42,4 +42,6 @@ public class StaffRequestDTO {
     private String password;
 
     private Boolean active = true;
+    private Boolean isManager;
+
 }

@@ -11,8 +11,8 @@ import lombok.Getter;
 public class InventoryRequestDTO {
 
     @NotNull(message = "Film ID is required")
-    private Integer filmId;
+    private Short filmId;
 
     @NotNull(message = "Store ID is required")
-    private Integer storeId;
+    private Short storeId;
 }

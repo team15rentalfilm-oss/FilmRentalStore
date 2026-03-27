@@ -31,7 +31,7 @@ public class CustomerRequestDTO {
 
     // Since store is predefined, we use ID here (practical exception)
     @NotNull(message = "Store ID is required")
-    private Integer storeId;
+    private Short storeId;
 
     private Boolean active = true;
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff, Integer>, JpaSpecificationExecutor<Staff> {
+public interface StaffRepository extends JpaRepository<Staff, Short>, JpaSpecificationExecutor<Staff> {
 
     // ID-based (internal use)
     List<Staff> findByStore_StoreId(Integer storeId);
