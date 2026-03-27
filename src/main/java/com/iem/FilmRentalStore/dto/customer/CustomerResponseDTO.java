@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CustomerResponseDTO {
 
-    private Integer customerId;
+    private Short customerId;
     private String firstName;
     private String lastName;
     private String email;

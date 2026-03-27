@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 public class FilmResponseDTO {
 
-    private Integer filmId;
+    private Short filmId;
     private String title;
     private String description;
     private Integer releaseYear;

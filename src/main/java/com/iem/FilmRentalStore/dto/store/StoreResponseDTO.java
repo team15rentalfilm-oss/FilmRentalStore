@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.dto.store;
 
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressResponseDTO;
+import com.iem.FilmRentalStore.dto.staff.StaffDTO;
 import lombok.Setter;
 
 import lombok.Getter;

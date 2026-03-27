@@ -1,23 +1,16 @@
 package com.iem.FilmRentalStore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "film")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
+@Table(name = "film")
 public class Film {
 
     @Id
@@ -25,80 +18,65 @@ public class Film {
     @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
     private Short filmId;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(nullable = false, length = 128)
     private String title;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "release_year", columnDefinition = "YEAR")
     private Integer releaseYear;
 
-    @Column(name = "language_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Byte languageId;
+    // Language
+    @ManyToOne
+    @JoinColumn(name = "language_id", nullable = false)
+    private Language language;
 
-    @Column(name = "original_language_id", columnDefinition = "TINYINT UNSIGNED")
-    private Byte originalLanguageId;
+    // Rental Duration
+    @Column(name = "rental_duration")
+    private Integer rentalDuration;
 
-    @Column(name = "rental_duration", nullable = false)
-    private Short rentalDuration;
-
-    @Column(name = "rental_rate", nullable = false, precision = 4, scale = 2)
+    // Rental Rate
+    @Column(name = "rental_rate", precision = 4, scale = 2)
     private BigDecimal rentalRate;
 
+    // Length
     @Column(name = "length")
-    private Short length;
+    private Integer length;
 
-    @Column(name = "replacement_cost", nullable = false, precision = 5, scale = 2)
+    // Replacement Cost
+    @Column(name = "replacement_cost", precision = 5, scale = 2)
     private BigDecimal replacementCost;
 
+    //Rating
     @Column(name = "rating")
     private String rating;
 
-    @Column(name = "special_features")
-    private String specialFeatures;
+    //Special Features
+    @ElementCollection
+    @CollectionTable(name = "film_special_features", joinColumns = @JoinColumn(name = "film_id"))
+    @Column(name = "feature")
+    private Set<String> specialFeatures;
 
-    @Column(name = "last_update", nullable = false)
-    private LocalDateTime lastUpdate;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "language_id", insertable = false, updatable = false)
-    private Language language;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "original_language_id", insertable = false, updatable = false)
-    private Language originalLanguage;
-
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    // Categories
+    @ManyToMany
     @JoinTable(
             name = "film_category",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> categories = new HashSet<>();
+    private Set<Category> categories;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
-    private Set<FilmActor> filmActors = new HashSet<>();
+    //Actors
+    @ManyToMany
+    @JoinTable(
+            name = "film_actor",
+            joinColumns = @JoinColumn(name = "film_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private Set<Actor> actors;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
-    private Set<Inventory> inventories = new HashSet<>();
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "film", fetch = FetchType.LAZY)
-    private FilmText filmText;
-
-    @PrePersist
-    public void prePersist() {
-        lastUpdate = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        lastUpdate = LocalDateTime.now();
-    }
+    // 🔹 Last Update
+    @Column(name = "last_update")
+    private java.time.LocalDateTime lastUpdate;
 }

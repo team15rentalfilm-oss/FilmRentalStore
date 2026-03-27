@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CategoryResponseDTO {
 
-    private Integer categoryId;
+    private Byte categoryId;
     private String name;
     private LocalDateTime lastUpdate;
 }

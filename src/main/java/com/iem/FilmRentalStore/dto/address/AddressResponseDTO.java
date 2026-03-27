@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class AddressResponseDTO {
 
-    private Integer addressId;
+    private Short addressId;
     private String address;
     private String address2;
     private String district;

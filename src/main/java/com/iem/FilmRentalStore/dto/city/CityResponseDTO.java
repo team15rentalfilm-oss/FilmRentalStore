@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class CityResponseDTO {
 
-    private Integer cityId;
+    private Short cityId;
     private String city;
     private CountryDTO country;
 }
