@@ -2,14 +2,10 @@ package com.iem.FilmRentalStore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "address")
@@ -21,7 +17,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "address_id")
     private Short addressId;
 
     @Column(name = "address", nullable = false, length = 50)
@@ -33,34 +29,23 @@ public class Address {
     @Column(name = "district", nullable = false, length = 20)
     private String district;
 
-    @Column(name = "city_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private Short cityId;
+    // 🔥 IMPORTANT RELATION
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
 
     @Column(name = "postal_code", length = 10)
     private String postalCode;
 
-    @Column(name = "phone", nullable = false, length = 20)
+    @Column(name = "phone", length = 20)
     private String phone;
+
+    @Column(name = "location", nullable = false)
+    @ColumnTransformer(read = "ST_AsText(location)", write = "ST_GeomFromText(?)")
+    private String location;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", insertable = false, updatable = false)
-    private City city;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private List<Customer> customers = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private List<Staff> staffMembers = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
-    private List<Store> stores = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

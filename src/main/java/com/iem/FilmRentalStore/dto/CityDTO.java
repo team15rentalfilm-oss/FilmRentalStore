@@ -1,7 +1,10 @@
 package com.iem.FilmRentalStore.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.iem.FilmRentalStore.entity.City;
 import com.iem.FilmRentalStore.entity.Country;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +14,11 @@ public class CityDTO {
     @Getter
     @Setter
     public static class Request {
+        @NotBlank(message = "city is required")
         private String city;
+
+        @NotNull(message = "countryId is required")
+        @JsonAlias({"country_id", "countryID", "countryid"})
         private Short countryId;
     }
 
