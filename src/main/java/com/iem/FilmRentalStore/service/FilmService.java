@@ -1,22 +1,23 @@
 package com.iem.FilmRentalStore.service;
 
+import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
+import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
+
 import java.util.List;
 
 public interface FilmService {
 
-    FilmDTO createFilm(FilmDTO filmDTO);
+    FilmResponseDTO createFilm(FilmRequestDTO request);
 
-    FilmDTO getFilmById(Short id);
+    FilmResponseDTO getFilmById(Short id);
 
-    List<FilmDTO> getAllFilms();
+    List<FilmResponseDTO> getAllFilms();
 
-    FilmDTO updateFilm(Short id, FilmDTO filmDTO);
+    FilmResponseDTO updateFilm(Short id, FilmRequestDTO request);
+
+    FilmResponseDTO patchFilm(Short id, FilmRequestDTO request);
 
     void deleteFilm(Short id);
 
-
-
-    List<FilmDTO> searchFilms(String title, Integer year);
-    FilmDTO patchFilm(Short id, FilmDTO filmDTO);
-
+    List<FilmResponseDTO> searchFilms(String title, Integer year);
 }

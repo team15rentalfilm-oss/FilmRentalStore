@@ -1,24 +1,21 @@
 package com.iem.FilmRentalStore.dto.payment;
 
-import java.time.LocalDateTime;
-
-import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
-import com.iem.FilmRentalStore.dto.rental.RentalDTO;
-import com.iem.FilmRentalStore.dto.staff.StaffDTO;
 import lombok.Getter;
 import lombok.Setter;
 
-
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class PaymentResponseDTO {
 
     private Integer paymentId;
-    private Double amount;
+    private BigDecimal amount;
     private LocalDateTime paymentDate;
 
-    private CustomerDTO customer;
-    private StaffDTO staff;
-    private RentalDTO rental;
+    // 🔥 ADD THESE (missing fields)
+    private Integer rentalId;
+    private Short staffId;
+    private Short customerId;
 }

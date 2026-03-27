@@ -28,8 +28,10 @@ public class FilmRequestDTO {
     private Integer releaseYear;
 
     @NotNull(message = "Language is required")
-    @Valid
-    private LanguageDTO language;
+    private Integer languageId;
+
+    @NotEmpty(message = "At least one category is required")
+    private Set<Byte> categoryIds;
 
     @Min(1)
     private Integer rentalDuration;

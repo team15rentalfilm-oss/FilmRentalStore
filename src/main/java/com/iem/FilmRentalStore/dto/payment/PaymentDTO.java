@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class PaymentDTO {
 
     private BigDecimal amount;
-    private LocalDateTime paymentDate;
+    private String paymentDate;
 
     private String customerName;
     private String filmTitle;

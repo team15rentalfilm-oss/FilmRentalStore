@@ -15,6 +15,10 @@ public class PaymentRequestDTO {
     @NotNull(message = "Rental ID is required")
     private Integer rentalId;
 
+    @NotNull(message = "Staff ID is required")
+    private Short staffId;
+
+
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be positive")
     private BigDecimal amount;

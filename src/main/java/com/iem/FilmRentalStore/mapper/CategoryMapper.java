@@ -21,7 +21,7 @@ public class CategoryMapper {
     }
 
     //Entity → Lightweight DTO
-    public CategoryDTO toDTO(Category category) {
+    public static CategoryDTO toDTO(Category category) {
         CategoryDTO dto = new CategoryDTO();
         dto.setName(category.getName());
         return dto;
