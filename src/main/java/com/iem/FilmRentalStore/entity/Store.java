@@ -20,8 +20,8 @@ public class Store {
     private Integer storeId;
 
     @ManyToOne
-    @JoinColumn(name = "manager_staff_id", nullable = false)
-    private Staff manager;
+    @JoinColumn(name = "manager_staff_id")
+    private Staff managerStaff;
 
     @ManyToOne
     @JoinColumn(name = "address_id", nullable = false)

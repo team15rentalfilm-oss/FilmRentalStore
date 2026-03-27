@@ -1,82 +1,83 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.StoreDTO;
+import com.iem.FilmRentalStore.dto.store.StoreDTO;
+import com.iem.FilmRentalStore.dto.store.StoreRequestDTO;
+import com.iem.FilmRentalStore.entity.Address;
 import com.iem.FilmRentalStore.entity.Store;
+import com.iem.FilmRentalStore.entity.Staff;
+import com.iem.FilmRentalStore.mapper.StoreMapper;
 import com.iem.FilmRentalStore.repository.StoreRepository;
+import com.iem.FilmRentalStore.repository.StaffRepository;
+import com.iem.FilmRentalStore.service.AddressService;
 import com.iem.FilmRentalStore.service.StoreService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
+    private final StaffRepository staffRepository;
+    private final AddressService addressService;
 
-    public StoreServiceImpl(StoreRepository storeRepository) {
-        this.storeRepository = storeRepository;
+    @Override
+    public StoreDTO createStore(StoreRequestDTO request) {
+
+        // 🔥 Step 1: Resolve Address
+        Address address = addressService.createAndReturnEntity(request.getAddress());
+
+        // 🔥 Step 2: Create store WITHOUT manager (avoid circular dependency)
+        Store store = new Store();
+        store.setAddress(address);
+
+        Store saved = storeRepository.save(store);
+
+        return StoreMapper.toDTO(saved);
+    }
+
+    @Override
+    public StoreDTO getStoreById(Short id) {
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + id));
+
+        return StoreMapper.toDTO(store);
     }
 
     @Override
     public List<StoreDTO> getAllStores() {
-        return storeRepository.findAll().stream()
-                .map(this::toDTO)
+        return storeRepository.findAll()
+                .stream()
+                .map(StoreMapper::toDTO)
                 .toList();
     }
 
     @Override
-    public StoreDTO getStoreById(Byte id) {
-        Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + id));
-        return toDTO(store);
-    }
+    public StoreDTO updateStore(Short id, StoreRequestDTO request) {
 
-    @Override
-    public StoreDTO createStore(StoreDTO storeDTO) {
-        Store store = new Store();
-        mapDtoToEntity(storeDTO, store);
-        return toDTO(storeRepository.save(store));
-    }
-
-    @Override
-    public StoreDTO updateStore(Byte id, StoreDTO storeDTO) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + id));
 
-        if (storeDTO.getManagerStaffId() != null) {
-            store.setManagerStaffId(storeDTO.getManagerStaffId());
-        }
-        if (storeDTO.getAddressId() != null) {
-            store.setAddressId(storeDTO.getAddressId());
+        // 🔥 Update Address if provided
+        if (request.getAddress() != null) {
+            Address address = addressService.createAndReturnEntity(request.getAddress());
+            store.setAddress(address);
         }
 
-        return toDTO(storeRepository.save(store));
-    }
+        // 🔥 Set manager (after store exists)
+        if (request.getManagerStaffId() != null) {
+            Staff manager = staffRepository.findById(request.getManagerStaffId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Staff not found with id: " + request.getManagerStaffId()));
 
-    @Override
-    public void deleteStore(Byte id) {
-        if (!storeRepository.existsById(id)) {
-            throw new EntityNotFoundException("Store not found with id: " + id);
+            store.setManagerStaff(manager);
         }
-        storeRepository.deleteById(id);
-    }
 
-    private void mapDtoToEntity(StoreDTO dto, Store store) {
-        if (dto.getManagerStaffId() != null) {
-            store.setManagerStaffId(dto.getManagerStaffId());
-        }
-        if (dto.getAddressId() != null) {
-            store.setAddressId(dto.getAddressId());
-        }
-    }
+        Store updated = storeRepository.save(store);
 
-    private StoreDTO toDTO(Store store) {
-        return new StoreDTO(
-                store.getStoreId(),
-                store.getManagerStaffId(),
-                store.getAddressId(),
-                store.getLastUpdate()
-        );
+        return StoreMapper.toDTO(updated);
     }
 }

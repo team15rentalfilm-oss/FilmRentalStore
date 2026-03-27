@@ -20,7 +20,7 @@ public class AddressMapper {
     }
 
     // Entity → DTO
-    public AddressDTO toDTO(Address address) {
+    public static AddressDTO toDTO(Address address) {
         AddressDTO dto = new AddressDTO();
         dto.setAddress(address.getAddress());
         dto.setAddress2(address.getAddress2());

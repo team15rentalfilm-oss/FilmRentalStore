@@ -1,13 +1,17 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.StoreDTO;
+import com.iem.FilmRentalStore.dto.store.StoreDTO;
+import com.iem.FilmRentalStore.dto.store.StoreRequestDTO;
 
 import java.util.List;
 
 public interface StoreService {
+
+    StoreDTO createStore(StoreRequestDTO request);
+
+    StoreDTO getStoreById(Short id);
+
     List<StoreDTO> getAllStores();
-    StoreDTO getStoreById(Byte id);
-    StoreDTO createStore(StoreDTO storeDTO);
-    StoreDTO updateStore(Byte id, StoreDTO storeDTO);
-    void deleteStore(Byte id);
+
+    StoreDTO updateStore(Short id, StoreRequestDTO request);
 }
