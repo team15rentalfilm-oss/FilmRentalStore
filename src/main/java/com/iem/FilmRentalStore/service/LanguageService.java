@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.LanguageDTO;
 import java.util.List;
 
 public interface LanguageService {

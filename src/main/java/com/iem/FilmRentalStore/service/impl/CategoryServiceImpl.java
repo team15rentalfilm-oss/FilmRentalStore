@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.CategoryDTO;
 import com.iem.FilmRentalStore.entity.Category;
 import com.iem.FilmRentalStore.exception.ResourceNotFoundException;
 import com.iem.FilmRentalStore.repository.CategoryRepository;

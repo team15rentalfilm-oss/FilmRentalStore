@@ -1,0 +1,15 @@
+package com.iem.FilmRentalStore.dto.address;
+
+import com.iem.FilmRentalStore.dto.city.CityDTO;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class AddressDTO {
+
+    private String address;
+    private String district;
+    private String postalCode;
+    private CityDTO city;
+}

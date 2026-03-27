@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.PaymentDTO;
 import com.iem.FilmRentalStore.entity.Payment;
 import com.iem.FilmRentalStore.exception.ResourceNotFoundException;
 import com.iem.FilmRentalStore.repository.CustomerRepository;

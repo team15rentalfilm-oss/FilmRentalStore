@@ -1,7 +1,5 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.PaymentDTO;
-
 import java.util.List;
 
 public interface PaymentService {

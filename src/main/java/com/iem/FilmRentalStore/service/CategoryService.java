@@ -1,7 +1,5 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.CategoryDTO;
-
 import java.util.List;
 
 public interface CategoryService {

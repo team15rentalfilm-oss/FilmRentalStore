@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.ActorDTO;
 import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;

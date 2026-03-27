@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.ActorDTO;
 import java.util.List;
 
 public interface ActorService {

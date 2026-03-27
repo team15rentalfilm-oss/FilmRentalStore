@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.CategoryDTO;
 import com.iem.FilmRentalStore.service.CategoryService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

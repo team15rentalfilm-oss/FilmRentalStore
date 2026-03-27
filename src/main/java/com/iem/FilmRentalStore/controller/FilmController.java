@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.FilmDTO;
 import com.iem.FilmRentalStore.service.FilmService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

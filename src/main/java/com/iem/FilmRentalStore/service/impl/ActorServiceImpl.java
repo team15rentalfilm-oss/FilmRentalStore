@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.ActorDTO;
 import com.iem.FilmRentalStore.entity.Actor;
 import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.service.ActorService;
