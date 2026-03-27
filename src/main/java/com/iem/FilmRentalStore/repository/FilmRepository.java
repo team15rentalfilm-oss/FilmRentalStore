@@ -11,7 +11,5 @@ public interface FilmRepository extends JpaRepository<Film, Short> {
 
     List<Film> findByTitleContainingIgnoreCase(String title);
 
-    List<Film> findByReleaseYear(Integer releaseYear);
-
-    List<Film> findByTitleContainingIgnoreCaseAndReleaseYear(String title, Integer releaseYear);
+    List<Film> findByFilmCategories_Category_NameIgnoreCase(String categoryName);
 }

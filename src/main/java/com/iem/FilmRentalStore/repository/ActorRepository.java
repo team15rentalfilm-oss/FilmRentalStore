@@ -5,5 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ActorRepository extends JpaRepository<Actor, Integer> {
-    List<Actor> findByFirstName(String firstName);
+
+    // Search by first name (partial)
+    List<Actor> findByFirstNameContainingIgnoreCase(String firstName);
+
+    // Search by last name (partial)
+    List<Actor> findByLastNameContainingIgnoreCase(String lastName);
+
+    // Combined search (best one)
+    List<Actor> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+            String firstName, String lastName);
 }
