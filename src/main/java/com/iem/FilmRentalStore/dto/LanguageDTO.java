@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class LanguageDTO {
 
-    private int languageId;
+    private Integer languageId;
 
     @NotBlank(message = "Language name is mandatory")
     @Size(max = 20, message = "Language name cannot exceed 20 characters")

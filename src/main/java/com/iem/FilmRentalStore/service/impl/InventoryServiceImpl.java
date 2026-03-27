@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.InventoryDTO;
 import com.iem.FilmRentalStore.entity.Inventory;
 import com.iem.FilmRentalStore.repository.InventoryRepository;
 import com.iem.FilmRentalStore.service.InventoryService;
@@ -7,9 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,64 +22,112 @@ public class InventoryServiceImpl implements InventoryService {
         this.inventoryRepository = inventoryRepository;
     }
 
+    // ===================== GET ALL =====================
     @Override
-    public List<Inventory> getAllInventories() {
-        return inventoryRepository.findAll();
+    public List<InventoryDTO> getAllInventories() {
+        return inventoryRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
+    // ===================== SEARCH =====================
     @Override
-    public List<Inventory> getInventoriesByFields(Map<String, String> searchParams) {
+    public List<InventoryDTO> getInventoriesByFields(Map<String, String> searchParams) {
+
         Specification<Inventory> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
             searchParams.forEach((key, value) -> {
                 try {
                     root.get(key);
                     predicates.add(cb.equal(root.get(key).as(String.class), value));
-                } catch (IllegalArgumentException ignored) {
-                }
+                } catch (IllegalArgumentException ignored) {}
             });
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-        return inventoryRepository.findAll(spec);
+
+        return inventoryRepository.findAll(spec)
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
+    // ===================== GET BY ID =====================
     @Override
-    public Inventory getInventoryById(Integer id) {
-        return inventoryRepository.findById(id)
+    public InventoryDTO getInventoryById(Integer id) {
+        Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory not found with id: " + id));
+
+        return toDTO(inventory);
     }
 
+    // ===================== CREATE =====================
     @Override
-    public Inventory createInventory(Inventory inventory) {
-        return inventoryRepository.save(inventory);
+    public InventoryDTO createInventory(InventoryDTO dto) {
+        Inventory inventory = new Inventory();
+        mapDtoToEntity(dto, inventory);
+
+        return toDTO(inventoryRepository.save(inventory));
     }
 
+    // ===================== UPDATE (PUT) =====================
     @Override
-    public Inventory updateInventory(Integer id, Inventory inventoryDetails) {
-        Inventory inventory = getInventoryById(id);
-        inventory.setFilmId(inventoryDetails.getFilmId());
-        inventory.setStoreId(inventoryDetails.getStoreId());
-        return inventoryRepository.save(inventory);
+    public InventoryDTO updateInventory(Integer id, InventoryDTO dto) {
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Inventory not found with id: " + id));
+
+        mapDtoToEntity(dto, inventory);
+
+        return toDTO(inventoryRepository.save(inventory));
     }
 
+    // ===================== PATCH =====================
     @Override
-    public Inventory patchInventory(Integer id, Map<String, Object> updates) {
-        Inventory inventory = getInventoryById(id);
+    public InventoryDTO patchInventory(Integer id, Map<String, Object> updates) {
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Inventory not found with id: " + id));
 
-        updates.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(Inventory.class, key);
-            if (field != null && !key.equals("inventoryId") && !key.equals("lastUpdate")) {
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, inventory, value);
-            }
-        });
+        if (updates.containsKey("filmId")) {
+            inventory.setFilmId(((Number) updates.get("filmId")).shortValue());
+        }
 
-        return inventoryRepository.save(inventory);
+        if (updates.containsKey("storeId")) {
+            inventory.setStoreId(((Number) updates.get("storeId")).byteValue());
+        }
+
+        return toDTO(inventoryRepository.save(inventory));
     }
 
+    // ===================== DELETE =====================
     @Override
     public void deleteInventory(Integer id) {
-        Inventory inventory = getInventoryById(id);
-        inventoryRepository.delete(inventory);
+        if (!inventoryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Inventory not found with id: " + id);
+        }
+        inventoryRepository.deleteById(id);
+    }
+
+    // ===================== MAPPING =====================
+
+    private InventoryDTO toDTO(Inventory inventory) {
+        return new InventoryDTO(
+                inventory.getInventoryId(),
+                inventory.getFilmId(),
+                inventory.getStoreId(),
+                inventory.getLastUpdate()
+        );
+    }
+
+    private void mapDtoToEntity(InventoryDTO dto, Inventory inventory) {
+
+        if (dto.getFilmId() != null) {
+            inventory.setFilmId(dto.getFilmId());
+        }
+
+        if (dto.getStoreId() != null) {
+            inventory.setStoreId(dto.getStoreId());
+        }
     }
 }

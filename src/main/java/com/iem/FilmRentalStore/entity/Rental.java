@@ -1,20 +1,23 @@
 package com.iem.FilmRentalStore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(
         name = "rental",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"rental_date", "inventory_id", "customer_id"})
-        }
+        uniqueConstraints = @UniqueConstraint(columnNames = {"rental_date", "inventory_id", "customer_id"})
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Rental {
@@ -42,13 +45,32 @@ public class Rental {
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inventory_id", insertable = false, updatable = false)
+    private Inventory inventory;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    private Customer customer;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "staff_id", insertable = false, updatable = false)
+    private Staff staff;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "rental", fetch = FetchType.LAZY)
+    private List<Payment> payments = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.lastUpdate = LocalDateTime.now();
+        lastUpdate = LocalDateTime.now();
     }
 }

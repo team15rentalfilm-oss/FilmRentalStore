@@ -3,20 +3,24 @@ package com.iem.FilmRentalStore.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 @Embeddable
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class FilmActorId implements Serializable {
 
     @Column(name = "actor_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer actorId;
+    private Short actorId;
 
     @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer filmId;
+    private Short filmId;
 }

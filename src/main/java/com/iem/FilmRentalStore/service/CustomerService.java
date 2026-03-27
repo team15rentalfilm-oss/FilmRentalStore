@@ -10,7 +10,7 @@ public interface CustomerService {
 
     Customer getById(Short id);
 
-    List<Customer> search(String firstName, String lastName, String email, Short storeId);
+    List<Customer> search(String firstName, String lastName, String email, Byte storeId);
 
     Customer create(Customer c);
 

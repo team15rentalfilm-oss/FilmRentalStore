@@ -1,16 +1,13 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.entity.Store;
+import com.iem.FilmRentalStore.dto.StoreDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface StoreService {
-    List<Store> getAllStores();
-    List<Store> getStoresByFields(Map<String, String> searchParams);
-    Store getStoreById(Integer id);
-    Store createStore(Store store);
-    Store updateStore(Integer id, Store storeDetails);
-    Store patchStore(Integer id, Map<String, Object> updates);
-    void deleteStore(Integer id);
+    List<StoreDTO> getAllStores();
+    StoreDTO getStoreById(Byte id);
+    StoreDTO createStore(StoreDTO storeDTO);
+    StoreDTO updateStore(Byte id, StoreDTO storeDTO);
+    void deleteStore(Byte id);
 }

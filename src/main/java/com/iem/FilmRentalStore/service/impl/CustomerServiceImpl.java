@@ -28,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> search(String firstName, String lastName, String email, Short storeId) {
+    public List<Customer> search(String firstName, String lastName, String email, Byte storeId) {
         if (firstName != null && !firstName.isBlank()) {
             return repo.findByFirstNameContainingIgnoreCase(firstName);
         }
