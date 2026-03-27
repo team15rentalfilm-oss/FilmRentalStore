@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Embeddable
@@ -17,7 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class FilmCategoryId implements Serializable {
-
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Column(name = "film_id")

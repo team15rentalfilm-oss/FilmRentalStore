@@ -1,16 +1,21 @@
 package com.iem.FilmRentalStore.service;
 
+import com.iem.FilmRentalStore.dto.category.CategoryDTO;
+import com.iem.FilmRentalStore.dto.category.CategoryRequestDTO;
+
 import java.util.List;
 
 public interface CategoryService {
 
-    CategoryDTO createCategory(CategoryDTO categoryDTO);
+    CategoryDTO createCategory(CategoryRequestDTO request);
+
+    CategoryDTO getCategoryById(Integer id);
 
     CategoryDTO getCategoryById(Byte id);
 
     List<CategoryDTO> getAllCategories();
 
-    CategoryDTO updateCategory(Byte id, CategoryDTO categoryDTO);
+    CategoryDTO updateCategory(Integer id, CategoryRequestDTO request);
 
-    void deleteCategory(Byte id);
+    CategoryDTO updateCategory(Byte id, CategoryRequestDTO request);
 }

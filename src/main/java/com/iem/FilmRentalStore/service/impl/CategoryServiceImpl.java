@@ -1,56 +1,65 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.category.CategoryDTO;
+import com.iem.FilmRentalStore.dto.category.CategoryRequestDTO;
 import com.iem.FilmRentalStore.entity.Category;
-import com.iem.FilmRentalStore.exception.ResourceNotFoundException;
+import com.iem.FilmRentalStore.mapper.CategoryMapper;
 import com.iem.FilmRentalStore.repository.CategoryRepository;
 import com.iem.FilmRentalStore.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Override
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        Category category = new Category();
-        category.setName(categoryDTO.getName());
+    public CategoryDTO createCategory(CategoryRequestDTO request) {
+        Category category = CategoryMapper.toEntity(request);
         Category saved = categoryRepository.save(category);
-        return new CategoryDTO(saved.getId(), saved.getName());
+        return categoryMapper.toDTO(saved);
+    }
+
+    @Override
+    public CategoryDTO getCategoryById(Integer id) {
+        return null;
     }
 
     @Override
     public CategoryDTO getCategoryById(Byte id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-        return new CategoryDTO(category.getId(), category.getName());
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
+
+        return categoryMapper.toDTO(category);
     }
 
     @Override
     public List<CategoryDTO> getAllCategories() {
-        return categoryRepository.findAll().stream()
-                .map(cat -> new CategoryDTO(cat.getId(), cat.getName()))
-                .collect(Collectors.toList());
+        return categoryRepository.findAll()
+                .stream()
+                .map(categoryMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public CategoryDTO updateCategory(Byte id, CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(Integer id, CategoryRequestDTO request) {
+        return null;
+    }
+
+    @Override
+    public CategoryDTO updateCategory(Byte id, CategoryRequestDTO request) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-        category.setName(categoryDTO.getName());
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
+
+        category.setName(request.getName());
+
         Category updated = categoryRepository.save(category);
-        return new CategoryDTO(updated.getId(), updated.getName());
-    }
-
-    @Override
-    public void deleteCategory(Byte id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-        categoryRepository.delete(category);
+        return categoryMapper.toDTO(updated);
     }
 }

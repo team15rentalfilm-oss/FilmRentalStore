@@ -1,73 +1,56 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.actor.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
 import com.iem.FilmRentalStore.entity.Actor;
+import com.iem.FilmRentalStore.mapper.ActorMapper;
 import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.service.ActorService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ActorServiceImpl implements ActorService {
 
-    private final ActorRepository repo;
+    private final ActorRepository actorRepository;
+    private final ActorMapper actorMapper;
 
-    public ActorServiceImpl(ActorRepository repo) {
-        this.repo = repo;
+    @Override
+    public ActorDTO createActor(ActorRequestDTO request) {
+        Actor actor = ActorMapper.toEntity(request);
+        Actor saved = actorRepository.save(actor);
+        return actorMapper.toDTO(saved);
     }
 
-    private ActorDTO mapToDTO(Actor actor) {
-        ActorDTO dto = new ActorDTO();
-        //dto.setActorId(actor.getActorId());
-        dto.setFirstName(actor.getFirstName());
-        dto.setLastName(actor.getLastName());
-        return dto;
+    @Override
+    public ActorDTO getActorById(Integer id) {
+        Actor actor = actorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
+
+        return actorMapper.toDTO(actor);
     }
 
-    private Actor mapToEntity(ActorDTO dto) {
-        Actor actor = new Actor();
-        //actor.setActorId(dto.getActorId());
-        actor.setFirstName(dto.getFirstName());
-        actor.setLastName(dto.getLastName());
-        return actor;
+    @Override
+    public List<ActorDTO> getAllActors() {
+        return actorRepository.findAll()
+                .stream()
+                .map(actorMapper::toDTO)
+                .toList();
     }
 
-    public List<ActorDTO> getAll() {
-        return repo.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
-    }
+    @Override
+    public ActorDTO updateActor(Integer id, ActorRequestDTO request) {
+        Actor actor = actorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
 
-    public ActorDTO getById(int id) {
-        return mapToDTO(repo.findById(id).orElseThrow());
-    }
+        actor.setFirstName(request.getFirstName());
+        actor.setLastName(request.getLastName());
 
-    public List<ActorDTO> getByFirstName(String name) {
-        return repo.findByFirstName(name).stream().map(this::mapToDTO).collect(Collectors.toList());
-    }
-
-    public ActorDTO create(ActorDTO dto) {
-        return mapToDTO(repo.save(mapToEntity(dto)));
-    }
-
-    public ActorDTO update(int id, ActorDTO dto) {
-        Actor actor = mapToEntity(dto);
-        actor.setActorId(id);
-        return mapToDTO(repo.save(actor));
-    }
-
-    public ActorDTO patch(int id, ActorDTO dto) {
-        Actor existing = repo.findById(id).orElseThrow();
-
-        if (dto.getFirstName() != null)
-            existing.setFirstName(dto.getFirstName());
-
-        if (dto.getLastName() != null)
-            existing.setLastName(dto.getLastName());
-
-        return mapToDTO(repo.save(existing));
-    }
-
-    public void delete(int id) {
-        repo.deleteById(id);
+        Actor updated = actorRepository.save(actor);
+        return actorMapper.toDTO(updated);
     }
 }

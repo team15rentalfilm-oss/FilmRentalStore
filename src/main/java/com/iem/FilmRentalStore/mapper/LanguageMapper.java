@@ -5,7 +5,6 @@ import com.iem.FilmRentalStore.dto.language.*;
 import com.iem.FilmRentalStore.entity.Language;
 
 
-import com.iem.FilmRentalStore.entity.Language;
 
 public class LanguageMapper {
 
@@ -25,7 +24,7 @@ public class LanguageMapper {
     }
 
     // 🔹 Entity → Lightweight DTO
-    public static LanguageDTO toDTO(Language language) {
+    public LanguageDTO toDTO(Language language) {
         LanguageDTO dto = new LanguageDTO();
         dto.setName(language.getName());
         return dto;

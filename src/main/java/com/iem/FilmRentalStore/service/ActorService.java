@@ -1,20 +1,17 @@
 package com.iem.FilmRentalStore.service;
 
+import com.iem.FilmRentalStore.dto.actor.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
+
 import java.util.List;
 
 public interface ActorService {
 
-    List<ActorDTO> getAll();
+    ActorDTO createActor(ActorRequestDTO request);
 
-    ActorDTO getById(int id);
+    ActorDTO getActorById(Integer id);
 
-    List<ActorDTO> getByFirstName(String name);
+    List<ActorDTO> getAllActors();
 
-    ActorDTO create(ActorDTO dto);
-
-    ActorDTO update(int id, ActorDTO dto);
-
-    ActorDTO patch(int id, ActorDTO dto);
-
-    void delete(int id);
+    ActorDTO updateActor(Integer id, ActorRequestDTO request);
 }
