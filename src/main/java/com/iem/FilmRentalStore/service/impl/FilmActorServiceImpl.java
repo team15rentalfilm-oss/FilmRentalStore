@@ -2,66 +2,88 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.FilmActorDTO;
 import com.iem.FilmRentalStore.dto.FilmActorDetailsDTO;
+import com.iem.FilmRentalStore.entity.Actor;
+import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.entity.FilmActor;
 import com.iem.FilmRentalStore.entity.FilmActorId;
+import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.repository.FilmActorRepository;
+import com.iem.FilmRentalStore.repository.FilmRepository;
 import com.iem.FilmRentalStore.service.FilmActorService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class FilmActorServiceImpl implements FilmActorService {
 
-    private final FilmActorRepository repo;
+    private final FilmActorRepository filmActorRepository;
+    private final ActorRepository actorRepository;
+    private final FilmRepository filmRepository;
 
-    public FilmActorServiceImpl(FilmActorRepository repo) {
-        this.repo = repo;
+    public FilmActorServiceImpl(FilmActorRepository filmActorRepository,
+                                ActorRepository actorRepository,
+                                FilmRepository filmRepository) {
+        this.filmActorRepository = filmActorRepository;
+        this.actorRepository = actorRepository;
+        this.filmRepository = filmRepository;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FilmActorDTO> getAll() {
-        return repo.findAll().stream().map(fa -> {
-            FilmActorDTO dto = new FilmActorDTO();
-            dto.setActorId(fa.getId().getActorId().intValue());
-            dto.setFilmId(fa.getId().getFilmId().intValue());
-            return dto;
-        }).collect(Collectors.toList());
+        return filmActorRepository.findAll()
+                .stream()
+                .map(entity -> {
+                    FilmActorDTO dto = new FilmActorDTO();
+                    dto.setActorId(entity.getId().getActorId());
+                    dto.setFilmId(entity.getId().getFilmId());
+                    return dto;
+                })
+                .toList();
     }
 
     @Override
     public FilmActorDTO create(FilmActorDTO dto) {
-        FilmActorId id = new FilmActorId();
-        id.setActorId(dto.getActorId().shortValue());
-        id.setFilmId(dto.getFilmId().shortValue());
+        Actor actor = actorRepository.findById(dto.getActorId())
+                .orElseThrow(() -> new EntityNotFoundException("Actor not found with id " + dto.getActorId()));
 
-        FilmActor fa = new FilmActor();
-        fa.setId(id);
+        Film film = filmRepository.findById(dto.getFilmId())
+                .orElseThrow(() -> new EntityNotFoundException("Film not found with id " + dto.getFilmId()));
 
-        repo.save(fa);
+        FilmActorId id = new FilmActorId(dto.getActorId(), dto.getFilmId());
+
+        if (filmActorRepository.existsById(id)) {
+            throw new IllegalArgumentException("FilmActor already exists for actorId=" + dto.getActorId()
+                    + " and filmId=" + dto.getFilmId());
+        }
+
+        FilmActor filmActor = new FilmActor();
+        filmActor.setId(id);
+        filmActor.setActor(actor);
+        filmActor.setFilm(film);
+
+        filmActorRepository.save(filmActor);
         return dto;
     }
 
     @Override
-    public void delete(int actorId, int filmId) {
-        FilmActorId id = new FilmActorId();
-        id.setActorId((short) actorId);
-        id.setFilmId((short) filmId);
+    public void delete(Short actorId, Short filmId) {
+        FilmActorId id = new FilmActorId(actorId, filmId);
 
-        repo.deleteById(id);
+        if (!filmActorRepository.existsById(id)) {
+            throw new EntityNotFoundException("FilmActor not found for actorId=" + actorId + " and filmId=" + filmId);
+        }
+
+        filmActorRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FilmActorDetailsDTO> getFilmActorDetails() {
-        return repo.findAll().stream()
-                .map(fa -> new FilmActorDetailsDTO(
-                        fa.getId().getActorId().intValue(),
-                        fa.getActor() != null ? fa.getActor().getFirstName() : null,
-                        fa.getActor() != null ? fa.getActor().getLastName() : null,
-                        fa.getId().getFilmId().intValue(),
-                        fa.getFilm() != null ? fa.getFilm().getTitle() : null
-                ))
-                .collect(Collectors.toList());
+        return filmActorRepository.findAllDetails();
     }
 }

@@ -22,7 +22,7 @@ public class Actor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "actor_id", columnDefinition = "SMALLINT UNSIGNED")
-    private Integer actorId;
+    private short actorId;
 
     @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;

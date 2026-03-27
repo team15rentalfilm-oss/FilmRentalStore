@@ -1,9 +1,8 @@
 package com.iem.FilmRentalStore.repository;
 
 import com.iem.FilmRentalStore.entity.FilmCategory;
+import com.iem.FilmRentalStore.entity.FilmCategory.FilmCategoryId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface FilmCategoryRepository extends JpaRepository<FilmCategory, FilmCategory.FilmCategoryId> {
+public interface FilmCategoryRepository extends JpaRepository<FilmCategory, FilmCategoryId> {
 }

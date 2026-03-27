@@ -5,15 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FilmActorDetailsDTO {
 
-    private Integer actorId;
+    private Short actorId;
     private String actorFirstName;
     private String actorLastName;
-    private Integer filmId;
+
+    private Short filmId;
     private String filmTitle;
+
+    private LocalDateTime lastUpdate;
 }

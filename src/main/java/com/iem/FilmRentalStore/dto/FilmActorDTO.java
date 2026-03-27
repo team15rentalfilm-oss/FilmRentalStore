@@ -11,9 +11,9 @@ public class FilmActorDTO {
 
     @NotNull(message = "Actor ID is mandatory")
     @Positive(message = "Actor ID must be greater than 0")
-    private Integer actorId;
+    private Short actorId;
 
     @NotNull(message = "Film ID is mandatory")
     @Positive(message = "Film ID must be greater than 0")
-    private Integer filmId;
+    private Short filmId;
 }

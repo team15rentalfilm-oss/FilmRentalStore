@@ -7,8 +7,9 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
-@RequestMapping({"/api/film-actor", "/film-actor"})
+@RequestMapping("/api/film-actor")
 public class FilmActorController {
 
     private final FilmActorService service;
@@ -32,9 +33,9 @@ public class FilmActorController {
         return service.create(dto);
     }
 
-    @DeleteMapping
-    public void delete(@RequestParam int actorId,
-                       @RequestParam int filmId) {
+    @DeleteMapping("/{actorId}/{filmId}")
+    public void delete(@PathVariable Short actorId,
+                       @PathVariable Short filmId) {
         service.delete(actorId, filmId);
     }
 }

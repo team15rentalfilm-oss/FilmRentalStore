@@ -1,6 +1,9 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.FilmTextDTO;
+import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.entity.FilmText;
+import com.iem.FilmRentalStore.repository.FilmRepository;
 import com.iem.FilmRentalStore.repository.FilmTextRepository;
 import com.iem.FilmRentalStore.service.FilmTextService;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,69 +21,121 @@ import java.util.Map;
 public class FilmTextServiceImpl implements FilmTextService {
 
     private final FilmTextRepository filmTextRepository;
+    private final FilmRepository filmRepository;
 
-    public FilmTextServiceImpl(FilmTextRepository filmTextRepository) {
+    public FilmTextServiceImpl(FilmTextRepository filmTextRepository, FilmRepository filmRepository) {
         this.filmTextRepository = filmTextRepository;
+        this.filmRepository = filmRepository;
+    }
+
+    private FilmTextDTO toDto(FilmText filmText) {
+        return new FilmTextDTO(
+                filmText.getFilmId(),
+                filmText.getTitle(),
+                filmText.getDescription()
+        );
     }
 
     @Override
-    public List<FilmText> getAllFilmTexts() {
-        return filmTextRepository.findAll();
+    public List<FilmTextDTO> getAllFilmTexts() {
+        return filmTextRepository.findAll().stream().map(this::toDto).toList();
     }
 
     @Override
-    public List<FilmText> getFilmTextsByFields(Map<String, String> searchParams) {
+    public List<FilmTextDTO> getFilmTextsByFields(Map<String, String> searchParams) {
         Specification<FilmText> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
             searchParams.forEach((key, value) -> {
                 try {
-                    root.get(key);
-                    predicates.add(cb.equal(root.get(key).as(String.class), value));
-                } catch (IllegalArgumentException ignored) {
+                    if ("filmId".equals(key)) {
+                        predicates.add(cb.equal(root.get("filmId"), Short.valueOf(value)));
+                    } else if ("title".equals(key) || "description".equals(key)) {
+                        predicates.add(cb.equal(root.get(key), value));
+                    }
+                } catch (Exception ignored) {
                 }
             });
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-        return filmTextRepository.findAll(spec);
+
+        return filmTextRepository.findAll(spec).stream().map(this::toDto).toList();
     }
 
     @Override
-    public FilmText getFilmTextById(Integer id) {
-        return filmTextRepository.findById(id)
+    public FilmTextDTO getFilmTextById(Short id) {
+        FilmText filmText = filmTextRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("FilmText not found with id: " + id));
+        return toDto(filmText);
     }
 
     @Override
-    public FilmText createFilmText(FilmText filmText) {
-        return filmTextRepository.save(filmText);
+    public FilmTextDTO createFilmText(FilmTextDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Request body cannot be null");
+        }
+        if (dto.filmId() == null) {
+            throw new IllegalArgumentException("filmId is required");
+        }
+        if (dto.title() == null || dto.title().isBlank()) {
+            throw new IllegalArgumentException("title is required");
+        }
+
+        Film film = filmRepository.findById(dto.filmId())
+                .orElseThrow(() -> new EntityNotFoundException("Film not found with id: " + dto.filmId()));
+
+        if (filmTextRepository.existsById(dto.filmId())) {
+            throw new IllegalArgumentException("FilmText already exists for film id: " + dto.filmId());
+        }
+
+        FilmText filmText = new FilmText();
+        filmText.setFilm(film);
+        filmText.setTitle(dto.title());
+        filmText.setDescription(dto.description());
+
+        return toDto(filmTextRepository.save(filmText));
     }
 
     @Override
-    public FilmText updateFilmText(Integer id, FilmText filmTextDetails) {
-        FilmText filmText = getFilmTextById(id);
-        filmText.setTitle(filmTextDetails.getTitle());
-        filmText.setDescription(filmTextDetails.getDescription());
-        return filmTextRepository.save(filmText);
+    public FilmTextDTO updateFilmText(Short id, FilmTextDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Request body cannot be null");
+        }
+
+        FilmText filmText = filmTextRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("FilmText not found with id: " + id));
+
+        filmText.setTitle(dto.title());
+        filmText.setDescription(dto.description());
+
+        return toDto(filmTextRepository.save(filmText));
     }
 
     @Override
-    public FilmText patchFilmText(Integer id, Map<String, Object> updates) {
-        FilmText filmText = getFilmTextById(id);
+    public FilmTextDTO patchFilmText(Short id, Map<String, Object> updates) {
+        FilmText filmText = filmTextRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("FilmText not found with id: " + id));
 
         updates.forEach((key, value) -> {
+            if ("filmId".equals(key) || "film".equals(key)) {
+                return;
+            }
+
             Field field = ReflectionUtils.findField(FilmText.class, key);
-            if (field != null && !key.equals("filmId")) {
+            if (field != null) {
                 field.setAccessible(true);
                 ReflectionUtils.setField(field, filmText, value);
             }
         });
 
-        return filmTextRepository.save(filmText);
+        return toDto(filmTextRepository.save(filmText));
     }
 
     @Override
-    public void deleteFilmText(Integer id) {
-        FilmText filmText = getFilmTextById(id);
+    public void deleteFilmText(Short id) {
+        FilmText filmText = filmTextRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("FilmText not found with id: " + id));
         filmTextRepository.delete(filmText);
     }
 }

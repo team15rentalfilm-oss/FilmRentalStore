@@ -11,7 +11,7 @@ public interface FilmActorService {
 
     FilmActorDTO create(FilmActorDTO dto);
 
-    void delete(int actorId, int filmId);
+    void delete(Short actorId, Short filmId);
 
     List<FilmActorDetailsDTO> getFilmActorDetails();
 }

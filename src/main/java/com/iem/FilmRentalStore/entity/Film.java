@@ -89,7 +89,7 @@ public class Film {
     private Set<Inventory> inventories = new HashSet<>();
 
     @JsonIgnore
-    @OneToOne(mappedBy = "film", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "film",fetch = FetchType.LAZY)
     private FilmText filmText;
 
     @PrePersist

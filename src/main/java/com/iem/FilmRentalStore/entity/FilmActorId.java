@@ -18,9 +18,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class FilmActorId implements Serializable {
 
-    @Column(name = "actor_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "actor_id")
     private Short actorId;
 
-    @Column(name = "film_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "film_id")
     private Short filmId;
 }

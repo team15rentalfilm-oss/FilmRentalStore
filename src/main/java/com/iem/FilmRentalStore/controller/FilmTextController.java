@@ -1,6 +1,6 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.entity.FilmText;
+import com.iem.FilmRentalStore.dto.FilmTextDTO;
 import com.iem.FilmRentalStore.service.FilmTextService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class FilmTextController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FilmText>> getFilmTexts(@RequestParam Map<String, String> searchParams) {
+    public ResponseEntity<List<FilmTextDTO>> getFilmTexts(@RequestParam Map<String, String> searchParams) {
         if (searchParams.isEmpty()) {
             return ResponseEntity.ok(filmTextService.getAllFilmTexts());
         }
@@ -28,27 +28,27 @@ public class FilmTextController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FilmText> getFilmTextById(@PathVariable Integer id) {
+    public ResponseEntity<FilmTextDTO> getFilmTextById(@PathVariable Short id) {
         return ResponseEntity.ok(filmTextService.getFilmTextById(id));
     }
 
     @PostMapping
-    public ResponseEntity<FilmText> createFilmText(@RequestBody FilmText filmText) {
-        return new ResponseEntity<>(filmTextService.createFilmText(filmText), HttpStatus.CREATED);
+    public ResponseEntity<FilmTextDTO> createFilmText(@RequestBody FilmTextDTO filmTextDto) {
+        return new ResponseEntity<>(filmTextService.createFilmText(filmTextDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FilmText> updateFilmText(@PathVariable Integer id, @RequestBody FilmText filmText) {
-        return ResponseEntity.ok(filmTextService.updateFilmText(id, filmText));
+    public ResponseEntity<FilmTextDTO> updateFilmText(@PathVariable Short id, @RequestBody FilmTextDTO filmTextDto) {
+        return ResponseEntity.ok(filmTextService.updateFilmText(id, filmTextDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<FilmText> patchFilmText(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<FilmTextDTO> patchFilmText(@PathVariable Short id, @RequestBody Map<String, Object> updates) {
         return ResponseEntity.ok(filmTextService.patchFilmText(id, updates));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFilmText(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteFilmText(@PathVariable Short id) {
         filmTextService.deleteFilmText(id);
         return ResponseEntity.noContent().build();
     }

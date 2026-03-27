@@ -7,15 +7,15 @@ public interface ActorService {
 
     List<ActorDTO> getAll();
 
-    ActorDTO getById(int id);
+    ActorDTO getById(Short id);
 
     List<ActorDTO> getByFirstName(String name);
 
     ActorDTO create(ActorDTO dto);
 
-    ActorDTO update(int id, ActorDTO dto);
+    ActorDTO update(Short id, ActorDTO dto);
 
-    ActorDTO patch(int id, ActorDTO dto);
+    ActorDTO patch(Short id, ActorDTO dto);
 
-    void delete(int id);
+    void delete(Short id);
 }

@@ -20,14 +20,16 @@ public class FilmActor {
     @EmbeddedId
     private FilmActorId id;
 
-    @JsonIgnore
+    @MapsId("actorId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "actor_id", referencedColumnName = "actor_id", insertable = false, updatable = false)
+    @JoinColumn(name = "actor_id", nullable = false)
+    @JsonIgnore
     private Actor actor;
 
-    @JsonIgnore
+    @MapsId("filmId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "film_id", referencedColumnName = "film_id", insertable = false, updatable = false)
+    @JoinColumn(name = "film_id", nullable = false)
+    @JsonIgnore
     private Film film;
 
     @Column(name = "last_update", nullable = false)

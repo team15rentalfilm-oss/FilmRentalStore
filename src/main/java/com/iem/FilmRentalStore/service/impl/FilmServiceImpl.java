@@ -1,11 +1,13 @@
 package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.FilmDTO;
+import com.iem.FilmRentalStore.dto.FilmTextDTO;
 import com.iem.FilmRentalStore.entity.Category;
 import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.repository.CategoryRepository;
 import com.iem.FilmRentalStore.repository.FilmRepository;
 import com.iem.FilmRentalStore.service.FilmService;
+import com.iem.FilmRentalStore.service.FilmTextService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,14 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
     private final CategoryRepository categoryRepository;
+    private final FilmTextService filmTextService;
 
-    public FilmServiceImpl(FilmRepository filmRepository, CategoryRepository categoryRepository) {
+    public FilmServiceImpl(FilmRepository filmRepository,
+                           CategoryRepository categoryRepository,
+                           FilmTextService filmTextService) {
         this.filmRepository = filmRepository;
         this.categoryRepository = categoryRepository;
+        this.filmTextService = filmTextService;
     }
 
     @Override
@@ -32,6 +38,7 @@ public class FilmServiceImpl implements FilmService {
 
         Film saved = filmRepository.save(film);
 
+        // Category handling
         if (filmDTO.getCategoryIds() != null && !filmDTO.getCategoryIds().isEmpty()) {
             Set<Category> categories = categoryRepository.findAllById(filmDTO.getCategoryIds())
                     .stream()
@@ -39,6 +46,17 @@ public class FilmServiceImpl implements FilmService {
             saved.setCategories(categories);
             saved = filmRepository.save(saved);
         }
+
+        // Auto-create film_text
+        String description = saved.getDescription() != null ? saved.getDescription() : "";
+
+        filmTextService.createFilmText(
+                new FilmTextDTO(
+                        saved.getFilmId(),
+                        saved.getTitle(),
+                        description
+                )
+        );
 
         return mapEntityToDto(saved);
     }
@@ -137,50 +155,20 @@ public class FilmServiceImpl implements FilmService {
         return mapEntityToDto(filmRepository.save(film));
     }
 
+    // ---------------- HELPER METHODS ----------------
+
     private void mapDtoToEntity(FilmDTO dto, Film film) {
-        if (dto.getTitle() != null) {
-            film.setTitle(dto.getTitle());
-        }
-
-        if (dto.getDescription() != null) {
-            film.setDescription(dto.getDescription());
-        }
-
-        if (dto.getReleaseYear() != null) {
-            film.setReleaseYear(dto.getReleaseYear());
-        }
-
-        if (dto.getLanguageId() != null) {
-            film.setLanguageId(dto.getLanguageId());
-        }
-
-        if (dto.getOriginalLanguageId() != null) {
-            film.setOriginalLanguageId(dto.getOriginalLanguageId());
-        }
-
-        if (dto.getRentalDuration() != null) {
-            film.setRentalDuration(dto.getRentalDuration());
-        }
-
-        if (dto.getRentalRate() != null) {
-            film.setRentalRate(dto.getRentalRate());
-        }
-
-        if (dto.getLength() != null) {
-            film.setLength(dto.getLength());
-        }
-
-        if (dto.getReplacementCost() != null) {
-            film.setReplacementCost(dto.getReplacementCost());
-        }
-
-        if (dto.getRating() != null) {
-            film.setRating(dto.getRating());
-        }
-
-        if (dto.getSpecialFeatures() != null) {
-            film.setSpecialFeatures(dto.getSpecialFeatures());
-        }
+        if (dto.getTitle() != null) film.setTitle(dto.getTitle());
+        if (dto.getDescription() != null) film.setDescription(dto.getDescription());
+        if (dto.getReleaseYear() != null) film.setReleaseYear(dto.getReleaseYear());
+        if (dto.getLanguageId() != null) film.setLanguageId(dto.getLanguageId());
+        if (dto.getOriginalLanguageId() != null) film.setOriginalLanguageId(dto.getOriginalLanguageId());
+        if (dto.getRentalDuration() != null) film.setRentalDuration(dto.getRentalDuration());
+        if (dto.getRentalRate() != null) film.setRentalRate(dto.getRentalRate());
+        if (dto.getLength() != null) film.setLength(dto.getLength());
+        if (dto.getReplacementCost() != null) film.setReplacementCost(dto.getReplacementCost());
+        if (dto.getRating() != null) film.setRating(dto.getRating());
+        if (dto.getSpecialFeatures() != null) film.setSpecialFeatures(dto.getSpecialFeatures());
     }
 
     private FilmDTO mapEntityToDto(Film film) {

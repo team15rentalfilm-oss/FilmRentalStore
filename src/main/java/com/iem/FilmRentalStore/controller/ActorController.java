@@ -25,7 +25,7 @@ public class ActorController {
 
     // GET BY ID
     @GetMapping("/{id}")
-    public ActorDTO getById(@PathVariable int id) {
+    public ActorDTO getById(@PathVariable Short id) {
         return service.getById(id);
     }
 
@@ -43,19 +43,19 @@ public class ActorController {
 
     // PUT
     @PutMapping("/{id}")
-    public ActorDTO update(@PathVariable int id, @Valid @RequestBody ActorDTO dto) {
+    public ActorDTO update(@PathVariable Short id, @Valid @RequestBody ActorDTO dto) {
         return service.update(id, dto);
     }
 
     // PATCH
     @PatchMapping("/{id}")
-    public ActorDTO patch(@PathVariable int id, @RequestBody ActorDTO dto) {
+    public ActorDTO patch(@PathVariable Short id, @RequestBody ActorDTO dto) {
         return service.patch(id, dto);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable Short id) {
         service.delete(id);
     }
 }
