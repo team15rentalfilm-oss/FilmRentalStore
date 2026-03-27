@@ -23,7 +23,6 @@ public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
-    private final AddressMapper addressMapper;
 
     @Override
     public AddressDTO createAddress(AddressRequestDTO request) {
@@ -55,14 +54,14 @@ public class AddressServiceImpl implements AddressService {
                 });
 
         // Step 3: Map address
-        Address address = addressMapper.toEntity(request);
+        Address address = AddressMapper.toEntity(request);
 
         // Step 4: Set relationship
         address.setCity(city);
 
         Address saved = addressRepository.save(address);
 
-        return addressMapper.toDTO(saved);
+        return AddressMapper.toDTO(saved);
     }
 
     @Override
@@ -70,14 +69,14 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Address not found with id: " + id));
 
-        return addressMapper.toDTO(address);
+        return AddressMapper.toDTO(address);
     }
 
     @Override
     public List<AddressDTO> getAllAddresses() {
         return addressRepository.findAll()
                 .stream()
-                .map(addressMapper::toDTO)
+                .map(AddressMapper::toDTO)
                 .toList();
     }
 
@@ -121,7 +120,7 @@ public class AddressServiceImpl implements AddressService {
 
         Address updated = addressRepository.save(address);
 
-        return addressMapper.toDTO(updated);
+        return AddressMapper.toDTO(updated);
     }
 
     @Override

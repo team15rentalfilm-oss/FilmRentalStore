@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class AddressMapper {
 
     // DTO → Entity
-    public Address toEntity(AddressRequestDTO dto) {
+    public static Address toEntity(AddressRequestDTO dto) {
         Address address = new Address();
         address.setAddress(dto.getAddress());
         address.setAddress2(dto.getAddress2());

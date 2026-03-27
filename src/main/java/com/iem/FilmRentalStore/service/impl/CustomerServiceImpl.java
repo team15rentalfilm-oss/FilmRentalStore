@@ -24,7 +24,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
     private final AddressService addressService;
-    private final CustomerMapper customerMapper;
 
     @Override
     public CustomerDTO createCustomer(CustomerRequestDTO request) {
@@ -41,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer saved = customerRepository.save(customer);
 
-        return customerMapper.toDTO(saved);
+        return CustomerMapper.toDTO(saved);
     }
 
     @Override
@@ -49,14 +48,14 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
 
-        return customerMapper.toDTO(customer);
+        return CustomerMapper.toDTO(customer);
     }
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
-                .map(customerMapper::toDTO)
+                .map(CustomerMapper::toDTO)
                 .toList();
     }
 
@@ -85,6 +84,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer saved = customerRepository.save(customer);
 
-        return customerMapper.toDTO(saved);
+        return CustomerMapper.toDTO(saved);
     }
 }
