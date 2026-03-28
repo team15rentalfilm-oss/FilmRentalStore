@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.category.CategoryDTO;
 import com.iem.FilmRentalStore.dto.category.CategoryRequestDTO;
+import com.iem.FilmRentalStore.dto.category.CategoryResponseDTO;
 import com.iem.FilmRentalStore.entity.Category;
 import com.iem.FilmRentalStore.mapper.CategoryMapper;
 import com.iem.FilmRentalStore.repository.CategoryRepository;
@@ -21,45 +22,62 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO createCategory(CategoryRequestDTO request) {
-        Category category = CategoryMapper.toEntity(request);
+
+        String normalizedName = request.getName().trim();
+
+        categoryRepository.findByNameIgnoreCase(normalizedName)
+                .ifPresent(existing -> {
+                    throw new IllegalArgumentException(
+                            "Category already exists with name: " + normalizedName
+                    );
+                });
+
+        Category category = new Category();
+        category.setName(normalizedName);
+
         Category saved = categoryRepository.save(category);
+
         return categoryMapper.toDTO(saved);
     }
 
     @Override
-    public CategoryDTO getCategoryById(Integer id) {
-        return null;
-    }
-
-    @Override
-    public CategoryDTO getCategoryById(Byte id) {
+    public CategoryResponseDTO getCategoryResponseById(Byte id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
 
-        return categoryMapper.toDTO(category);
+        return CategoryMapper.toResponseDTO(category);
     }
 
     @Override
-    public List<CategoryDTO> getAllCategories() {
+    public List<CategoryResponseDTO> getAllCategoryResponses() {
         return categoryRepository.findAll()
                 .stream()
-                .map(CategoryMapper::toDTO)
+                .map(CategoryMapper::toResponseDTO)
                 .toList();
     }
 
     @Override
-    public CategoryDTO updateCategory(Integer id, CategoryRequestDTO request) {
-        return null;
-    }
-
-    @Override
     public CategoryDTO updateCategory(Byte id, CategoryRequestDTO request) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
 
-        category.setName(request.getName());
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Category not found with id: " + id));
+
+        String normalizedName = request.getName().trim();
+
+        // 🔴 Duplicate check (exclude current category)
+        categoryRepository.findByNameIgnoreCase(normalizedName)
+                .filter(existing -> !existing.getId().equals(id))
+                .ifPresent(existing -> {
+                    throw new IllegalArgumentException(
+                            "Category already exists with name: " + normalizedName
+                    );
+                });
+
+        category.setName(normalizedName);
 
         Category updated = categoryRepository.save(category);
+
         return categoryMapper.toDTO(updated);
     }
 }

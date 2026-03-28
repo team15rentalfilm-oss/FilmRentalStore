@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service;
 
 import com.iem.FilmRentalStore.dto.category.CategoryDTO;
 import com.iem.FilmRentalStore.dto.category.CategoryRequestDTO;
+import com.iem.FilmRentalStore.dto.category.CategoryResponseDTO;
 
 import java.util.List;
 
@@ -9,13 +10,9 @@ public interface CategoryService {
 
     CategoryDTO createCategory(CategoryRequestDTO request);
 
-    CategoryDTO getCategoryById(Integer id);
+    CategoryResponseDTO getCategoryResponseById(Byte id);
 
-    CategoryDTO getCategoryById(Byte id);
-
-    List<CategoryDTO> getAllCategories();
-
-    CategoryDTO updateCategory(Integer id, CategoryRequestDTO request);
+    List<CategoryResponseDTO> getAllCategoryResponses();
 
     CategoryDTO updateCategory(Byte id, CategoryRequestDTO request);
 }
