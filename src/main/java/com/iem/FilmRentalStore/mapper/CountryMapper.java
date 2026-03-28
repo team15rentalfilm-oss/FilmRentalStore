@@ -14,7 +14,7 @@ public class CountryMapper {
         return country;
     }
 
-    public CountryResponseDTO toResponseDTO(Country country) {
+    public static CountryResponseDTO toResponseDTO(Country country) {
         CountryResponseDTO dto = new CountryResponseDTO();
         dto.setCountryId(country.getCountryId());
         dto.setCountry(country.getCountry());

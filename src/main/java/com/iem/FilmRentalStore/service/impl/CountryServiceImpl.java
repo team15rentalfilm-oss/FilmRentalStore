@@ -40,7 +40,23 @@ public class CountryServiceImpl implements CountryService {
     public List<CountryResponseDTO> getAllCountries() {
         return countryRepository.findAll()
                 .stream()
-                .map(countryMapper::toResponseDTO)
+                .map(CountryMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public List<CountryResponseDTO> searchCountries(String name) {
+
+        String normalized = name == null ? "" : name.trim();
+
+        if (normalized.isEmpty()) {
+            return List.of();
+        }
+
+        return countryRepository
+                .findByCountryContainingIgnoreCase(normalized)
+                .stream()
+                .map(CountryMapper::toResponseDTO)
                 .toList();
     }
 
@@ -53,14 +69,6 @@ public class CountryServiceImpl implements CountryService {
         country.setCountry(request.getCountry());
 
         Country updated = countryRepository.save(country);
-        return countryMapper.toDTO(updated);
-    }
-
-    @Override
-    public List<CountryResponseDTO> searchCountries(String name) {
-        return countryRepository.findByCountryContainingIgnoreCase(name)
-                .stream()
-                .map(countryMapper::toResponseDTO)
-                .toList();
+        return CountryMapper.toDTO(updated);
     }
 }

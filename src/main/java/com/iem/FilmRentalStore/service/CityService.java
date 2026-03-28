@@ -2,6 +2,8 @@ package com.iem.FilmRentalStore.service;
 
 import com.iem.FilmRentalStore.dto.city.CityDTO;
 import com.iem.FilmRentalStore.dto.city.CityRequestDTO;
+import com.iem.FilmRentalStore.dto.city.CityResponseDTO;
+import com.iem.FilmRentalStore.dto.country.CountryResponseDTO;
 
 import java.util.List;
 
@@ -9,13 +11,14 @@ public interface CityService {
 
     CityDTO createCity(CityRequestDTO request);
 
-    CityDTO getCityById(Integer id);
+    CityResponseDTO getCityById(Short id);
+    List<CityResponseDTO> getAllCities();
 
-    CityDTO getCityById(Short id);
+    CityResponseDTO updateCity(Short id, CityRequestDTO request);
 
-    List<CityDTO> getAllCities();
+    List<CountryResponseDTO> searchCountries(String name);
 
-    CityDTO updateCity(Integer id, CityRequestDTO request);
+    List<CityResponseDTO> searchCitiesByName(String city);
 
-    CityDTO updateCity(Short id, CityRequestDTO request);
+    List<CityResponseDTO> searchCitiesByCountry(String country);
 }

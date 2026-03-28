@@ -27,16 +27,12 @@ public class City {
     @Column(name = "city", nullable = false, length = 50)
     private String city;
 
-    @Column(name = "country_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private Short countryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id", insertable = false, updatable = false)
-    private Country country;
 
     @JsonIgnore
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
