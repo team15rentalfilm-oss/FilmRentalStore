@@ -68,7 +68,7 @@ public class CityServiceImpl implements CityService {
     public List<CityDTO> getAllCities() {
         return cityRepository.findAll()
                 .stream()
-                .map(cityMapper::toDTO)
+                .map(CityMapper::toDTO)
                 .toList();
     }
 

@@ -19,7 +19,7 @@ public class CountryMapper {
         return dto;
     }
 
-    public CountryDTO toDTO(Country country) {
+    public static CountryDTO toDTO(Country country) {
         CountryDTO dto = new CountryDTO();
         dto.setCountry(country.getCountry());
         return dto;

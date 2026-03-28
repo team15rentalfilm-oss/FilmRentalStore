@@ -38,7 +38,7 @@ public class LanguageServiceImpl implements LanguageService {
     public List<LanguageDTO> getAllLanguages() {
         return languageRepository.findAll()
                 .stream()
-                .map(languageMapper::toDTO)
+                .map(LanguageMapper::toDTO)
                 .toList();
     }
 
