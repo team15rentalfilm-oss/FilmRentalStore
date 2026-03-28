@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.country.CountryDTO;
 import com.iem.FilmRentalStore.dto.country.CountryRequestDTO;
+import com.iem.FilmRentalStore.dto.country.CountryResponseDTO;
 import com.iem.FilmRentalStore.service.CountryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,19 @@ public class CountryController {
     }
 
     @GetMapping("/{id}")
-    public CountryDTO getCountryById(@PathVariable Short id) {
+    public CountryResponseDTO getCountryById(@PathVariable Short id) {
         return countryService.getCountryById(id);
     }
 
     @GetMapping
-    public List<CountryDTO> getAllCountries() {
+    public List<CountryResponseDTO> getAllCountries() {
         return countryService.getAllCountries();
     }
 
+    @GetMapping("/search")
+    public List<CountryResponseDTO> searchCountries(@RequestParam String name) {
+        return countryService.searchCountries(name);
+    }
     @PutMapping("/{id}")
     public CountryDTO updateCountry(@PathVariable Short id,
                                     @Valid @RequestBody CountryRequestDTO request) {

@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.country.CountryDTO;
 import com.iem.FilmRentalStore.dto.country.CountryRequestDTO;
+import com.iem.FilmRentalStore.dto.country.CountryResponseDTO;
 import com.iem.FilmRentalStore.entity.Country;
 import com.iem.FilmRentalStore.mapper.CountryMapper;
 import com.iem.FilmRentalStore.repository.CountryRepository;
@@ -26,31 +27,23 @@ public class CountryServiceImpl implements CountryService {
         return countryMapper.toDTO(saved);
     }
 
-    @Override
-    public CountryDTO getCountryById(Integer id) {
-        return null;
-    }
 
     @Override
-    public CountryDTO getCountryById(Short id) {
+    public CountryResponseDTO getCountryById(Short id) {
         Country country = countryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Country not found with id: " + id));
 
-        return countryMapper.toDTO(country);
+        return countryMapper.toResponseDTO(country);
     }
 
     @Override
-    public List<CountryDTO> getAllCountries() {
+    public List<CountryResponseDTO> getAllCountries() {
         return countryRepository.findAll()
                 .stream()
-                .map(CountryMapper::toDTO)
+                .map(countryMapper::toResponseDTO)
                 .toList();
     }
 
-    @Override
-    public CountryDTO updateCountry(Integer id, CountryRequestDTO request) {
-        return null;
-    }
 
     @Override
     public CountryDTO updateCountry(Short id, CountryRequestDTO request) {
@@ -61,5 +54,13 @@ public class CountryServiceImpl implements CountryService {
 
         Country updated = countryRepository.save(country);
         return countryMapper.toDTO(updated);
+    }
+
+    @Override
+    public List<CountryResponseDTO> searchCountries(String name) {
+        return countryRepository.findByCountryContainingIgnoreCase(name)
+                .stream()
+                .map(countryMapper::toResponseDTO)
+                .toList();
     }
 }

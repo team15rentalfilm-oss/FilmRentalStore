@@ -8,16 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class CountryMapper {
 
-    public static Country toEntity(CountryRequestDTO dto) {
+    public Country toEntity(CountryRequestDTO dto) {
         Country country = new Country();
         country.setCountry(dto.getCountry());
         return country;
     }
 
-    public static CountryResponseDTO toResponseDTO(Country country) {
+    public CountryResponseDTO toResponseDTO(Country country) {
         CountryResponseDTO dto = new CountryResponseDTO();
         dto.setCountryId(country.getCountryId());
         dto.setCountry(country.getCountry());
+        dto.setLastUpdate(country.getLastUpdate());
         return dto;
     }
 
