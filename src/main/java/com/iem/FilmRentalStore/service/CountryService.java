@@ -3,6 +3,7 @@ package com.iem.FilmRentalStore.service;
 import com.iem.FilmRentalStore.dto.country.CountryDTO;
 import com.iem.FilmRentalStore.dto.country.CountryRequestDTO;
 import com.iem.FilmRentalStore.dto.country.CountryResponseDTO;
+import com.iem.FilmRentalStore.entity.Country;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface CountryService {
     List<CountryResponseDTO> getAllCountries();
 
     List<CountryResponseDTO> searchCountries(String name);
+
+    Country getOrCreateCountry(String countryName);
 }

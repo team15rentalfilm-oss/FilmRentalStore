@@ -27,4 +27,6 @@ public interface CityRepository extends JpaRepository<City, Short> {
 
     @Query("SELECT c FROM City c JOIN FETCH c.country WHERE LOWER(c.country.country) LIKE LOWER(CONCAT('%', :country, '%'))")
     List<City> findByCountryNameWithCountry(@Param("country") String country);
+
+
 }

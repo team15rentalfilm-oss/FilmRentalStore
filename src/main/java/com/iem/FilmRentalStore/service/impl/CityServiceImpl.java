@@ -1,6 +1,7 @@
 package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.city.CityDTO;
+import com.iem.FilmRentalStore.dto.city.CityPatchDTO;
 import com.iem.FilmRentalStore.dto.city.CityRequestDTO;
 import com.iem.FilmRentalStore.dto.city.CityResponseDTO;
 import com.iem.FilmRentalStore.dto.country.CountryResponseDTO;
@@ -11,6 +12,7 @@ import com.iem.FilmRentalStore.mapper.CountryMapper;
 import com.iem.FilmRentalStore.repository.CityRepository;
 import com.iem.FilmRentalStore.repository.CountryRepository;
 import com.iem.FilmRentalStore.service.CityService;
+import com.iem.FilmRentalStore.service.CountryService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,22 +27,22 @@ public class CityServiceImpl implements CityService {
     private final CountryRepository countryRepository;
     private final CityMapper cityMapper;
     private final CountryMapper countryMapper;
-
+    private final CountryService countryService;
 
     @Override
     public CityDTO createCity(CityRequestDTO request) {
 
+        String cityName = normalize(request.getCity());
         String countryName = normalize(request.getCountry().getCountry());
-        // 🔍 Find existing or create new
-        Country country = countryRepository
-                .findByCountryIgnoreCase(countryName)
-                .orElseGet(() -> {
-                    Country newCountry = new Country();
-                    newCountry.setCountry(countryName);
-                    return countryRepository.save(newCountry);
-                });
 
-        City city = cityMapper.toEntity(request);
+        Country country = countryService.getOrCreateCountry(countryName);
+
+        if (cityRepository.findByCityIgnoreCaseAndCountry(cityName, country).isPresent()) {
+            throw new IllegalArgumentException("City already exists in this country");
+        }
+
+        City city = new City();
+        city.setCity(cityName);
         city.setCountry(country);
 
         City saved = cityRepository.save(city);
@@ -73,18 +75,14 @@ public class CityServiceImpl implements CityService {
                 .orElseThrow(() -> new EntityNotFoundException("City not found with id: " + id));
 
         String countryName = normalize(request.getCountry().getCountry());
-        Country country = countryRepository
-                .findByCountryIgnoreCase(countryName)
-                .orElseGet(() -> {
-                    Country newCountry = new Country();
-                    newCountry.setCountry(countryName);
-                    return countryRepository.save(newCountry);
-                });
+
+        Country country = countryService.getOrCreateCountry(countryName);
 
         city.setCity(request.getCity());
         city.setCountry(country);
 
         City updated = cityRepository.save(city);
+
         City fetched = cityRepository.findByIdWithCountry(updated.getCityId())
                 .orElseThrow(() -> new EntityNotFoundException("City not found"));
 
@@ -116,6 +114,51 @@ public class CityServiceImpl implements CityService {
                 .stream()
                 .map(cityMapper::toResponseDTO)
                 .toList();
+    }
+
+    @Override
+    public CityResponseDTO patchCity(Short id, CityPatchDTO request) {
+
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("City not found with id: " + id));
+
+        if (request.getCity() != null && !request.getCity().trim().isEmpty()) {
+            city.setCity(request.getCity().trim());
+        }
+
+        if (request.getCountry() != null && !request.getCountry().trim().isEmpty()) {
+            String countryName = normalize(request.getCountry());
+
+            Country country = countryService.getOrCreateCountry(countryName);
+            city.setCountry(country);
+        }
+
+        City updated = cityRepository.save(city);
+
+        City fetched = cityRepository.findByIdWithCountry(updated.getCityId())
+                .orElseThrow(() -> new EntityNotFoundException("City not found"));
+
+        return cityMapper.toResponseDTO(fetched);
+    }
+
+    @Override
+    public City getOrCreateCity(String cityName, String countryName) {
+
+        String normalizedCity = normalize(cityName);
+        String normalizedCountry = normalize(countryName);
+
+        // 🔗 Get or create country first
+        Country country = countryService.getOrCreateCountry(normalizedCountry);
+
+        // 🔍 Check if city already exists in that country
+        return cityRepository
+                .findByCityIgnoreCaseAndCountry(normalizedCity, country)
+                .orElseGet(() -> {
+                    City newCity = new City();
+                    newCity.setCity(normalizedCity);
+                    newCity.setCountry(country);
+                    return cityRepository.save(newCity);
+                });
     }
 
 }

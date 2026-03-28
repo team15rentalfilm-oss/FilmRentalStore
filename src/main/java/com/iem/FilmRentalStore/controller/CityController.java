@@ -1,6 +1,7 @@
 package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.city.CityDTO;
+import com.iem.FilmRentalStore.dto.city.CityPatchDTO;
 import com.iem.FilmRentalStore.dto.city.CityRequestDTO;
 import com.iem.FilmRentalStore.dto.city.CityResponseDTO;
 import com.iem.FilmRentalStore.dto.country.CountryResponseDTO;
@@ -48,5 +49,11 @@ public class CityController {
     @GetMapping("/search/country")
     public List<CityResponseDTO> searchCitiesByCountry(@RequestParam String country) {
         return cityService.searchCitiesByCountry(country);
+    }
+
+    @PatchMapping("/{id}")
+    public CityResponseDTO patchCity(@PathVariable Short id,
+                                     @RequestBody CityPatchDTO request) {
+        return cityService.patchCity(id, request);
     }
 }

@@ -20,13 +20,26 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
     private final CountryMapper countryMapper;
 
+    // 🔥 STRICT CREATE (throws error if exists)
     @Override
     public CountryDTO createCountry(CountryRequestDTO request) {
-        Country country = countryMapper.toEntity(request);
+
+        String normalized = normalize(request.getCountry());
+
+        // ❌ Check if already exists
+        countryRepository.findByCountryIgnoreCase(normalized)
+                .ifPresent(c -> {
+                    throw new IllegalArgumentException("Country already exists: " + normalized);
+                });
+
+        // ✅ Create new
+        Country country = new Country();
+        country.setCountry(normalized);
+
         Country saved = countryRepository.save(country);
+
         return countryMapper.toDTO(saved);
     }
-
 
     @Override
     public CountryResponseDTO getCountryById(Short id) {
@@ -60,15 +73,45 @@ public class CountryServiceImpl implements CountryService {
                 .toList();
     }
 
-
     @Override
     public CountryDTO updateCountry(Short id, CountryRequestDTO request) {
-        Country country = countryRepository.findById(id)
+
+        Country existing = countryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Country not found with id: " + id));
 
-        country.setCountry(request.getCountry());
+        String normalized = normalize(request.getCountry());
 
-        Country updated = countryRepository.save(country);
-        return CountryMapper.toDTO(updated);
+        // ❌ Prevent duplicate update
+        countryRepository.findByCountryIgnoreCase(normalized)
+                .filter(c -> !c.getCountryId().equals(id))
+                .ifPresent(c -> {
+                    throw new IllegalArgumentException("Country already exists: " + normalized);
+                });
+
+        existing.setCountry(normalized);
+
+        Country updated = countryRepository.save(existing);
+
+        return countryMapper.toDTO(updated);
+    }
+
+    // 🔥 REUSABLE METHOD (internal use)
+    @Override
+    public Country getOrCreateCountry(String countryName) {
+
+        String normalized = normalize(countryName);
+
+        return countryRepository
+                .findByCountryIgnoreCase(normalized)
+                .orElseGet(() -> {
+                    Country newCountry = new Country();
+                    newCountry.setCountry(normalized);
+                    return countryRepository.save(newCountry);
+                });
+    }
+
+    // 🔧 Utility
+    private String normalize(String input) {
+        return input == null ? null : input.trim().replaceAll("\\s+", " ");
     }
 }
