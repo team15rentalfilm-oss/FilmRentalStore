@@ -7,7 +7,7 @@ import lombok.Getter;
 @Setter
 public class ActorResponseDTO {
 
-    private Integer actorId;
+    private Short actorId;
     private String firstName;
     private String lastName;
 }

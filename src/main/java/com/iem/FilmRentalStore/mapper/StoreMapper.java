@@ -5,7 +5,9 @@ import com.iem.FilmRentalStore.dto.store.*;
 import com.iem.FilmRentalStore.entity.Address;
 import com.iem.FilmRentalStore.entity.Staff;
 import com.iem.FilmRentalStore.entity.Store;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StoreMapper {
 
     // RequestDTO → Entity

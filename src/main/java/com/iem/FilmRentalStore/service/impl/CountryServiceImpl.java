@@ -43,7 +43,7 @@ public class CountryServiceImpl implements CountryService {
     public List<CountryDTO> getAllCountries() {
         return countryRepository.findAll()
                 .stream()
-                .map(countryMapper::toDTO)
+                .map(CountryMapper::toDTO)
                 .toList();
     }
 

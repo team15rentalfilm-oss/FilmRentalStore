@@ -2,10 +2,12 @@ package com.iem.FilmRentalStore.mapper;
 
 import com.iem.FilmRentalStore.dto.film.*;
 import com.iem.FilmRentalStore.entity.*;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Component
 public class FilmMapper {
 
     //RequestDTO → Entity

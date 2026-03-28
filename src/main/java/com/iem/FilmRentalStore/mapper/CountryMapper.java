@@ -3,7 +3,9 @@ package com.iem.FilmRentalStore.mapper;
 
 import com.iem.FilmRentalStore.dto.country.*;
 import com.iem.FilmRentalStore.entity.Country;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CountryMapper {
 
     public static Country toEntity(CountryRequestDTO dto) {

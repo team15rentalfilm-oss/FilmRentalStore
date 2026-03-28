@@ -38,7 +38,7 @@ public class ActorServiceImpl implements ActorService {
     public List<ActorDTO> getAllActors() {
         return actorRepository.findAll()
                 .stream()
-                .map(actorMapper::toDTO)
+                .map(ActorMapper::toDTO)
                 .toList();
     }
 

@@ -2,10 +2,11 @@ package com.iem.FilmRentalStore.mapper;
 
 import com.iem.FilmRentalStore.dto.payment.*;
 import com.iem.FilmRentalStore.entity.*;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-
+@Component
 public class PaymentMapper {
 
     public static Payment toEntity(Rental rental, Staff staff, BigDecimal amount) {

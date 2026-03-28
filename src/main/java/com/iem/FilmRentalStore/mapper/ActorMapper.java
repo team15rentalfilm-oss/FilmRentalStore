@@ -4,7 +4,9 @@ package com.iem.FilmRentalStore.mapper;
 import com.iem.FilmRentalStore.dto.actor.*;
 
 import com.iem.FilmRentalStore.entity.Actor;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ActorMapper {
 
     // RequestDTO → Entity

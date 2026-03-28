@@ -2,7 +2,9 @@ package com.iem.FilmRentalStore.mapper;
 import com.iem.FilmRentalStore.dto.category.*;
 
 import com.iem.FilmRentalStore.entity.Category;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CategoryMapper {
 
     //RequestDTO → Entity

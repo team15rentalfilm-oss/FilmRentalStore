@@ -4,7 +4,9 @@ import com.iem.FilmRentalStore.dto.customer.*;
 import com.iem.FilmRentalStore.entity.Address;
 import com.iem.FilmRentalStore.entity.Customer;
 import com.iem.FilmRentalStore.entity.Store;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CustomerMapper {
 
     // 🔹 RequestDTO → Entity

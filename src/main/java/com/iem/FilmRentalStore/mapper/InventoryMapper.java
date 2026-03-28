@@ -4,7 +4,9 @@ import com.iem.FilmRentalStore.dto.inventory.*;
 import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.entity.Inventory;
 import com.iem.FilmRentalStore.entity.Store;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InventoryMapper {
 
     // 🔹 Request → Entity

@@ -3,9 +3,10 @@ package com.iem.FilmRentalStore.mapper;
 
 import com.iem.FilmRentalStore.dto.language.*;
 import com.iem.FilmRentalStore.entity.Language;
+import org.springframework.stereotype.Component;
 
 
-
+@Component
 public class LanguageMapper {
 
     //RequestDTO → Entity

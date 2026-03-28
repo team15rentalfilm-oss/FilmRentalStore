@@ -79,4 +79,6 @@ public class Film {
     public void updateTimestamp() {
         this.lastUpdate = java.time.LocalDateTime.now();
     }
+    @OneToMany(mappedBy = "film")
+    private Set<FilmCategory> filmCategories;
 }

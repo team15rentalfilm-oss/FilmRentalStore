@@ -2,7 +2,9 @@ package com.iem.FilmRentalStore.mapper;
 
 import com.iem.FilmRentalStore.dto.rental.*;
 import com.iem.FilmRentalStore.entity.*;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RentalMapper {
 
     // 🔹 Entity creation (no dto needed)
