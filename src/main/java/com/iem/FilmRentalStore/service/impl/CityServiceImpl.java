@@ -26,7 +26,6 @@ public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
     private final CityMapper cityMapper;
-    private final CountryMapper countryMapper;
     private final CountryService countryService;
 
     @Override
@@ -47,7 +46,7 @@ public class CityServiceImpl implements CityService {
 
         City saved = cityRepository.save(city);
 
-        return cityMapper.toDTO(saved);
+        return CityMapper.toDTO(saved);
     }
 
 

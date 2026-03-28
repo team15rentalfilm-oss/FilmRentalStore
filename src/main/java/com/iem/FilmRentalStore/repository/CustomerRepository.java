@@ -15,15 +15,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Short> {
     // 🔍 Search by Last Name
     List<Customer> findByLastNameContainingIgnoreCase(String lastName);
 
-    // 🔍 Search by First OR Last Name
-    List<Customer> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-            String firstName, String lastName);
-
     // 🔍 Search by Email
     List<Customer> findByEmailContainingIgnoreCase(String email);
-
-    // 🔍 Search by Store ID (⚠ FIXED TYPE)
-    List<Customer> findByStore_StoreId(Short storeId);
 
     // 🔍 Search by Active Status
     List<Customer> findByActive(Boolean active);

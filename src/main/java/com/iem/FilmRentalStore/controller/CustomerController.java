@@ -1,7 +1,9 @@
 package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerPatchDTO;
 import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerResponseDTO;
 import com.iem.FilmRentalStore.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ public class CustomerController {
 
     // ✅ GET BY ID
     @GetMapping("/{id}")
-    public CustomerDTO getCustomer(@PathVariable Short id) {
+    public CustomerResponseDTO getCustomer(@PathVariable Short id) {
         return customerService.getCustomerById(id);
     }
 
@@ -83,9 +85,10 @@ public class CustomerController {
     // ================= PATCH =================
 
     // 🔧 PARTIAL UPDATE
+    // 🔧 PARTIAL UPDATE
     @PatchMapping("/{id}")
     public CustomerDTO patchCustomer(@PathVariable Short id,
-                                     @RequestBody Map<String, Object> updates) {
-        return customerService.patchCustomer(id, updates);
+                                     @RequestBody CustomerPatchDTO dto) {
+        return customerService.patchCustomer(id, dto);
     }
 }

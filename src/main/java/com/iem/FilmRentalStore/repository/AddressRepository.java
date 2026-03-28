@@ -1,6 +1,7 @@
 package com.iem.FilmRentalStore.repository;
 
 import com.iem.FilmRentalStore.entity.Address;
+import com.iem.FilmRentalStore.entity.City;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -38,4 +39,6 @@ public interface AddressRepository extends JpaRepository<Address, Short> {
     @Query("SELECT a FROM Address a JOIN FETCH a.city c JOIN FETCH c.country " +
             "WHERE LOWER(c.country.country) LIKE LOWER(CONCAT('%', :country, '%'))")
     List<Address> findByCountryWithFetch(String country);
+
+    Optional<Address> findByAddressAndCity(String address, City city);
 }
