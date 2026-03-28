@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.actor.ActorDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.entity.Actor;
 import com.iem.FilmRentalStore.mapper.ActorMapper;
 import com.iem.FilmRentalStore.repository.ActorRepository;
@@ -20,30 +21,30 @@ public class ActorServiceImpl implements ActorService {
     private final ActorMapper actorMapper;
 
     @Override
-    public ActorDTO createActor(ActorRequestDTO request) {
+    public ActorResponseDTO createActor(ActorRequestDTO request) {
         Actor actor = ActorMapper.toEntity(request);
         Actor saved = actorRepository.save(actor);
-        return actorMapper.toDTO(saved);
+        return actorMapper.toResponseDTO(saved);
     }
 
     @Override
-    public ActorDTO getActorById(Integer id) {
+    public ActorResponseDTO getActorById(Integer id) {
         Actor actor = actorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
 
-        return actorMapper.toDTO(actor);
+        return actorMapper.toResponseDTO(actor);
     }
 
     @Override
-    public List<ActorDTO> getAllActors() {
+    public List<ActorResponseDTO> getAllActors() {
         return actorRepository.findAll()
                 .stream()
-                .map(ActorMapper::toDTO)
+                .map(ActorMapper::toResponseDTO)
                 .toList();
     }
 
     @Override
-    public ActorDTO updateActor(Integer id, ActorRequestDTO request) {
+    public ActorResponseDTO updateActor(Integer id, ActorRequestDTO request) {
         Actor actor = actorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
 
@@ -51,6 +52,15 @@ public class ActorServiceImpl implements ActorService {
         actor.setLastName(request.getLastName());
 
         Actor updated = actorRepository.save(actor);
-        return actorMapper.toDTO(updated);
+        return actorMapper.toResponseDTO(updated);
+    }
+
+    @Override
+    public List<ActorResponseDTO> searchActors(String name) {
+        return actorRepository
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name)
+                .stream()
+                .map(ActorMapper::toResponseDTO)
+                .toList();
     }
 }

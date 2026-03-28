@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.actor.ActorDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,38 +17,34 @@ public class ActorController {
 
     private final ActorService actorService;
 
-    // 🔥 CREATE
+    // 🔥 CREATE ACTOR
     @PostMapping
-    public ActorDTO createActor(@Valid @RequestBody ActorRequestDTO request) {
+    public ActorResponseDTO createActor(@Valid @RequestBody ActorRequestDTO request) {
         return actorService.createActor(request);
     }
 
-    // 🔥 GET BY ID
+    // 🔥 GET ACTOR BY ID
     @GetMapping("/{id}")
-    public ActorDTO getActorById(@PathVariable Integer id) {
+    public ActorResponseDTO getActorById(@PathVariable Integer id) {
         return actorService.getActorById(id);
     }
 
-    // 🔥 GET ALL
+    // 🔥 GET ALL ACTORS
     @GetMapping
-    public List<ActorDTO> getAllActors() {
+    public List<ActorResponseDTO> getAllActors() {
         return actorService.getAllActors();
     }
 
-    // 🔥 UPDATE
-    @PutMapping("/{id}")
-    public ActorDTO updateActor(@PathVariable Integer id,
-                                @Valid @RequestBody ActorRequestDTO request) {
-        return actorService.updateActor(id, request);
+    // 🔥 SEARCH ACTOR (PARTIAL MATCH - DB LEVEL)
+    @GetMapping("/search")
+    public List<ActorResponseDTO> searchActors(@RequestParam String name) {
+        return actorService.searchActors(name);
     }
 
-    // 🔥 SEARCH
-    @GetMapping("/search")
-    public List<ActorDTO> searchActors(@RequestParam String name) {
-        return actorService.getAllActors()
-                .stream()
-                .filter(a -> a.getFirstName().toLowerCase().contains(name.toLowerCase())
-                        || a.getLastName().toLowerCase().contains(name.toLowerCase()))
-                .toList();
+    // 🔥 UPDATE ACTOR
+    @PutMapping("/{id}")
+    public ActorResponseDTO updateActor(@PathVariable Integer id,
+                                @Valid @RequestBody ActorRequestDTO request) {
+        return actorService.updateActor(id, request);
     }
 }
