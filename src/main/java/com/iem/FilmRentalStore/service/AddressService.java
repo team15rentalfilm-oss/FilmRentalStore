@@ -17,4 +17,14 @@ public interface AddressService {
     AddressDTO updateAddress(Short id, AddressRequestDTO request);
 
     Address createAndReturnEntity(AddressRequestDTO request);
+
+    List<AddressDTO> getByCountry(String country);
+
+    AddressDTO patchAddress(Short id, AddressRequestDTO request);
+
+    List<AddressDTO> searchByAddress(String address);
+
+    List<AddressDTO> searchByDistrict(String district);
+
+    List<AddressDTO> searchByCity(String city);
 }

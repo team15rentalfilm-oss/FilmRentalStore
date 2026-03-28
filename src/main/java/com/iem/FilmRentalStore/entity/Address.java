@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.geo.Point;
+
 
 @Data
 @NoArgsConstructor
@@ -46,4 +48,9 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
+
+    @Column(name = "location", columnDefinition = "POINT")
+    private Point location;
+
+
 }
