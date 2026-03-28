@@ -4,19 +4,32 @@ import com.iem.FilmRentalStore.dto.film.*;
 import com.iem.FilmRentalStore.entity.*;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class FilmMapper {
 
-    //RequestDTO → Entity
+    // CREATE
     public static Film toEntity(FilmRequestDTO dto,
                                 Language language,
                                 Set<Category> categories,
                                 Set<Actor> actors) {
 
         Film film = new Film();
+
+        updateEntity(film, dto, language, categories, actors);
+
+        return film;
+    }
+
+    // UPDATE (FULL)
+    public static void updateEntity(Film film,
+                                    FilmRequestDTO dto,
+                                    Language language,
+                                    Set<Category> categories,
+                                    Set<Actor> actors) {
 
         film.setTitle(dto.getTitle());
         film.setDescription(dto.getDescription());
@@ -34,18 +47,27 @@ public class FilmMapper {
 
         film.setCategories(categories);
         film.setActors(actors);
-
-        return film;
     }
 
-    //Entity → ResponseDTO
+    // PATCH
+    public static void patchEntity(Film film, FilmPatchDTO dto) {
+
+        if (dto.getTitle() != null) film.setTitle(dto.getTitle());
+        if (dto.getDescription() != null) film.setDescription(dto.getDescription());
+        if (dto.getReleaseYear() != null) film.setReleaseYear(dto.getReleaseYear());
+        if (dto.getRating() != null) film.setRating(dto.getRating());
+    }
+
+    // RESPONSE
     public static FilmResponseDTO toResponseDTO(Film film) {
+
         FilmResponseDTO dto = new FilmResponseDTO();
 
         dto.setFilmId(film.getFilmId());
         dto.setTitle(film.getTitle());
         dto.setDescription(film.getDescription());
         dto.setReleaseYear(film.getReleaseYear());
+        dto.setLastUpdate(film.getLastUpdate());
 
         dto.setLanguage(LanguageMapper.toDTO(film.getLanguage()));
 
@@ -57,32 +79,28 @@ public class FilmMapper {
         dto.setRating(film.getRating());
         dto.setSpecialFeatures(film.getSpecialFeatures());
 
-        // Categories
         dto.setCategories(
-                film.getCategories()
-                        .stream()
-                        .map(CategoryMapper::toDTO)
-                        .collect(Collectors.toList())
+                film.getCategories() == null ? List.of() :
+                        film.getCategories().stream()
+                                .map(CategoryMapper::toDTO)
+                                .toList()
         );
 
-        // Actors
         dto.setActors(
-                film.getActors()
-                        .stream()
-                        .map(ActorMapper::toDTO)
-                        .collect(Collectors.toList())
+                film.getActors() == null ? List.of() :
+                        film.getActors().stream()
+                                .map(ActorMapper::toDTO)
+                                .toList()
         );
 
         return dto;
     }
 
-    //Entity → Lightweight DTO
+    // LIGHTWEIGHT
     public static FilmDTO toDTO(Film film) {
         FilmDTO dto = new FilmDTO();
-
         dto.setTitle(film.getTitle());
         dto.setRating(film.getRating());
-
         return dto;
     }
 }

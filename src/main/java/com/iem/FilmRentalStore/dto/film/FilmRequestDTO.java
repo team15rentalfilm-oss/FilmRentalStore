@@ -26,11 +26,14 @@ public class FilmRequestDTO {
 
     private Integer releaseYear;
 
-    @NotNull(message = "Language is required")
-    private Integer languageId;
+    @NotBlank(message = "Language is required")
+    private String language;
 
     @NotEmpty(message = "At least one category is required")
-    private Set<Byte> categoryIds;
+    private Set<String> categories;
+
+    @NotEmpty(message = "At least one actor is required")
+    private Set<String> actors;
 
     @Min(1)
     private Integer rentalDuration;
@@ -46,10 +49,4 @@ public class FilmRequestDTO {
     private String rating;
 
     private Set<String> specialFeatures;
-
-    @Valid
-    private List<CategoryDTO> categories;
-
-    @Valid
-    private List<ActorDTO> actors;
 }

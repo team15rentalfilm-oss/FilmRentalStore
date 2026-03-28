@@ -18,7 +18,7 @@ public class Category {
     @Column(name = "category_id")
     private Byte id;
 
-    @Column(name = "name", nullable = false, length = 25)
+    @Column(name = "name", nullable = false, unique=true, length = 25)
     private String name;
 
     //Many-to-Many with Film (inverse side)

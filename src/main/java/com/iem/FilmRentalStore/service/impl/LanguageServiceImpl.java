@@ -80,4 +80,31 @@ public class LanguageServiceImpl implements LanguageService {
         return LanguageMapper.toResponseDTO(updated);
     }
 
+    private String normalize(String value) {
+        return value == null ? null : value.trim().toLowerCase();
+    }
+
+    private Language getOrCreateLanguage(String name) {
+
+        String normalized = normalize(name);
+
+        return languageRepository.findByNameIgnoreCase(normalized)
+                .orElseGet(() -> {
+                    try {
+                        Language lang = new Language();
+                        lang.setName(normalized);
+                        return languageRepository.save(lang);
+                    } catch (Exception e) {
+                        // 🔥 If duplicate inserted by another thread
+                        try {
+                            return languageRepository.findByNameIgnoreCase(normalized)
+                                    .orElseThrow(() -> e);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                });
+    }
+
+
 }

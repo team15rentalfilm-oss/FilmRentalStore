@@ -20,7 +20,7 @@ public class Language {
     @Column(name = "language_id", columnDefinition = "TINYINT UNSIGNED")
     private Integer languageId;
 
-    @Column(name = "name", columnDefinition = "CHAR(20)")
+    @Column(name = "name", columnDefinition = "CHAR(20)",nullable = false, unique = true)
     private String name;
 
 

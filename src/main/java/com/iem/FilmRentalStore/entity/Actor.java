@@ -8,7 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "actor")
+@Table(
+        name = "actor",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"first_name", "last_name"})
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

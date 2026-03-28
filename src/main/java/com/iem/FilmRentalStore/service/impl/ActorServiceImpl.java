@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +64,41 @@ public class ActorServiceImpl implements ActorService {
                 .stream()
                 .map(ActorMapper::toResponseDTO)
                 .toList();
+    }
+
+    private String normalize(String value) {
+        return value == null ? null : value.trim().toLowerCase();
+    }
+
+    private Set<Actor> getOrCreateActors(Set<String> names) {
+
+        return names.stream()
+                .map(fullName -> {
+
+                    String[] parts = fullName.trim().split(" ", 2);
+
+                    String firstName = normalize(parts[0]);
+                    String lastName = parts.length > 1 ? normalize(parts[1]) : "";
+
+                    return actorRepository
+                            .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
+                            .orElseGet(() -> {
+                                try {
+                                    Actor actor = new Actor();
+                                    actor.setFirstName(firstName);
+                                    actor.setLastName(lastName);
+                                    return actorRepository.save(actor);
+                                } catch (Exception e) {
+                                    try {
+                                        return actorRepository
+                                                .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
+                                                .orElseThrow(() -> e);
+                                    } catch (Exception ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            });
+                })
+                .collect(Collectors.toSet());
     }
 }

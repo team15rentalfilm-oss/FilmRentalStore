@@ -1,18 +1,23 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
 import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
+import com.iem.FilmRentalStore.entity.Actor;
 import com.iem.FilmRentalStore.entity.Category;
 import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.entity.Language;
 import com.iem.FilmRentalStore.exception.ResourceNotFoundException;
-import com.iem.FilmRentalStore.mapper.CategoryMapper;
-import com.iem.FilmRentalStore.mapper.LanguageMapper;
+import com.iem.FilmRentalStore.mapper.FilmMapper;
+import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.repository.CategoryRepository;
 import com.iem.FilmRentalStore.repository.FilmRepository;
 import com.iem.FilmRentalStore.repository.LanguageRepository;
 import com.iem.FilmRentalStore.service.FilmService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,153 +33,168 @@ public class FilmServiceImpl implements FilmService {
     private final FilmRepository filmRepository;
     private final CategoryRepository categoryRepository;
     private final LanguageRepository languageRepository;
+    private final ActorRepository actorRepository;
 
     // 🔥 CREATE
     @Override
     public FilmResponseDTO createFilm(FilmRequestDTO request) {
 
-        Film film = new Film();
+        Language language = getOrCreateLanguage(request.getLanguage());
+        Set<Category> categories = getOrCreateCategories(request.getCategories());
+        Set<Actor> actors = getOrCreateActors(request.getActors());
 
-        film.setTitle(request.getTitle());
-        film.setDescription(request.getDescription());
-        film.setReleaseYear(request.getReleaseYear());
-        film.setRentalDuration(request.getRentalDuration());
-        film.setRentalRate(request.getRentalRate());
-        film.setLength(request.getLength());
-        film.setReplacementCost(request.getReplacementCost());
-        film.setRating(request.getRating());
-        film.setSpecialFeatures(request.getSpecialFeatures());
+        Film film = FilmMapper.toEntity(request, language, categories, actors);
 
-        // 🔥 Language
-        Language language = languageRepository.findById(request.getLanguageId())
-                .orElseThrow(() -> new ResourceNotFoundException("Language", "id", request.getLanguageId()));
-        film.setLanguage(language);
-
-        // 🔥 Categories
-        Set<Category> categories = request.getCategoryIds().stream()
-                .map(id -> categoryRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id)))
-                .collect(Collectors.toSet());
-
-        film.setCategories(categories);
-
-        Film saved = filmRepository.save(film);
-
-        return mapToResponse(saved);
+        return FilmMapper.toResponseDTO(filmRepository.save(film));
     }
 
     // 🔥 GET BY ID
     @Override
     @Transactional(readOnly = true)
     public FilmResponseDTO getFilmById(Short id) {
-        Film film = filmRepository.findById(id)
+
+        Film film = filmRepository.findWithRelationsByFilmId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
 
-        return mapToResponse(film);
+        return FilmMapper.toResponseDTO(film);
     }
 
-    // 🔥 GET ALL
+    // 🔥 GET ALL (PAGINATION)
     @Override
     @Transactional(readOnly = true)
-    public List<FilmResponseDTO> getAllFilms() {
-        return filmRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+    public Page<FilmResponseDTO> getAllFilms(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return filmRepository.findAll(pageable)
+                .map(film -> {
+                    // 🔥 Force initialize lazy fields
+                    film.getSpecialFeatures().size();
+                    film.getCategories().size();
+                    film.getActors().size();
+
+                    return FilmMapper.toResponseDTO(film);
+                });
     }
 
     // 🔥 UPDATE (FULL)
     @Override
     public FilmResponseDTO updateFilm(Short id, FilmRequestDTO request) {
 
-        Film film = filmRepository.findById(id)
+        Film film = filmRepository.findWithRelationsByFilmId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
 
-        film.setTitle(request.getTitle());
-        film.setDescription(request.getDescription());
-        film.setReleaseYear(request.getReleaseYear());
-        film.setRentalDuration(request.getRentalDuration());
-        film.setRentalRate(request.getRentalRate());
-        film.setLength(request.getLength());
-        film.setReplacementCost(request.getReplacementCost());
-        film.setRating(request.getRating());
-        film.setSpecialFeatures(request.getSpecialFeatures());
+        Language language = getOrCreateLanguage(request.getLanguage());
+        Set<Category> categories = getOrCreateCategories(request.getCategories());
+        Set<Actor> actors = getOrCreateActors(request.getActors());
 
-        Language language = languageRepository.findById(request.getLanguageId())
-                .orElseThrow(() -> new ResourceNotFoundException("Language", "id", request.getLanguageId()));
+        FilmMapper.updateEntity(film, request, language, categories, actors);
 
-        film.setLanguage(language);
+        return FilmMapper.toResponseDTO(filmRepository.save(film));
+    }
+    // 🔥 PATCH
+    @Override
+    public FilmResponseDTO patchFilm(Short id, FilmPatchDTO request) {
 
-        Set<Category> categories = request.getCategoryIds().stream()
-                .map(categoryId -> categoryRepository.findById(categoryId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId)))
-                .collect(Collectors.toSet());
+        Film film = filmRepository.findWithRelationsByFilmId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
 
-        film.setCategories(categories);
+        FilmMapper.patchEntity(film, request);
 
         Film updated = filmRepository.save(film);
 
-        return mapToResponse(updated);
+        return FilmMapper.toResponseDTO(updated);
     }
 
-    // 🔥 PATCH (PARTIAL UPDATE)
-    @Override
-    public FilmResponseDTO patchFilm(Short id, FilmRequestDTO request) {
-
-        Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
-
-        if (request.getTitle() != null) film.setTitle(request.getTitle());
-        if (request.getDescription() != null) film.setDescription(request.getDescription());
-        if (request.getRating() != null) film.setRating(request.getRating());
-
-        Film updated = filmRepository.save(film);
-
-        return mapToResponse(updated);
-    }
-
-    // 🔥 DELETE
-    @Override
-    public void deleteFilm(Short id) {
-        Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Film", "id", id));
-
-        filmRepository.delete(film);
-    }
-
-    // 🔥 SEARCH
+    // 🔥 SEARCH (DB LEVEL)
     @Override
     @Transactional(readOnly = true)
-    public List<FilmResponseDTO> searchFilms(String title, Integer year) {
+    public Page<FilmResponseDTO> searchFilms(
+            String title,
+            Integer year,
+            String category,
+            String actor,
+            int page,
+            int size) {
 
-        return filmRepository.findAll()
-                .stream()
-                .filter(f -> title == null || f.getTitle().toLowerCase().contains(title.toLowerCase()))
-                .filter(f -> year == null || f.getReleaseYear().equals(year))
-                .map(this::mapToResponse)
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 🔥 Already uses EntityGraph → no lazy issue
+        Page<Film> pageData = filmRepository.findAll(pageable);
+
+        List<Film> filtered = pageData.getContent().stream()
+
+                // Title filter
+                .filter(f -> title == null ||
+                        f.getTitle().toLowerCase().contains(title.toLowerCase()))
+
+                // Year filter
+                .filter(f -> year == null ||
+                        year.equals(f.getReleaseYear()))
+
+                // Category filter
+                .filter(f -> category == null ||
+                        f.getCategories().stream()
+                                .anyMatch(c -> c.getName().equalsIgnoreCase(category)))
+
+                // Actor filter
+                .filter(f -> actor == null ||
+                        f.getActors().stream()
+                                .anyMatch(a ->
+                                        (a.getFirstName() + " " + a.getLastName())
+                                                .equalsIgnoreCase(actor)))
+
                 .toList();
+
+        List<FilmResponseDTO> content = filtered.stream()
+                .map(FilmMapper::toResponseDTO)
+                .toList();
+
+        return new org.springframework.data.domain.PageImpl<>(
+                content,
+                pageable,
+                filtered.size()
+        );
     }
 
-    // 🔥 MAPPER METHOD (IMPORTANT)
-    private FilmResponseDTO mapToResponse(Film film) {
+    // 🔥 HELPER METHODS (VERY IMPORTANT)
 
-        FilmResponseDTO dto = new FilmResponseDTO();
+    private Language getOrCreateLanguage(String name) {
+        return languageRepository.findByNameIgnoreCase(name)
+                .orElseGet(() -> {
+                    Language lang = new Language();
+                    lang.setName(name);
+                    return languageRepository.save(lang);
+                });
+    }
 
-        dto.setFilmId(film.getFilmId());
-        dto.setTitle(film.getTitle());
-        dto.setDescription(film.getDescription());
-        dto.setReleaseYear(film.getReleaseYear());
-        dto.setRating(film.getRating());
-        dto.setLastUpdate(film.getLastUpdate());
+    private Set<Category> getOrCreateCategories(Set<String> names) {
+        return names.stream()
+                .map(name -> categoryRepository.findByNameIgnoreCase(name)
+                        .orElseGet(() -> {
+                            Category cat = new Category();
+                            cat.setName(name);
+                            return categoryRepository.save(cat);
+                        }))
+                .collect(Collectors.toSet());
+    }
 
-        dto.setLanguage(LanguageMapper.toDTO(film.getLanguage()));
+    private Set<Actor> getOrCreateActors(Set<String> names) {
+        return names.stream()
+                .map(fullName -> {
+                    String[] parts = fullName.split(" ", 2);
+                    String firstName = parts[0];
+                    String lastName = parts.length > 1 ? parts[1] : "";
 
-        dto.setCategories(
-                film.getCategories().stream()
-                        .map(CategoryMapper::toDTO)
-                        .toList()
-        );
-
-        return dto;
+                    return actorRepository
+                            .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
+                            .orElseGet(() -> {
+                                Actor actor = new Actor();
+                                actor.setFirstName(firstName);
+                                actor.setLastName(lastName);
+                                return actorRepository.save(actor);
+                            });
+                })
+                .collect(Collectors.toSet());
     }
 }

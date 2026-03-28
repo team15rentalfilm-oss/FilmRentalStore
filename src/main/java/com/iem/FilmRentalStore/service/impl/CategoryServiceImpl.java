@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,5 +81,33 @@ public class CategoryServiceImpl implements CategoryService {
         Category updated = categoryRepository.save(category);
 
         return categoryMapper.toDTO(updated);
+    }
+
+    private String normalize(String value) {
+        return value == null ? null : value.trim().toLowerCase();
+    }
+    private Set<Category> getOrCreateCategories(Set<String> names) {
+
+        return names.stream()
+                .map(name -> {
+                    String normalized = normalize(name);
+
+                    return categoryRepository.findByNameIgnoreCase(normalized)
+                            .orElseGet(() -> {
+                                try {
+                                    Category cat = new Category();
+                                    cat.setName(normalized);
+                                    return categoryRepository.save(cat);
+                                } catch (Exception e) {
+                                    try {
+                                        return categoryRepository.findByNameIgnoreCase(normalized)
+                                                .orElseThrow(() -> e);
+                                    } catch (Exception ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            });
+                })
+                .collect(Collectors.toSet());
     }
 }
