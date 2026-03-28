@@ -49,8 +49,5 @@ public class Address {
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
-    @Column(name = "location", columnDefinition = "POINT")
-    private Point location;
-
 
 }

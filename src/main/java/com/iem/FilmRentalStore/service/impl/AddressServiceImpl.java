@@ -24,7 +24,7 @@ public class AddressServiceImpl implements AddressService {
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
 
-    // 🔥 COMMON METHOD (VERY IMPORTANT)
+    // 🔥 COMMON METHOD (Reusable Logic)
     private City getOrCreateCity(AddressRequestDTO request) {
 
         if (request.getCity() == null || request.getCity().getCountry() == null) {
@@ -63,13 +63,17 @@ public class AddressServiceImpl implements AddressService {
 
         Address saved = addressRepository.save(address);
 
-        return AddressMapper.toDTO(saved);
+        // 🔥 Re-fetch to avoid lazy issue
+        Address fullAddress = addressRepository.findByIdWithFetch(saved.getAddressId())
+                .orElseThrow(() -> new EntityNotFoundException("Address not found after save"));
+
+        return AddressMapper.toDTO(fullAddress);
     }
 
     // ✅ GET BY ID
     @Override
     public AddressDTO getAddressById(Short id) {
-        Address address = addressRepository.findByIdWithCityAndCountry(id)
+        Address address = addressRepository.findByIdWithFetch(id)
                 .orElseThrow(() -> new EntityNotFoundException("Address not found with id: " + id));
 
         return AddressMapper.toDTO(address);
@@ -78,7 +82,7 @@ public class AddressServiceImpl implements AddressService {
     // ✅ GET ALL
     @Override
     public List<AddressDTO> getAllAddresses() {
-        return addressRepository.findAll()
+        return addressRepository.findAllWithFetch()
                 .stream()
                 .map(AddressMapper::toDTO)
                 .toList();
@@ -102,29 +106,11 @@ public class AddressServiceImpl implements AddressService {
 
         Address updated = addressRepository.save(address);
 
-        return AddressMapper.toDTO(updated);
-    }
+        // 🔥 Re-fetch
+        Address fullAddress = addressRepository.findByIdWithFetch(updated.getAddressId())
+                .orElseThrow(() -> new EntityNotFoundException("Address not found after update"));
 
-    // 🔥 FIXED (IMPORTANT)
-    @Override
-    public Address createAndReturnEntity(AddressRequestDTO request) {
-
-        City city = getOrCreateCity(request);
-
-        Address address = AddressMapper.toEntity(request);
-        address.setCity(city);
-
-        return addressRepository.save(address);
-    }
-
-    // ✅ GET BY COUNTRY
-    @Override
-    public List<AddressDTO> getByCountry(String country) {
-        return addressRepository
-                .findByCity_Country_CountryContainingIgnoreCase(country)
-                .stream()
-                .map(AddressMapper::toDTO)
-                .toList();
+        return AddressMapper.toDTO(fullAddress);
     }
 
     // 🔥 PATCH (PARTIAL UPDATE)
@@ -149,7 +135,6 @@ public class AddressServiceImpl implements AddressService {
         if (request.getPhone() != null)
             address.setPhone(request.getPhone());
 
-        // 🔥 Only update city if provided
         if (request.getCity() != null && request.getCity().getCountry() != null) {
             City city = getOrCreateCity(request);
             address.setCity(city);
@@ -157,28 +142,56 @@ public class AddressServiceImpl implements AddressService {
 
         Address updated = addressRepository.save(address);
 
-        return AddressMapper.toDTO(updated);
+        // 🔥 Re-fetch
+        Address fullAddress = addressRepository.findByIdWithFetch(updated.getAddressId())
+                .orElseThrow(() -> new EntityNotFoundException("Address not found after patch"));
+
+        return AddressMapper.toDTO(fullAddress);
     }
 
+    // ✅ CREATE + RETURN ENTITY (for reuse in Customer/Store)
+    @Override
+    public Address createAndReturnEntity(AddressRequestDTO request) {
+
+        City city = getOrCreateCity(request);
+
+        Address address = AddressMapper.toEntity(request);
+        address.setCity(city);
+
+        return addressRepository.save(address);
+    }
+
+    // ✅ SEARCH BY ADDRESS
     @Override
     public List<AddressDTO> searchByAddress(String address) {
-        return addressRepository.findByAddressContainingIgnoreCase(address)
+        return addressRepository.findByAddressWithFetch(address)
                 .stream()
                 .map(AddressMapper::toDTO)
                 .toList();
     }
 
+    // ✅ SEARCH BY DISTRICT
     @Override
     public List<AddressDTO> searchByDistrict(String district) {
-        return addressRepository.findByDistrictContainingIgnoreCase(district)
+        return addressRepository.findByDistrictWithFetch(district)
                 .stream()
                 .map(AddressMapper::toDTO)
                 .toList();
     }
 
+    // ✅ SEARCH BY CITY
     @Override
     public List<AddressDTO> searchByCity(String city) {
-        return addressRepository.findByCity_CityContainingIgnoreCase(city)
+        return addressRepository.findByCityWithFetch(city)
+                .stream()
+                .map(AddressMapper::toDTO)
+                .toList();
+    }
+
+    // ✅ SEARCH BY COUNTRY
+    @Override
+    public List<AddressDTO> getByCountry(String country) {
+        return addressRepository.findByCountryWithFetch(country)
                 .stream()
                 .map(AddressMapper::toDTO)
                 .toList();
