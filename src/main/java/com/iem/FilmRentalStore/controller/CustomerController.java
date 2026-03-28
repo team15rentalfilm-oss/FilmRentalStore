@@ -1,63 +1,39 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.entity.Customer;
+import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
 import com.iem.FilmRentalStore.service.CustomerService;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
-@CrossOrigin("*")
+@RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerService service;
+    private final CustomerService customerService;
 
-    public CustomerController(CustomerService service) {
-        this.service = service;
-    }
-
-    @GetMapping
-    public List<Customer> getAll() {
-        return service.getAll();
+    @PostMapping
+    public CustomerDTO createCustomer(@Valid @RequestBody CustomerRequestDTO request) {
+        return customerService.createCustomer(request);
     }
 
     @GetMapping("/{id}")
-    public Customer getById(@PathVariable short id) {
-        return service.getById(id);
+    public CustomerDTO getCustomerById(@PathVariable Short id) {
+        return customerService.getCustomerById(id);
     }
 
-    @GetMapping("/search")
-    public List<Customer> search(
-            @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String lastName,
-            @RequestParam(required = false) String email,
-
-            @Parameter(schema = @Schema(type = "integer", format = "int32"))
-            @RequestParam(required = false) Byte storeId
-    ) {
-        return service.search(firstName, lastName, email, storeId);
-    }
-
-    @PostMapping
-    public Customer create(@RequestBody Customer c) {
-        return service.create(c);
+    @GetMapping
+    public List<CustomerDTO> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 
     @PutMapping("/{id}")
-    public Customer update(@PathVariable short id, @RequestBody Customer c) {
-        return service.update(id, c);
-    }
-
-    @PatchMapping("/{id}")
-    public Customer patch(@PathVariable short id, @RequestBody Customer c) {
-        return service.patch(id, c);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable short id) {
-        service.delete(id);
+    public CustomerDTO updateCustomer(@PathVariable Short id,
+                                      @Valid @RequestBody CustomerRequestDTO request) {
+        return customerService.updateCustomer(id, request);
     }
 }

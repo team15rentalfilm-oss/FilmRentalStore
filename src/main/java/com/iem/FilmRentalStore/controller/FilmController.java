@@ -1,61 +1,65 @@
 package com.iem.FilmRentalStore.controller;
 
+import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
+import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
 import com.iem.FilmRentalStore.service.FilmService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/films")
+@RequiredArgsConstructor
 public class FilmController {
 
     private final FilmService filmService;
 
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
-
+    // 🔥 CREATE
     @PostMapping
-    public ResponseEntity<FilmDTO> createFilm(@Valid @RequestBody FilmDTO filmDTO) {
-        FilmDTO created = filmService.createFilm(filmDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public FilmResponseDTO createFilm(@Valid @RequestBody FilmRequestDTO request) {
+        return filmService.createFilm(request);
     }
 
+    // 🔥 GET BY ID
+    @GetMapping("/{id}")
+    public FilmResponseDTO getFilmById(@PathVariable Short id) {
+        return filmService.getFilmById(id);
+    }
+
+    // 🔥 GET ALL
     @GetMapping
-    public ResponseEntity<List<FilmDTO>> getAllFilms() {
-        return ResponseEntity.ok(filmService.getAllFilms());
+    public List<FilmResponseDTO> getAllFilms() {
+        return filmService.getAllFilms();
     }
 
+    // 🔥 UPDATE (FULL)
+    @PutMapping("/{id}")
+    public FilmResponseDTO updateFilm(@PathVariable Short id,
+                                      @Valid @RequestBody FilmRequestDTO request) {
+        return filmService.updateFilm(id, request);
+    }
+
+    // 🔥 PATCH (PARTIAL)
+    @PatchMapping("/{id}")
+    public FilmResponseDTO patchFilm(@PathVariable Short id,
+                                     @RequestBody FilmRequestDTO request) {
+        return filmService.patchFilm(id, request);
+    }
+
+    // 🔥 DELETE
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable Short id) {
+        filmService.deleteFilm(id);
+    }
+
+    // 🔥 SEARCH
     @GetMapping("/search")
-    public ResponseEntity<List<FilmDTO>> searchFilms(
+    public List<FilmResponseDTO> searchFilms(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer year) {
-        return ResponseEntity.ok(filmService.searchFilms(title, year));
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<FilmDTO> getFilm(@PathVariable Short id) {
-        return ResponseEntity.ok(filmService.getFilmById(id));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<FilmDTO> updateFilm(@PathVariable Short id,
-                                              @Valid @RequestBody FilmDTO filmDTO) {
-        return ResponseEntity.ok(filmService.updateFilm(id, filmDTO));
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<FilmDTO> patchFilm(@PathVariable Short id,
-                                             @RequestBody FilmDTO filmDTO) {
-        return ResponseEntity.ok(filmService.patchFilm(id, filmDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFilm(@PathVariable Short id) {
-        filmService.deleteFilm(id);
-        return ResponseEntity.noContent().build();
+        return filmService.searchFilms(title, year);
     }
 }

@@ -1,60 +1,53 @@
 package com.iem.FilmRentalStore.controller;
 
+import com.iem.FilmRentalStore.dto.actor.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
 import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/actors")
+@RequiredArgsConstructor
 public class ActorController {
 
-    private final ActorService service;
+    private final ActorService actorService;
 
-    public ActorController(ActorService service) {
-        this.service = service;
-    }
-
-    // GET ALL
-    @GetMapping
-    public List<ActorDTO> getAll() {
-        return service.getAll();
-    }
-
-    // GET BY ID
-    @GetMapping("/{id}")
-    public ActorDTO getById(@PathVariable int id) {
-        return service.getById(id);
-    }
-
-    // GET BY FIELD
-    @GetMapping("/search")
-    public List<ActorDTO> getByName(@RequestParam String name) {
-        return service.getByFirstName(name);
-    }
-
-    // POST
+    // 🔥 CREATE
     @PostMapping
-    public ActorDTO create(@Valid @RequestBody ActorDTO dto) {
-        return service.create(dto);
+    public ActorDTO createActor(@Valid @RequestBody ActorRequestDTO request) {
+        return actorService.createActor(request);
     }
 
-    // PUT
+    // 🔥 GET BY ID
+    @GetMapping("/{id}")
+    public ActorDTO getActorById(@PathVariable Integer id) {
+        return actorService.getActorById(id);
+    }
+
+    // 🔥 GET ALL
+    @GetMapping
+    public List<ActorDTO> getAllActors() {
+        return actorService.getAllActors();
+    }
+
+    // 🔥 UPDATE
     @PutMapping("/{id}")
-    public ActorDTO update(@PathVariable int id, @Valid @RequestBody ActorDTO dto) {
-        return service.update(id, dto);
+    public ActorDTO updateActor(@PathVariable Integer id,
+                                @Valid @RequestBody ActorRequestDTO request) {
+        return actorService.updateActor(id, request);
     }
 
-    // PATCH
-    @PatchMapping("/{id}")
-    public ActorDTO patch(@PathVariable int id, @RequestBody ActorDTO dto) {
-        return service.patch(id, dto);
-    }
-
-    // DELETE
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
-        service.delete(id);
+    // 🔥 SEARCH
+    @GetMapping("/search")
+    public List<ActorDTO> searchActors(@RequestParam String name) {
+        return actorService.getAllActors()
+                .stream()
+                .filter(a -> a.getFirstName().toLowerCase().contains(name.toLowerCase())
+                        || a.getLastName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
     }
 }

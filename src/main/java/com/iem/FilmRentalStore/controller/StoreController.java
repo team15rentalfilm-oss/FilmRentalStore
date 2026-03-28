@@ -1,50 +1,39 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.StoreDTO;
+import com.iem.FilmRentalStore.dto.store.StoreDTO;
+import com.iem.FilmRentalStore.dto.store.StoreRequestDTO;
 import com.iem.FilmRentalStore.service.StoreService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stores")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequiredArgsConstructor
 public class StoreController {
 
     private final StoreService storeService;
 
-    public StoreController(StoreService storeService) {
-        this.storeService = storeService;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<StoreDTO>> getAllStores() {
-        return ResponseEntity.ok(storeService.getAllStores());
+    @PostMapping
+    public StoreDTO createStore(@Valid @RequestBody StoreRequestDTO request) {
+        return storeService.createStore(request);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StoreDTO> getStoreById(@PathVariable Integer id) {
-        return ResponseEntity.ok(storeService.getStoreById(id.byteValue()));
+    public StoreDTO getStoreById(@PathVariable Short id) {
+        return storeService.getStoreById(id);
     }
 
-    @PostMapping
-    public ResponseEntity<StoreDTO> createStore(@Valid @RequestBody StoreDTO storeDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(storeService.createStore(storeDTO));
+    @GetMapping
+    public List<StoreDTO> getAllStores() {
+        return storeService.getAllStores();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StoreDTO> updateStore(@PathVariable Integer id,
-                                                @Valid @RequestBody StoreDTO storeDTO) {
-        return ResponseEntity.ok(storeService.updateStore(id.byteValue(), storeDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStore(@PathVariable Integer id) {
-        storeService.deleteStore(id.byteValue());
-        return ResponseEntity.noContent().build();
+    public StoreDTO updateStore(@PathVariable Short id,
+                                @Valid @RequestBody StoreRequestDTO request) {
+        return storeService.updateStore(id, request);
     }
 }

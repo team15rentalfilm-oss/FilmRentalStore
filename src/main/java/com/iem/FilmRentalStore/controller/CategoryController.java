@@ -1,52 +1,39 @@
 package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.category.CategoryDTO;
+import com.iem.FilmRentalStore.dto.category.CategoryRequestDTO;
 import com.iem.FilmRentalStore.service.CategoryService;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        return ResponseEntity.ok(categoryService.createCategory(categoryDTO));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public CategoryDTO createCategory(@Valid @RequestBody CategoryRequestDTO request) {
+        return categoryService.createCategory(request);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategory(
-            @Parameter(schema = @Schema(type = "integer", format = "int32"))
-            @PathVariable Byte id) {
-        return ResponseEntity.ok(categoryService.getCategoryById(id));
+    public CategoryDTO getCategoryById(@PathVariable Byte id) {
+        return categoryService.getCategoryById(id);
+    }
+
+    @GetMapping
+    public List<CategoryDTO> getAllCategories() {
+        return categoryService.getAllCategories();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(
-            @Parameter(schema = @Schema(type = "integer", format = "int32"))
-            @PathVariable Byte id,
-            @RequestBody CategoryDTO categoryDTO) {
-        return ResponseEntity.ok(categoryService.updateCategory(id, categoryDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(
-            @Parameter(schema = @Schema(type = "integer", format = "int32"))
-            @PathVariable Byte id) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+    public CategoryDTO updateCategory(@PathVariable Byte id,
+                                      @Valid @RequestBody CategoryRequestDTO request) {
+        return categoryService.updateCategory(id, request);
     }
 }
