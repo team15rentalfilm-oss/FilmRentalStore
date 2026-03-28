@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.language.LanguageDTO;
 import com.iem.FilmRentalStore.dto.language.LanguageRequestDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageResponseDTO;
 import com.iem.FilmRentalStore.entity.Language;
 import com.iem.FilmRentalStore.mapper.LanguageMapper;
 import com.iem.FilmRentalStore.repository.LanguageRepository;
@@ -20,37 +21,63 @@ public class LanguageServiceImpl implements LanguageService {
     private final LanguageMapper languageMapper;
 
     @Override
-    public LanguageDTO createLanguage(LanguageRequestDTO request) {
-        Language language = languageMapper.toEntity(request);
+    public LanguageResponseDTO createLanguage(LanguageRequestDTO request) {
+
+        // 🔒 Check duplicate
+        languageRepository.findByNameIgnoreCase(request.getName())
+                .ifPresent(l -> {
+                    throw new RuntimeException("Language already exists with name: " + request.getName());
+                });
+
+        Language language = LanguageMapper.toEntity(request);
         Language saved = languageRepository.save(language);
-        return languageMapper.toDTO(saved);
+
+        return LanguageMapper.toResponseDTO(saved);
     }
 
     @Override
-    public LanguageDTO getLanguageById(Integer id) {
+    public LanguageResponseDTO getLanguageById(Integer id) {
         Language language = languageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Language not found with id: " + id));
 
-        return languageMapper.toDTO(language);
+        return languageMapper.toResponseDTO(language);
     }
 
     @Override
-    public List<LanguageDTO> getAllLanguages() {
+    public LanguageResponseDTO getLanguageByName(String name) {
+
+        Language language = languageRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new EntityNotFoundException("Language not found with name: " + name));
+
+        return LanguageMapper.toResponseDTO(language);
+    }
+
+    @Override
+    public List<LanguageResponseDTO> getAllLanguages() {
         return languageRepository.findAll()
                 .stream()
-                .map(LanguageMapper::toDTO)
+                .map(LanguageMapper::toResponseDTO)
                 .toList();
     }
 
     @Override
-    public LanguageDTO updateLanguage(Integer id, LanguageRequestDTO request) {
+    public LanguageResponseDTO updateLanguage(Integer id, LanguageRequestDTO request) {
+
         Language language = languageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Language not found with id: " + id));
+
+        // 🔒 Check if another language already has this name
+        languageRepository.findByNameIgnoreCase(request.getName())
+                .ifPresent(existing -> {
+                    if (!existing.getLanguageId().equals(id)) {
+                        throw new RuntimeException("Language already exists with name: " + request.getName());
+                    }
+                });
 
         language.setName(request.getName());
 
         Language updated = languageRepository.save(language);
-        return languageMapper.toDTO(updated);
+        return LanguageMapper.toResponseDTO(updated);
     }
 
 }

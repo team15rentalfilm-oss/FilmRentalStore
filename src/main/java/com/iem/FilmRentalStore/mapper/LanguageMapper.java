@@ -21,6 +21,7 @@ public class LanguageMapper {
         LanguageResponseDTO dto = new LanguageResponseDTO();
         dto.setLanguageId(language.getLanguageId());
         dto.setName(language.getName());
+        dto.setLastUpdate(language.getLastUpdate());
         return dto;
     }
 
