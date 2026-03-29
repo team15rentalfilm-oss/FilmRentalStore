@@ -2,8 +2,9 @@ package com.iem.FilmRentalStore.service;
 
 import com.iem.FilmRentalStore.dto.inventory.InventoryDTO;
 import com.iem.FilmRentalStore.dto.inventory.InventoryRequestDTO;
-
-import java.util.List;
+import com.iem.FilmRentalStore.dto.inventory.InventoryResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface InventoryService {
 
@@ -11,13 +12,15 @@ public interface InventoryService {
 
     InventoryDTO getInventoryById(Integer id);
 
-    List<InventoryDTO> getAllInventory();
+    InventoryResponseDTO getInventoryDetails(Integer id);
+
+    Page<InventoryDTO> getAllInventory(Short filmId, Short storeId, Pageable pageable);
 
     InventoryDTO updateInventory(Integer id, InventoryRequestDTO request);
 
-    List<InventoryDTO> getByFilmId(Short filmId);
-    List<InventoryDTO> getByStoreId(Short storeId);
+    Page<InventoryDTO> getByFilmId(Short filmId, Pageable pageable);
+
+    Page<InventoryDTO> getByStoreId(Short storeId, Pageable pageable);
 
     InventoryDTO patchInventory(Integer id, InventoryRequestDTO request);
-
 }

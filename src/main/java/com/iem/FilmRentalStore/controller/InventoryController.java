@@ -2,12 +2,15 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.inventory.InventoryDTO;
 import com.iem.FilmRentalStore.dto.inventory.InventoryRequestDTO;
+import com.iem.FilmRentalStore.dto.inventory.InventoryResponseDTO;
 import com.iem.FilmRentalStore.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
@@ -16,41 +19,82 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
+    // 🔥 Helper → Ignore sorting globally
+    private Pageable sanitizePageable(Pageable pageable) {
+        return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+    }
+
+    // ✅ CREATE
     @PostMapping
-    public InventoryDTO createInventory(@Valid @RequestBody InventoryRequestDTO request) {
-        return inventoryService.createInventory(request);
+    public ResponseEntity<InventoryDTO> createInventory(
+            @Valid @RequestBody InventoryRequestDTO request) {
+        return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
+    // ✅ GET BY ID (LIGHTWEIGHT)
     @GetMapping("/{id}")
-    public InventoryDTO getInventoryById(@PathVariable Integer id) {
-        return inventoryService.getInventoryById(id);
+    public ResponseEntity<InventoryDTO> getInventoryById(@PathVariable Integer id) {
+        return ResponseEntity.ok(inventoryService.getInventoryById(id));
     }
 
+    // ✅ GET BY ID (DETAILED)
+    @GetMapping("/{id}/details")
+    public ResponseEntity<InventoryResponseDTO> getInventoryDetails(@PathVariable Integer id) {
+        return ResponseEntity.ok(inventoryService.getInventoryDetails(id));
+    }
+
+    // ✅ GET ALL (PAGINATION + FILTER)
     @GetMapping
-    public List<InventoryDTO> getAllInventory(
+    public ResponseEntity<Page<InventoryDTO>> getAllInventory(
             @RequestParam(required = false) Short filmId,
-            @RequestParam(required = false) Short storeId) {
+            @RequestParam(required = false) Short storeId,
+            Pageable pageable
+    ) {
+        pageable = sanitizePageable(pageable);
 
-        if (filmId != null) {
-            return inventoryService.getByFilmId(filmId);
-        }
-
-        if (storeId != null) {
-            return inventoryService.getByStoreId(storeId);
-        }
-
-        return inventoryService.getAllInventory();
+        return ResponseEntity.ok(
+                inventoryService.getAllInventory(filmId, storeId, pageable)
+        );
     }
 
+    // ✅ UPDATE (FULL)
     @PutMapping("/{id}")
-    public InventoryDTO updateInventory(@PathVariable Integer id,
-                                        @Valid @RequestBody InventoryRequestDTO request) {
-        return inventoryService.updateInventory(id, request);
+    public ResponseEntity<InventoryDTO> updateInventory(
+            @PathVariable Integer id,
+            @Valid @RequestBody InventoryRequestDTO request) {
+        return ResponseEntity.ok(inventoryService.updateInventory(id, request));
     }
 
+    // ✅ PATCH (PARTIAL)
     @PatchMapping("/{id}")
-    public InventoryDTO patchInventory(@PathVariable Integer id,
-                                       @RequestBody InventoryRequestDTO request) {
-        return inventoryService.patchInventory(id, request);
+    public ResponseEntity<InventoryDTO> patchInventory(
+            @PathVariable Integer id,
+            @RequestBody InventoryRequestDTO request) {
+        return ResponseEntity.ok(inventoryService.patchInventory(id, request));
+    }
+
+    // ✅ BULK FETCH BY FILM
+    @GetMapping("/film/{filmId}")
+    public ResponseEntity<Page<InventoryDTO>> getByFilmId(
+            @PathVariable Short filmId,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable);
+
+        return ResponseEntity.ok(inventoryService.getByFilmId(filmId, pageable));
+    }
+
+    // ✅ BULK FETCH BY STORE
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<Page<InventoryDTO>> getByStoreId(
+            @PathVariable Short storeId,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable);
+
+        return ResponseEntity.ok(inventoryService.getByStoreId(storeId, pageable));
     }
 }
