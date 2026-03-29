@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class InventoryDTO {
 
+    private Integer inventoryId;
     private String filmTitle;
-    private String storeName;
+    private Integer storeId;
 }

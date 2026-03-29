@@ -27,7 +27,18 @@ public class InventoryController {
     }
 
     @GetMapping
-    public List<InventoryDTO> getAllInventory() {
+    public List<InventoryDTO> getAllInventory(
+            @RequestParam(required = false) Short filmId,
+            @RequestParam(required = false) Short storeId) {
+
+        if (filmId != null) {
+            return inventoryService.getByFilmId(filmId);
+        }
+
+        if (storeId != null) {
+            return inventoryService.getByStoreId(storeId);
+        }
+
         return inventoryService.getAllInventory();
     }
 
@@ -35,5 +46,11 @@ public class InventoryController {
     public InventoryDTO updateInventory(@PathVariable Integer id,
                                         @Valid @RequestBody InventoryRequestDTO request) {
         return inventoryService.updateInventory(id, request);
+    }
+
+    @PatchMapping("/{id}")
+    public InventoryDTO patchInventory(@PathVariable Integer id,
+                                       @RequestBody InventoryRequestDTO request) {
+        return inventoryService.patchInventory(id, request);
     }
 }

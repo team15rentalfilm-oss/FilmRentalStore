@@ -20,8 +20,9 @@ public class InventoryMapper {
     // 🔹 Entity → Lightweight DTO
     public static InventoryDTO toDTO(Inventory inventory) {
         InventoryDTO dto = new InventoryDTO();
+        dto.setInventoryId(inventory.getInventoryId());
         dto.setFilmTitle(inventory.getFilm().getTitle());
-        dto.setStoreName("Store " + inventory.getStore().getStoreId());
+        dto.setStoreId(inventory.getStore().getStoreId());
         return dto;
     }
 

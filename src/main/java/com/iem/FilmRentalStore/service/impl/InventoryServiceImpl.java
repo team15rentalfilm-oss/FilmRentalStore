@@ -46,7 +46,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryDTO getInventoryById(Integer id) {
-        Inventory inventory = inventoryRepository.findById(id)
+        Inventory inventory = inventoryRepository.findByIdWithFilmAndStore(id)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory not found with id: " + id));
 
         return InventoryMapper.toDTO(inventory);
@@ -54,7 +54,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public List<InventoryDTO> getAllInventory() {
-        return inventoryRepository.findAll()
+        return inventoryRepository.findAllWithFilmAndStore()
                 .stream()
                 .map(InventoryMapper::toDTO)
                 .toList();
@@ -81,4 +81,46 @@ public class InventoryServiceImpl implements InventoryService {
 
         return InventoryMapper.toDTO(updated);
     }
+
+    @Override
+    public List<InventoryDTO> getByFilmId(Short filmId) {
+        return inventoryRepository.findByFilm_FilmId(filmId)
+                .stream()
+                .map(InventoryMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<InventoryDTO> getByStoreId(Short storeId) {
+        return inventoryRepository.findByStore_StoreId(storeId)
+                .stream()
+                .map(InventoryMapper::toDTO)
+                .toList();
+    }
+
+
+    @Override
+    public InventoryDTO patchInventory(Integer id, InventoryRequestDTO request) {
+
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Inventory not found"));
+
+        if (request.getFilmId() != null) {
+            Film film = filmRepository.findById(request.getFilmId())
+                    .orElseThrow(() -> new EntityNotFoundException("Film not found"));
+            inventory.setFilm(film);
+        }
+
+        if (request.getStoreId() != null) {
+            Store store = storeRepository.findById(request.getStoreId())
+                    .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+            inventory.setStore(store);
+        }
+
+        Inventory updated = inventoryRepository.save(inventory);
+
+        return InventoryMapper.toDTO(updated);
+    }
+
+
 }

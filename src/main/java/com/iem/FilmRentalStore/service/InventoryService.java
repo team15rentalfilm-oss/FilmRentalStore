@@ -14,4 +14,10 @@ public interface InventoryService {
     List<InventoryDTO> getAllInventory();
 
     InventoryDTO updateInventory(Integer id, InventoryRequestDTO request);
+
+    List<InventoryDTO> getByFilmId(Short filmId);
+    List<InventoryDTO> getByStoreId(Short storeId);
+
+    InventoryDTO patchInventory(Integer id, InventoryRequestDTO request);
+
 }
