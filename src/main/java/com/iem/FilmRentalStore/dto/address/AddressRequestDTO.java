@@ -32,4 +32,5 @@ public class AddressRequestDTO {
 
     @Valid
     private CityRequestDTO city;
+
 }

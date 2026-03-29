@@ -3,6 +3,7 @@ package com.iem.FilmRentalStore.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 
 @Configuration
@@ -14,8 +15,10 @@ public class PageableConfig {
 
             pageableResolver.setMaxPageSize(50);
 
-            // ✅ Default pageable WITHOUT sort
-            pageableResolver.setFallbackPageable(PageRequest.of(0, 10));
+            // ✅ FIX: add safe default sort
+            pageableResolver.setFallbackPageable(
+                    PageRequest.of(0, 10, Sort.by("staffId").ascending())
+            );
         };
     }
 }
