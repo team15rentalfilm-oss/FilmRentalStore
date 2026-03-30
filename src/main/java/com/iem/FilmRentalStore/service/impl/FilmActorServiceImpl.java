@@ -2,11 +2,11 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
-import com.iem.FilmRentalStore.entity.Actor;
 import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.repository.FilmRepository;
 import com.iem.FilmRentalStore.service.FilmActorService;
+import com.iem.FilmRentalStore.mapper.ActorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class FilmActorServiceImpl implements FilmActorService {
     public List<ActorResponseDTO> getActorsByFilm(String title) {
         String query = title == null ? "" : title.trim();
         return actorRepository.findDistinctByFilmTitleContaining(query).stream()
-                .map(this::toActorResponse)
+                .map(ActorMapper::toResponseDTO)
                 .toList();
     }
 
@@ -41,14 +41,6 @@ public class FilmActorServiceImpl implements FilmActorService {
         FilmResponseDTO response = new FilmResponseDTO();
         response.setFilmId(film.getFilmId());
         response.setTitle(film.getTitle());
-        return response;
-    }
-
-    private ActorResponseDTO toActorResponse(Actor actor) {
-        ActorResponseDTO response = new ActorResponseDTO();
-        response.setActorId(actor.getActorId());
-        response.setFirstName(actor.getFirstName());
-        response.setLastName(actor.getLastName());
         return response;
     }
 }
