@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.store.StoreDTO;
 import com.iem.FilmRentalStore.dto.store.StoreRequestDTO;
+import com.iem.FilmRentalStore.dto.store.StoreResponseDTO;
 import com.iem.FilmRentalStore.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class StoreController {
     private final StoreService storeService;
 
     @PostMapping
-    public StoreDTO createStore(@Valid @RequestBody StoreRequestDTO request) {
+    public StoreResponseDTO createStore(@Valid @RequestBody StoreRequestDTO request) {
         return storeService.createStore(request);
     }
 

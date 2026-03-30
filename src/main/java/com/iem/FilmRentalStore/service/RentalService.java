@@ -1,17 +1,27 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.rental.RentalDTO;
-import com.iem.FilmRentalStore.dto.rental.RentalRequestDTO;
+import com.iem.FilmRentalStore.dto.rental.*;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 
 public interface RentalService {
 
-    RentalDTO createRental(RentalRequestDTO request);
+    RentalResponseDTO createRental(RentalRequestDTO request);
 
-    RentalDTO returnRental(Integer rentalId);
+    RentalResponseDTO returnRental(Integer rentalId);
 
-    RentalDTO getRentalById(Integer id);
+    RentalResponseDTO getRentalById(Integer id);
 
-    List<RentalDTO> getAllRentals();
+    Page<RentalResponseDTO> getAllRentals(Pageable pageable);
+
+    List<RentalResponseDTO> getByCustomerName(String name);
+
+    RentalResponseDTO patchRental(Integer id, RentalPatchDTO request);
+
+    Page<RentalResponseDTO> getByCustomerId(Short customerId, Pageable pageable);
+
+    Page<RentalResponseDTO> getByInventoryId(Integer inventoryId, Pageable pageable);
+
+    Page<RentalResponseDTO> getByStaffId(Byte staffId, Pageable pageable);
 }

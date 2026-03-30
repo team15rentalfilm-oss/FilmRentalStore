@@ -1,10 +1,14 @@
 package com.iem.FilmRentalStore.controller;
 
 import com.iem.FilmRentalStore.dto.payment.PaymentDTO;
+import com.iem.FilmRentalStore.dto.payment.PaymentPatchDTO;
 import com.iem.FilmRentalStore.dto.payment.PaymentRequestDTO;
+import com.iem.FilmRentalStore.dto.payment.PaymentResponseDTO;
 import com.iem.FilmRentalStore.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,21 +20,64 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    // 🔥 CREATE PAYMENT
     @PostMapping
-    public PaymentDTO createPayment(@Valid @RequestBody PaymentRequestDTO request) {
+    public PaymentResponseDTO createPayment(@RequestBody PaymentRequestDTO request) {
         return paymentService.createPayment(request);
     }
 
-    // 🔥 GET BY ID
     @GetMapping("/{id}")
-    public PaymentDTO getPaymentById(@PathVariable Short id) {
+    public PaymentResponseDTO getPaymentById(@PathVariable Integer id) {
         return paymentService.getPaymentById(id);
     }
 
-    // 🔥 GET ALL
     @GetMapping
-    public List<PaymentDTO> getAllPayments() {
-        return paymentService.getAllPayments();
+    public Page<PaymentResponseDTO> getAllPayments(Pageable pageable) {
+        return paymentService.getAllPayments(pageable);
+    }
+
+    @PatchMapping("/{id}")
+    public PaymentResponseDTO patchPayment(
+            @PathVariable Integer id,
+            @RequestBody PaymentPatchDTO request) {
+        return paymentService.patchPayment(id, request);
+    }
+
+    // 🔥 SEARCH BY CUSTOMER
+    @GetMapping("/search/customer")
+    public List<PaymentResponseDTO> getByCustomer(@RequestParam String name) {
+        return paymentService.getPaymentsByCustomerName(name);
+    }
+
+    // 🔥 GET BY RENTAL
+    @GetMapping("/rental/{rentalId}")
+    public List<PaymentResponseDTO> getByRental(@PathVariable Integer rentalId) {
+        return paymentService.getPaymentsByRentalId(rentalId);
+    }
+
+    // 🔥 GET BY CUSTOMER ID
+    @GetMapping("/customer/{customerId}")
+    public Page<PaymentResponseDTO> getByCustomerId(
+            @PathVariable Short customerId,
+            Pageable pageable) {
+
+        return paymentService.getByCustomerId(customerId, pageable);
+    }
+
+    // 🔥 GET BY STAFF ID
+    @GetMapping("/staff/{staffId}")
+    public Page<PaymentResponseDTO> getByStaffId(
+            @PathVariable Byte staffId,
+            Pageable pageable) {
+
+        return paymentService.getByStaffId(staffId, pageable);
+    }
+
+    // 🔥 SEARCH STAFF NAME
+    @GetMapping("/search/staff")
+    public Page<PaymentResponseDTO> searchByStaff(
+            @RequestParam String name,
+            Pageable pageable) {
+
+        return paymentService.searchByStaffName(name, pageable);
     }
 }

@@ -2,6 +2,9 @@ package com.iem.FilmRentalStore.repository;
 
 import com.iem.FilmRentalStore.entity.Inventory;
 import com.iem.FilmRentalStore.entity.Rental;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,15 +14,43 @@ import java.util.List;
 public interface RentalRepository extends JpaRepository<Rental, Integer> {
 
     // ID-based (internal use)
-    List<Rental> findByCustomer_CustomerId(Short customerId);
+    // ✅ PAGINATED VERSIONS
 
-    List<Rental> findByInventory_InventoryId(Integer inventoryId);
+    @EntityGraph(attributePaths = {
+            "inventory",
+            "inventory.film",
+            "customer",
+            "staff"
+    })
+    Page<Rental> findByCustomer_CustomerId(Short customerId, Pageable pageable);
 
-    List<Rental> findByStaff_StaffId(Byte staffId);
+    @EntityGraph(attributePaths = {
+            "inventory",
+            "inventory.film",
+            "customer",
+            "staff"
+    })
+    Page<Rental> findByInventory_InventoryId(Integer inventoryId, Pageable pageable);
 
-    // Name-based (user search)
+    @EntityGraph(attributePaths = {
+            "inventory",
+            "inventory.film",
+            "customer",
+            "staff"
+    })
+    Page<Rental> findByStaff_StaffId(Byte staffId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "inventory",
+            "inventory.film",
+            "customer",
+            "staff"
+    })
+    Page<Rental> findAll(Pageable pageable);
+
+    boolean existsByInventoryAndReturnDateIsNull(Inventory inventory);
+
     List<Rental> findByCustomer_FirstNameContainingIgnoreCaseOrCustomer_LastNameContainingIgnoreCase(
             String firstName, String lastName);
 
-    boolean existsByInventoryAndReturnDateIsNull(Inventory inventory);
 }

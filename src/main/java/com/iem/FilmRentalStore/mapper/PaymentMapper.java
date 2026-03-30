@@ -32,14 +32,28 @@ public class PaymentMapper {
     }
 
     public static PaymentResponseDTO toResponseDTO(Payment payment) {
+
         PaymentResponseDTO dto = new PaymentResponseDTO();
 
         dto.setPaymentId(payment.getPaymentId());
         dto.setAmount(payment.getAmount());
         dto.setPaymentDate(payment.getPaymentDate());
+
+        // 🔥 IDs
         dto.setRentalId(payment.getRental().getRentalId());
         dto.setStaffId(payment.getStaff().getStaffId());
         dto.setCustomerId(payment.getCustomer().getCustomerId());
+
+        // 🔥 Names (NEW)
+        dto.setStaffName(
+                payment.getStaff().getFirstName() + " " +
+                        payment.getStaff().getLastName()
+        );
+
+        dto.setCustomerName(
+                payment.getCustomer().getFirstName() + " " +
+                        payment.getCustomer().getLastName()
+        );
 
         return dto;
     }

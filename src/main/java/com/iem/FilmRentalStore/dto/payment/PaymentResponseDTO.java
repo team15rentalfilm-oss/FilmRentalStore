@@ -14,8 +14,11 @@ public class PaymentResponseDTO {
     private BigDecimal amount;
     private LocalDateTime paymentDate;
 
-    // 🔥 ADD THESE (missing fields)
     private Integer rentalId;
+
     private Short staffId;
+    private String staffName;        // ✅ NEW
+
     private Short customerId;
+    private String customerName;     // ✅ NEW
 }
