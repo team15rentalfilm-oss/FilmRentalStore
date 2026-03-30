@@ -52,10 +52,8 @@ public class Film {
     @Column(name = "rating")
     private String rating;
 
-    @ElementCollection
-    @CollectionTable(name = "film_special_features", joinColumns = @JoinColumn(name = "film_id"))
-    @Column(name = "feature")
-    private Set<String> specialFeatures = new LinkedHashSet<>();
+    @Column(name = "special_features")
+    private String specialFeatures;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

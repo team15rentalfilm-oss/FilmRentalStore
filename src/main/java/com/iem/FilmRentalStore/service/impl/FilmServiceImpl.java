@@ -21,7 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.hibernate.Hibernate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,7 +36,6 @@ public class FilmServiceImpl implements FilmService {
     private final LanguageRepository languageRepository;
     private final ActorRepository actorRepository;
 
-    // 🔥 CREATE
     @Override
     public FilmResponseDTO createFilm(FilmRequestDTO request) {
 
@@ -49,7 +48,6 @@ public class FilmServiceImpl implements FilmService {
         return FilmMapper.toResponseDTO(filmRepository.save(film));
     }
 
-    // 🔥 GET BY ID
     @Override
     @Transactional(readOnly = true)
     public FilmResponseDTO getFilmById(Short id) {
@@ -60,7 +58,6 @@ public class FilmServiceImpl implements FilmService {
         return FilmMapper.toResponseDTO(film);
     }
 
-    // 🔥 GET ALL (PAGINATION)
     @Override
     @Transactional(readOnly = true)
     public Page<FilmResponseDTO> getAllFilms(int page, int size) {
@@ -69,16 +66,15 @@ public class FilmServiceImpl implements FilmService {
 
         return filmRepository.findAll(pageable)
                 .map(film -> {
-                    // 🔥 Force initialize lazy fields
-                    film.getSpecialFeatures().size();
-                    film.getCategories().size();
-                    film.getActors().size();
+
+                    Hibernate.initialize(film.getCategories());
+                    Hibernate.initialize(film.getActors());
 
                     return FilmMapper.toResponseDTO(film);
                 });
     }
 
-    // 🔥 UPDATE (FULL)
+
     @Override
     public FilmResponseDTO updateFilm(Short id, FilmRequestDTO request) {
 
@@ -93,7 +89,7 @@ public class FilmServiceImpl implements FilmService {
 
         return FilmMapper.toResponseDTO(filmRepository.save(film));
     }
-    // 🔥 PATCH
+
     @Override
     public FilmResponseDTO patchFilm(Short id, FilmPatchDTO request) {
 
@@ -107,7 +103,6 @@ public class FilmServiceImpl implements FilmService {
         return FilmMapper.toResponseDTO(updated);
     }
 
-    // 🔥 SEARCH (DB LEVEL)
     @Override
     @Transactional(readOnly = true)
     public Page<FilmResponseDTO> searchFilms(
@@ -120,7 +115,6 @@ public class FilmServiceImpl implements FilmService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        // 🔥 Already uses EntityGraph → no lazy issue
         Page<Film> pageData = filmRepository.findAll(pageable);
 
         List<Film> filtered = pageData.getContent().stream()
@@ -158,7 +152,6 @@ public class FilmServiceImpl implements FilmService {
         );
     }
 
-    // 🔥 HELPER METHODS (VERY IMPORTANT)
 
     @Override
     @Transactional(readOnly = true)
