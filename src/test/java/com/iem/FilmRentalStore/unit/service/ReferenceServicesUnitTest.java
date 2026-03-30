@@ -45,6 +45,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -66,7 +67,7 @@ class ReferenceServicesUnitTest {
         ActorServiceImpl service = new ActorServiceImpl(actorRepository, new ActorMapper());
         Actor actor = TestDataFactory.actor((short) 1, "Tom", "Hanks");
         when(actorRepository.save(any(Actor.class))).thenReturn(actor);
-        when(actorRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase("tom", "tom"))
+        when(actorRepository.searchByName(anyString()))
                 .thenReturn(List.of(actor));
 
         var created = service.createActor(TestDataFactory.actorRequest("Tom", "Hanks"));
@@ -81,9 +82,9 @@ class ReferenceServicesUnitTest {
     @Test
     void actorServiceThrowsWhenActorMissing() {
         ActorServiceImpl service = new ActorServiceImpl(actorRepository, new ActorMapper());
-        when(actorRepository.findById(99)).thenReturn(Optional.empty());
+        when(actorRepository.findById((short) 99)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.getActorById(99))
+        assertThatThrownBy(() -> service.getActorById((short) 99))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Actor not found");
     }

@@ -119,16 +119,16 @@ class ControllerUnitTest {
         ActorRequestDTO request = TestDataFactory.actorRequest("Tom", "Hanks");
         ActorResponseDTO response = new ActorResponseDTO();
         when(actorService.createActor(request)).thenReturn(response);
-        when(actorService.getActorById(1)).thenReturn(response);
+        when(actorService.getActorById((short) 1)).thenReturn(response);
         when(actorService.getAllActors()).thenReturn(List.of(response));
         when(actorService.searchActors("tom")).thenReturn(List.of(response));
-        when(actorService.updateActor(1, request)).thenReturn(response);
+        when(actorService.updateActor((short) 1, request)).thenReturn(response);
 
         assertThat(actorController.createActor(request)).isSameAs(response);
-        assertThat(actorController.getActorById(1)).isSameAs(response);
+        assertThat(actorController.getActorById((short) 1)).isSameAs(response);
         assertThat(actorController.getAllActors()).containsExactly(response);
         assertThat(actorController.searchActors("tom")).containsExactly(response);
-        assertThat(actorController.updateActor(1, request)).isSameAs(response);
+        assertThat(actorController.updateActor((short) 1, request)).isSameAs(response);
     }
 
     @Test
