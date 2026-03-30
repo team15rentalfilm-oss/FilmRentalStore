@@ -15,9 +15,9 @@ public class PageableConfig {
 
             pageableResolver.setMaxPageSize(50);
 
-            // ✅ FIX: add safe default sort
+            // ✅ SINGLE SAFE GLOBAL FALLBACK
             pageableResolver.setFallbackPageable(
-                    PageRequest.of(0, 10, Sort.by("staffId").ascending())
+                    PageRequest.of(0, 10, Sort.by("rentalDate").descending())
             );
         };
     }

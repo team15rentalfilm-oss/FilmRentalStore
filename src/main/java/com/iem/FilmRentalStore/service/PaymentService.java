@@ -1,17 +1,27 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.payment.PaymentDTO;
-import com.iem.FilmRentalStore.dto.payment.PaymentRequestDTO;
+import com.iem.FilmRentalStore.dto.payment.*;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 
 public interface PaymentService {
 
-    PaymentDTO createPayment(PaymentRequestDTO request);
+    PaymentResponseDTO createPayment(PaymentRequestDTO request);
 
-    PaymentDTO getPaymentById(Integer id);
+    PaymentResponseDTO getPaymentById(Integer id);
 
-    PaymentDTO getPaymentById(Short id);
+    Page<PaymentResponseDTO> getAllPayments(Pageable pageable);
 
-    List<PaymentDTO> getAllPayments();
+    List<PaymentResponseDTO> getPaymentsByCustomerName(String name);
+
+    List<PaymentResponseDTO> getPaymentsByRentalId(Integer rentalId);
+
+    PaymentResponseDTO patchPayment(Integer id, PaymentPatchDTO request);
+
+    Page<PaymentResponseDTO> getByCustomerId(Short customerId, Pageable pageable);
+
+    Page<PaymentResponseDTO> getByStaffId(Byte staffId, Pageable pageable);
+
+    Page<PaymentResponseDTO> searchByStaffName(String name, Pageable pageable);
 }

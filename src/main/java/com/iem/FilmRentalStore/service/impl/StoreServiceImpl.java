@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.store.StoreDTO;
 import com.iem.FilmRentalStore.dto.store.StoreRequestDTO;
+import com.iem.FilmRentalStore.dto.store.StoreResponseDTO;
 import com.iem.FilmRentalStore.entity.Address;
 import com.iem.FilmRentalStore.entity.Store;
 import com.iem.FilmRentalStore.entity.Staff;
@@ -13,6 +14,7 @@ import com.iem.FilmRentalStore.service.StoreService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,18 +27,26 @@ public class StoreServiceImpl implements StoreService {
     private final AddressService addressService;
 
     @Override
-    public StoreDTO createStore(StoreRequestDTO request) {
+    @Transactional
+    public StoreResponseDTO createStore(StoreRequestDTO request) {
 
-        // 🔥 Step 1: Resolve Address
+        // ✅ Step 1: Resolve Address
         Address address = addressService.createAndReturnEntity(request.getAddress());
 
-        // 🔥 Step 2: Create store WITHOUT manager (avoid circular dependency)
+        // ✅ Step 2: Fetch Manager (MANDATORY)
+        Staff manager = staffRepository.findById(request.getManagerStaffId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Staff not found with id: " + request.getManagerStaffId()));
+
+        // ✅ Step 3: Create Store properly
         Store store = new Store();
         store.setAddress(address);
+        store.setManagerStaff(manager); // 🔥 IMPORTANT
 
+        // ✅ Step 4: Save
         Store saved = storeRepository.save(store);
 
-        return StoreMapper.toDTO(saved);
+        return StoreMapper.toResponseDTO(saved);
     }
 
     @Override
