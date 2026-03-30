@@ -43,7 +43,10 @@ public class FilmMapper {
         film.setReplacementCost(dto.getReplacementCost());
 
         film.setRating(dto.getRating());
-        film.setSpecialFeatures(dto.getSpecialFeatures());
+        film.setSpecialFeatures(
+                dto.getSpecialFeatures() == null ? null :
+                        String.join(",", dto.getSpecialFeatures())
+        );
 
         film.setCategories(categories);
         film.setActors(actors);
@@ -77,7 +80,10 @@ public class FilmMapper {
         dto.setReplacementCost(film.getReplacementCost());
 
         dto.setRating(film.getRating());
-        dto.setSpecialFeatures(film.getSpecialFeatures());
+        dto.setSpecialFeatures(
+                film.getSpecialFeatures() == null ? Set.of() :
+                        Set.of(film.getSpecialFeatures().split(","))
+        );
 
         dto.setCategories(
                 film.getCategories() == null ? List.of() :

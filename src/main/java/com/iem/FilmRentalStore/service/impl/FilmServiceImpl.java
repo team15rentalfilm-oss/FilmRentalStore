@@ -69,8 +69,7 @@ public class FilmServiceImpl implements FilmService {
 
         return filmRepository.findAll(pageable)
                 .map(film -> {
-                    // 🔥 Force initialize lazy fields
-                    film.getSpecialFeatures().size();
+
                     film.getCategories().size();
                     film.getActors().size();
 
