@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.service;
 
+import com.iem.FilmRentalStore.dto.staff.StaffPatchDTO;
 import com.iem.FilmRentalStore.dto.staff.StaffRequestDTO;
 import com.iem.FilmRentalStore.dto.staff.StaffResponseDTO;
 import org.springframework.data.domain.Page;
@@ -31,5 +32,5 @@ public interface StaffService {
     StaffResponseDTO updateStaff(Short id, StaffRequestDTO request);
 
     // ✅ PARTIAL UPDATE (PATCH)
-    StaffResponseDTO patchStaff(Short id, Map<String, Object> updates);
+    public StaffResponseDTO patchStaff(Short id, StaffPatchDTO dto);
 }

@@ -158,6 +158,7 @@ public class StaffServiceImpl implements StaffService {
 
     // ================= UPDATE =================
     @Override
+    @Transactional
     public StaffResponseDTO updateStaff(Short id, StaffRequestDTO request) {
 
         Staff staff = staffRepository.findById(id)
@@ -208,28 +209,57 @@ public class StaffServiceImpl implements StaffService {
 
     // ================= PATCH =================
     @Override
-    public StaffResponseDTO patchStaff(Short id, Map<String, Object> updates) {
+    @Transactional
+    public StaffResponseDTO patchStaff(Short id, StaffPatchDTO dto) {
 
         Staff staff = staffRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Staff not found"));
 
-        updates.forEach((key, value) -> {
-            switch (key) {
-                case "firstName" -> staff.setFirstName((String) value);
-                case "lastName" -> staff.setLastName((String) value);
-                case "email" -> staff.setEmail((String) value);
-                case "username" -> staff.setUsername((String) value);
-                case "active" -> staff.setActive((Boolean) value);
-                case "password" -> staff.setPassword((String) value);
+        if (dto.getFirstName() != null)
+            staff.setFirstName(dto.getFirstName());
 
-                case "storeId" -> {
-                    Store store = storeRepository.findById(Short.valueOf(value.toString()))
-                            .orElseThrow(() -> new EntityNotFoundException("Store not found"));
-                    staff.setStore(store);
-                }
-            }
-        });
+        if (dto.getLastName() != null)
+            staff.setLastName(dto.getLastName());
 
-        return StaffMapper.toResponseDTO(staffRepository.save(staff));
+        if (dto.getEmail() != null)
+            staff.setEmail(dto.getEmail());
+
+        if (dto.getUsername() != null)
+            staff.setUsername(dto.getUsername());
+
+        if (dto.getActive() != null)
+            staff.setActive(dto.getActive());
+
+        if (dto.getPassword() != null)
+            staff.setPassword(dto.getPassword());
+
+        if (dto.getStoreId() != null) {
+            Store store = storeRepository.findById(dto.getStoreId())
+                    .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+            staff.setStore(store);
+        }
+
+        if (dto.getAddress() != null) {
+            City city = getOrCreateCity(dto.getAddress());
+
+            Address address = addressRepository
+                    .findByAddressAndCity(dto.getAddress().getAddress(), city)
+                    .orElseGet(() -> {
+                        Address a = new Address();
+                        a.setAddress(dto.getAddress().getAddress());
+                        a.setAddress2(dto.getAddress().getAddress2());
+                        a.setDistrict(dto.getAddress().getDistrict());
+                        a.setPostalCode(dto.getAddress().getPostalCode());
+                        a.setPhone(dto.getAddress().getPhone());
+                        a.setCity(city);
+                        return addressRepository.save(a);
+                    });
+
+            staff.setAddress(address);
+        }
+
+        Staff saved = staffRepository.save(staff);
+
+        return StaffMapper.toResponseDTO(saved);
     }
 }

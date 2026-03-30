@@ -111,8 +111,8 @@ public class StaffController {
     @PatchMapping("/{id}")
     public StaffResponseDTO patch(
             @PathVariable Short id,
-            @RequestBody Map<String, Object> updates) {
+            @RequestBody StaffPatchDTO dto) {
 
-        return staffService.patchStaff(id, updates);
+        return staffService.patchStaff(id, dto);
     }
 }
