@@ -25,16 +25,17 @@ class SwaggerApiDocsTest {
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody())
                 .contains("/api/actors")
+                .contains("/api/addresses")
                 .contains("/api/categories")
+                .contains("/api/cities")
+                .contains("/api/countries")
                 .contains("/api/customers")
-                .contains("/api/film-actor")
                 .contains("/api/films")
-                .contains("/api/v1/film-texts")
-                .contains("/api/v1/inventories")
+                .contains("/api/inventory")
                 .contains("/api/languages")
                 .contains("/api/payments")
                 .contains("/api/rentals")
-                .contains("/api/v1/staff")
+                .contains("/api/staff")
                 .contains("/api/stores");
     }
 }
