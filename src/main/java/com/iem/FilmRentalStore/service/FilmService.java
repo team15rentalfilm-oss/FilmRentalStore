@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.service;
 
+import com.iem.FilmRentalStore.dto.film.FilmDTO;
 import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
 import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
@@ -26,4 +27,6 @@ public interface FilmService {
             String actor,
             int page,
             int size) ;
+
+    List<FilmDTO> suggestFilms(String title);
 }

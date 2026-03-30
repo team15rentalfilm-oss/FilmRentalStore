@@ -99,6 +99,7 @@ public class FilmMapper {
     // LIGHTWEIGHT
     public static FilmDTO toDTO(Film film) {
         FilmDTO dto = new FilmDTO();
+        dto.setFilmId(film.getFilmId());
         dto.setTitle(film.getTitle());
         dto.setRating(film.getRating());
         return dto;

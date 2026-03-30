@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class FilmDTO {
 
+    private Short filmId;
     private String title;
     private String rating;
 }

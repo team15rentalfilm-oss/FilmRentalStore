@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.dto.film;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.iem.FilmRentalStore.dto.actor.ActorDTO;
 import com.iem.FilmRentalStore.dto.category.CategoryDTO;
 import com.iem.FilmRentalStore.dto.language.LanguageDTO;
@@ -13,6 +14,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FilmResponseDTO {
 
     private Short filmId;

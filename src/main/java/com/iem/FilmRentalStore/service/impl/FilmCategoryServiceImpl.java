@@ -2,7 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.FilmCategoryDTO;
 import com.iem.FilmRentalStore.entity.FilmCategory;
-import com.iem.FilmRentalStore.entity.FilmCategory.FilmCategoryId;
+import com.iem.FilmRentalStore.entity.FilmCategoryId;
 import com.iem.FilmRentalStore.repository.FilmCategoryRepository;
 import com.iem.FilmRentalStore.service.FilmCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class FilmCategoryServiceImpl implements FilmCategoryService {
     public List<FilmCategoryDTO> getAll() {
         return repo.findAll().stream()
                 .map(fc -> new FilmCategoryDTO(
-                        fc.getFilmId(),
-                        fc.getCategoryId()
+                        fc.getId().getFilmId(),
+                        fc.getId().getCategoryId()
                 ))
                 .collect(Collectors.toList());
     }
@@ -31,8 +31,13 @@ public class FilmCategoryServiceImpl implements FilmCategoryService {
     public FilmCategoryDTO create(FilmCategoryDTO dto) {
 
         FilmCategory fc = new FilmCategory();
-        fc.setFilmId(dto.filmId);
-        fc.setCategoryId(dto.categoryId);
+
+        FilmCategoryId id = new FilmCategoryId(
+                dto.filmId,
+                dto.categoryId
+        );
+
+        fc.setId(id);
 
         repo.save(fc);
 

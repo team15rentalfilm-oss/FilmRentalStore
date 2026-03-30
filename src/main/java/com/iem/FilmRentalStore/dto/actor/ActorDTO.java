@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class ActorDTO {
 
+    private Short actorId;
     private String firstName;
     private String lastName;
 }
