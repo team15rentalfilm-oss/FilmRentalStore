@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.service.impl;
 
+import com.iem.FilmRentalStore.dto.film.FilmDTO;
 import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
 import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
@@ -158,6 +159,15 @@ public class FilmServiceImpl implements FilmService {
     }
 
     // 🔥 HELPER METHODS (VERY IMPORTANT)
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FilmDTO> suggestFilms(String title) {
+        String query = title == null ? "" : title.trim();
+        return filmRepository.findTop10ByTitleContainingIgnoreCaseOrderByTitleAsc(query).stream()
+                .map(FilmMapper::toDTO)
+                .toList();
+    }
 
     private Language getOrCreateLanguage(String name) {
         return languageRepository.findByNameIgnoreCase(name)

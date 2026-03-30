@@ -25,7 +25,7 @@ public class ActorController {
 
     // 🔥 GET ACTOR BY ID
     @GetMapping("/{id}")
-    public ActorResponseDTO getActorById(@PathVariable Integer id) {
+    public ActorResponseDTO getActorById(@PathVariable Short id) {
         return actorService.getActorById(id);
     }
 
@@ -43,7 +43,7 @@ public class ActorController {
 
     // 🔥 UPDATE ACTOR
     @PutMapping("/{id}")
-    public ActorResponseDTO updateActor(@PathVariable Integer id,
+    public ActorResponseDTO updateActor(@PathVariable Short id,
                                 @Valid @RequestBody ActorRequestDTO request) {
         return actorService.updateActor(id, request);
     }

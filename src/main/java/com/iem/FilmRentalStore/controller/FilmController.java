@@ -1,5 +1,6 @@
 package com.iem.FilmRentalStore.controller;
 
+import com.iem.FilmRentalStore.dto.film.FilmDTO;
 import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
 import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
@@ -59,5 +60,10 @@ public class FilmController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return filmService.searchFilms(title, year, category, actor, page, size);
+    }
+
+    @GetMapping("/suggestions")
+    public List<FilmDTO> suggestFilms(@RequestParam String title) {
+        return filmService.suggestFilms(title);
     }
 }

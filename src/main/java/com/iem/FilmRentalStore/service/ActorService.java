@@ -10,11 +10,11 @@ public interface ActorService {
 
     ActorResponseDTO createActor(ActorRequestDTO request);
 
-    ActorResponseDTO getActorById(Integer id);
+    ActorResponseDTO getActorById(Short id);
 
     List<ActorResponseDTO> getAllActors();
 
-    ActorResponseDTO updateActor(Integer id, ActorRequestDTO request);
+    ActorResponseDTO updateActor(Short id, ActorRequestDTO request);
 
     List<ActorResponseDTO> searchActors(String name);
 }

@@ -10,6 +10,7 @@ import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ActorServiceImpl implements ActorService {
 
     private final ActorRepository actorRepository;
@@ -30,7 +32,8 @@ public class ActorServiceImpl implements ActorService {
     }
 
     @Override
-    public ActorResponseDTO getActorById(Integer id) {
+    @Transactional(readOnly = true)
+    public ActorResponseDTO getActorById(Short id) {
         Actor actor = actorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
 
@@ -38,6 +41,7 @@ public class ActorServiceImpl implements ActorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ActorResponseDTO> getAllActors() {
         return actorRepository.findAll()
                 .stream()
@@ -46,7 +50,7 @@ public class ActorServiceImpl implements ActorService {
     }
 
     @Override
-    public ActorResponseDTO updateActor(Integer id, ActorRequestDTO request) {
+    public ActorResponseDTO updateActor(Short id, ActorRequestDTO request) {
         Actor actor = actorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
 
@@ -58,9 +62,10 @@ public class ActorServiceImpl implements ActorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ActorResponseDTO> searchActors(String name) {
         return actorRepository
-                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name)
+                .searchByName(name == null ? "" : name.trim())
                 .stream()
                 .map(ActorMapper::toResponseDTO)
                 .toList();

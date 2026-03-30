@@ -29,6 +29,7 @@ public class ActorMapper {
     // Entity → Lightweight DTO
     public static ActorDTO toDTO(Actor actor) {
         ActorDTO dto = new ActorDTO();
+        dto.setActorId(actor.getActorId());
         dto.setFirstName(actor.getFirstName());
         dto.setLastName(actor.getLastName());
         return dto;
