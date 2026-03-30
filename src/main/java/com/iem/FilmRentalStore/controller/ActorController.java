@@ -1,61 +1,50 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/actors")
+@RequiredArgsConstructor
 public class ActorController {
 
-    private final ActorService service;
+    private final ActorService actorService;
 
-    public ActorController(ActorService service) {
-        this.service = service;
-    }
-
-    // GET ALL
-    @GetMapping
-    public List<ActorDTO> getAll() {
-        return service.getAll();
-    }
-
-    // GET BY ID
-    @GetMapping("/{id}")
-    public ActorDTO getById(@PathVariable Short id) {
-        return service.getById(id);
-    }
-
-    // GET BY FIELD
-    @GetMapping("/search")
-    public List<ActorDTO> getByName(@RequestParam String name) {
-        return service.getByFirstName(name);
-    }
-
-    // POST
+    // 🔥 CREATE ACTOR
     @PostMapping
-    public ActorDTO create(@Valid @RequestBody ActorDTO dto) {
-        return service.create(dto);
+    public ActorResponseDTO createActor(@Valid @RequestBody ActorRequestDTO request) {
+        return actorService.createActor(request);
     }
 
-    // PUT
+    // 🔥 GET ACTOR BY ID
+    @GetMapping("/{id}")
+    public ActorResponseDTO getActorById(@PathVariable Integer id) {
+        return actorService.getActorById(id);
+    }
+
+    // 🔥 GET ALL ACTORS
+    @GetMapping
+    public List<ActorResponseDTO> getAllActors() {
+        return actorService.getAllActors();
+    }
+
+    // 🔥 SEARCH ACTOR (PARTIAL MATCH - DB LEVEL)
+    @GetMapping("/search")
+    public List<ActorResponseDTO> searchActors(@RequestParam String name) {
+        return actorService.searchActors(name);
+    }
+
+    // 🔥 UPDATE ACTOR
     @PutMapping("/{id}")
-    public ActorDTO update(@PathVariable Short id, @Valid @RequestBody ActorDTO dto) {
-        return service.update(id, dto);
-    }
-
-    // PATCH
-    @PatchMapping("/{id}")
-    public ActorDTO patch(@PathVariable Short id, @RequestBody ActorDTO dto) {
-        return service.patch(id, dto);
-    }
-
-    // DELETE
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Short id) {
-        service.delete(id);
+    public ActorResponseDTO updateActor(@PathVariable Integer id,
+                                @Valid @RequestBody ActorRequestDTO request) {
+        return actorService.updateActor(id, request);
     }
 }

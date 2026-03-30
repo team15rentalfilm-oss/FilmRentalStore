@@ -1,87 +1,104 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
+import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.entity.Actor;
+import com.iem.FilmRentalStore.mapper.ActorMapper;
 import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.service.ActorService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ActorServiceImpl implements ActorService {
 
-    private final ActorRepository repo;
+    private final ActorRepository actorRepository;
+    private final ActorMapper actorMapper;
 
-    public ActorServiceImpl(ActorRepository repo) {
-        this.repo = repo;
-    }
-
-    private ActorDTO mapToDTO(Actor actor) {
-        ActorDTO dto = new ActorDTO();
-        // dto.setActorId(actor.getActorId()); // keep only if ActorDTO has actorId
-        dto.setFirstName(actor.getFirstName());
-        dto.setLastName(actor.getLastName());
-        return dto;
-    }
-
-    private Actor mapToEntity(ActorDTO dto) {
-        Actor actor = new Actor();
-        // actor.setActorId(dto.getActorId()); // keep only if ActorDTO has actorId
-        actor.setFirstName(dto.getFirstName());
-        actor.setLastName(dto.getLastName());
-        return actor;
+    @Override
+    public ActorResponseDTO createActor(ActorRequestDTO request) {
+        Actor actor = ActorMapper.toEntity(request);
+        Actor saved = actorRepository.save(actor);
+        return actorMapper.toResponseDTO(saved);
     }
 
     @Override
-    public List<ActorDTO> getAll() {
-        return repo.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public ActorResponseDTO getActorById(Integer id) {
+        Actor actor = actorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
+
+        return actorMapper.toResponseDTO(actor);
     }
 
     @Override
-    public ActorDTO getById(Short id) {
-        return mapToDTO(repo.findById(id).orElseThrow());
+    public List<ActorResponseDTO> getAllActors() {
+        return actorRepository.findAll()
+                .stream()
+                .map(ActorMapper::toResponseDTO)
+                .toList();
     }
 
     @Override
-    public List<ActorDTO> getByFirstName(String name) {
-        return repo.findByFirstName(name).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public ActorResponseDTO updateActor(Integer id, ActorRequestDTO request) {
+        Actor actor = actorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
+
+        actor.setFirstName(request.getFirstName());
+        actor.setLastName(request.getLastName());
+
+        Actor updated = actorRepository.save(actor);
+        return actorMapper.toResponseDTO(updated);
     }
 
     @Override
-    public ActorDTO create(ActorDTO dto) {
-        return mapToDTO(repo.save(mapToEntity(dto)));
+    public List<ActorResponseDTO> searchActors(String name) {
+        return actorRepository
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name)
+                .stream()
+                .map(ActorMapper::toResponseDTO)
+                .toList();
     }
 
-    @Override
-    public ActorDTO update(Short id, ActorDTO dto) {
-        Actor actor = mapToEntity(dto);
-        actor.setActorId(id);
-        return mapToDTO(repo.save(actor));
+    private String normalize(String value) {
+        return value == null ? null : value.trim().toLowerCase();
     }
 
-    @Override
-    public ActorDTO patch(Short id, ActorDTO dto) {
-        Actor existing = repo.findById(id).orElseThrow();
+    private Set<Actor> getOrCreateActors(Set<String> names) {
 
-        if (dto.getFirstName() != null) {
-            existing.setFirstName(dto.getFirstName());
-        }
+        return names.stream()
+                .map(fullName -> {
 
-        if (dto.getLastName() != null) {
-            existing.setLastName(dto.getLastName());
-        }
+                    String[] parts = fullName.trim().split(" ", 2);
 
-        return mapToDTO(repo.save(existing));
-    }
+                    String firstName = normalize(parts[0]);
+                    String lastName = parts.length > 1 ? normalize(parts[1]) : "";
 
-    @Override
-    public void delete(Short id) {
-        repo.deleteById(id);
+                    return actorRepository
+                            .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
+                            .orElseGet(() -> {
+                                try {
+                                    Actor actor = new Actor();
+                                    actor.setFirstName(firstName);
+                                    actor.setLastName(lastName);
+                                    return actorRepository.save(actor);
+                                } catch (Exception e) {
+                                    try {
+                                        return actorRepository
+                                                .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
+                                                .orElseThrow(() -> e);
+                                    } catch (Exception ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            });
+                })
+                .collect(Collectors.toSet());
     }
 }

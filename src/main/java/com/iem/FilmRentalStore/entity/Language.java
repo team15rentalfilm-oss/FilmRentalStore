@@ -1,20 +1,16 @@
 package com.iem.FilmRentalStore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "language")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Language {
@@ -24,27 +20,24 @@ public class Language {
     @Column(name = "language_id", columnDefinition = "TINYINT UNSIGNED")
     private Integer languageId;
 
-    @Column(name = "name", nullable = false, columnDefinition = "CHAR(20)")
+    @Column(name = "name", columnDefinition = "CHAR(20)",nullable = false, unique = true)
     private String name;
+
 
     @Column(name = "last_update", nullable = false)
     private LocalDateTime lastUpdate;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "language", fetch = FetchType.LAZY)
-    private List<Film> films = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "originalLanguage", fetch = FetchType.LAZY)
-    private List<Film> originalLanguageFilms = new ArrayList<>();
-
     @PrePersist
     public void prePersist() {
-        lastUpdate = LocalDateTime.now();
+        this.lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        lastUpdate = LocalDateTime.now();
+        this.lastUpdate = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "language")
+    private List<Film> films;
+
 }

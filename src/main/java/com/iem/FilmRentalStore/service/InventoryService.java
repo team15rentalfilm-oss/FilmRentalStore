@@ -1,23 +1,26 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.InventoryDTO;
-
-import java.util.List;
-import java.util.Map;
+import com.iem.FilmRentalStore.dto.inventory.InventoryDTO;
+import com.iem.FilmRentalStore.dto.inventory.InventoryRequestDTO;
+import com.iem.FilmRentalStore.dto.inventory.InventoryResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface InventoryService {
 
-    List<InventoryDTO> getAllInventories();
-
-    List<InventoryDTO> getInventoriesByFields(Map<String, String> searchParams);
+    InventoryDTO createInventory(InventoryRequestDTO request);
 
     InventoryDTO getInventoryById(Integer id);
 
-    InventoryDTO createInventory(InventoryDTO inventoryDTO);
+    InventoryResponseDTO getInventoryDetails(Integer id);
 
-    InventoryDTO updateInventory(Integer id, InventoryDTO inventoryDTO);
+    Page<InventoryDTO> getAllInventory(Short filmId, Short storeId, Pageable pageable);
 
-    InventoryDTO patchInventory(Integer id, Map<String, Object> updates);
+    InventoryDTO updateInventory(Integer id, InventoryRequestDTO request);
 
-    void deleteInventory(Integer id);
+    Page<InventoryDTO> getByFilmId(Short filmId, Pageable pageable);
+
+    Page<InventoryDTO> getByStoreId(Short storeId, Pageable pageable);
+
+    InventoryDTO patchInventory(Integer id, InventoryRequestDTO request);
 }

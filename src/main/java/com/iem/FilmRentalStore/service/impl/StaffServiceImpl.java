@@ -1,17 +1,18 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.StaffDTO;
-import com.iem.FilmRentalStore.entity.Staff;
-import com.iem.FilmRentalStore.repository.StaffRepository;
+import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
+import com.iem.FilmRentalStore.dto.staff.*;
+import com.iem.FilmRentalStore.entity.*;
+import com.iem.FilmRentalStore.mapper.StaffMapper;
+import com.iem.FilmRentalStore.repository.*;
 import com.iem.FilmRentalStore.service.StaffService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,125 +20,246 @@ import java.util.Map;
 public class StaffServiceImpl implements StaffService {
 
     private final StaffRepository staffRepository;
+    private final StoreRepository storeRepository;
+    private final AddressRepository addressRepository;
+    private final CityRepository cityRepository;
+    private final CountryRepository countryRepository;
 
-    private StaffDTO mapToDTO(Staff staff) {
-        StaffDTO dto = new StaffDTO();
-        dto.setStaffId(staff.getStaffId());
-        dto.setFirstName(staff.getFirstName());
-        dto.setLastName(staff.getLastName());
-        dto.setAddressId(staff.getAddressId());
-        dto.setEmail(staff.getEmail());
-        dto.setStoreId(staff.getStoreId());
-        dto.setActive(staff.getActive());
-        dto.setUsername(staff.getUsername());
-        return dto;
+    // 🔥 SAME LOGIC AS CUSTOMER
+    @Transactional
+    private City getOrCreateCity(AddressRequestDTO request) {
+
+        String countryName = request.getCity().getCountry().getCountry();
+        String cityName = request.getCity().getCity();
+
+        Country country = countryRepository
+                .findByCountryIgnoreCase(countryName)
+                .orElseGet(() -> {
+                    Country newCountry = new Country();
+                    newCountry.setCountry(countryName);
+                    return countryRepository.save(newCountry);
+                });
+
+        return cityRepository
+                .findByCityIgnoreCaseAndCountry(cityName, country)
+                .orElseGet(() -> {
+                    City newCity = new City();
+                    newCity.setCity(cityName);
+                    newCity.setCountry(country);
+                    return cityRepository.save(newCity);
+                });
     }
 
-    private Staff mapToEntity(StaffDTO dto) {
-        Staff staff = new Staff();
-        staff.setFirstName(dto.getFirstName());
-        staff.setLastName(dto.getLastName());
-        staff.setAddressId(dto.getAddressId());
-        staff.setEmail(dto.getEmail());
-        staff.setStoreId(dto.getStoreId());
-        staff.setActive(dto.getActive());
-        staff.setUsername(dto.getUsername());
-        return staff;
+    // ================= CREATE =================
+    @Transactional
+    @Override
+    public StaffResponseDTO createStaff(StaffRequestDTO request) {
+
+        if (staffRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (request.getEmail() != null &&
+                staffRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        City city = getOrCreateCity(request.getAddress());
+
+        Address address = addressRepository
+                .findByAddressAndCity(request.getAddress().getAddress(), city)
+                .orElseGet(() -> {
+                    Address a = new Address();
+                    a.setAddress(request.getAddress().getAddress());
+                    a.setAddress2(request.getAddress().getAddress2());
+                    a.setDistrict(request.getAddress().getDistrict());
+                    a.setPostalCode(request.getAddress().getPostalCode());
+                    a.setPhone(request.getAddress().getPhone());
+                    a.setCity(city);
+                    return addressRepository.save(a);
+                });
+
+        Store store = storeRepository.findById(request.getStoreId())
+                .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
+        Staff staff = StaffMapper.toEntity(request, address, store);
+
+        // simple password (no encoding)
+        staff.setPassword(request.getPassword());
+
+        Staff saved = staffRepository.save(staff);
+
+        if (Boolean.TRUE.equals(request.getIsManager())) {
+            store.setManagerStaff(saved);
+            storeRepository.save(store);
+        }
+
+        Staff fullStaff = staffRepository.findByStaffId(saved.getStaffId())
+                .orElseThrow(() -> new EntityNotFoundException("Staff not found"));
+
+        return StaffMapper.toResponseDTO(saved);
     }
 
-    private Staff getStaffEntityById(Integer id) {
-        return staffRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Staff not found with id: " + id));
+    // ================= GET =================
+    @Transactional(readOnly = true)
+    @Override
+    public StaffResponseDTO getStaffById(Short id) {
+        Staff staff = staffRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Staff not found"));
+
+        return StaffMapper.toResponseDTO(staff);
     }
 
     @Override
-    public List<StaffDTO> getAllStaff() {
-        return staffRepository.findAll()
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<StaffResponseDTO> getAllStaff(Pageable pageable) {
+        return staffRepository.findAll(pageable)
+                .map(StaffMapper::toResponseDTO);
     }
 
+
+    // ================= SEARCH =================
     @Override
-    public List<StaffDTO> getStaffByFields(Map<String, String> searchParams) {
-        Specification<Staff> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
+    @Transactional(readOnly = true)
+    public Page<StaffResponseDTO> searchStaff(String name, Short storeId, Pageable pageable) {
 
-            searchParams.forEach((key, value) -> {
-                try {
-                    root.get(key);
+        if (name != null) {
+            return staffRepository
+                    .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name, pageable)
+                    .map(StaffMapper::toResponseDTO);
+        }
 
-                    switch (key) {
-                        case "active" -> predicates.add(cb.equal(root.get(key), Boolean.parseBoolean(value)));
-                        case "addressId", "storeId", "staffId" -> predicates.add(cb.equal(root.get(key), Integer.valueOf(value)));
-                        default -> predicates.add(cb.equal(root.get(key), value));
-                    }
-                } catch (IllegalArgumentException ignored) {
-                    // ignore invalid field names
-                }
-            });
+        if (storeId != null) {
+            return staffRepository
+                    .findByStore_StoreId(storeId, pageable)
+                    .map(StaffMapper::toResponseDTO);
+        }
 
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return staffRepository.findAll(spec)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+        return getAllStaff(pageable);
     }
 
+    // ================= CITY =================
     @Override
-    public StaffDTO getStaffById(Integer id) {
-        return mapToDTO(getStaffEntityById(id));
+    @Transactional(readOnly = true)
+    public Page<StaffResponseDTO> getStaffByCity(String city, Pageable pageable) {
+        return staffRepository
+                .findByAddress_City_CityContainingIgnoreCase(city, pageable)
+                .map(StaffMapper::toResponseDTO);
     }
 
+    // ================= COUNTRY =================
     @Override
-    public StaffDTO createStaff(StaffDTO staffDTO) {
-        Staff staff = mapToEntity(staffDTO);
-        staff.setStaffId(null);
-        return mapToDTO(staffRepository.save(staff));
+    @Transactional(readOnly = true)
+    public Page<StaffResponseDTO> getStaffByCountry(String country, Pageable pageable) {
+        return staffRepository
+                .findByAddress_City_Country_CountryContainingIgnoreCase(country, pageable)
+                .map(StaffMapper::toResponseDTO);
     }
 
+    // ================= UPDATE =================
     @Override
-    public StaffDTO updateStaff(Integer id, StaffDTO staffDTO) {
-        Staff staff = getStaffEntityById(id);
+    @Transactional
+    public StaffResponseDTO updateStaff(Short id, StaffRequestDTO request) {
 
-        staff.setFirstName(staffDTO.getFirstName());
-        staff.setLastName(staffDTO.getLastName());
-        staff.setAddressId(staffDTO.getAddressId());
-        staff.setEmail(staffDTO.getEmail());
-        staff.setStoreId(staffDTO.getStoreId());
-        staff.setActive(staffDTO.getActive());
-        staff.setUsername(staffDTO.getUsername());
+        Staff staff = staffRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Staff not found"));
 
-        return mapToDTO(staffRepository.save(staff));
+        staff.setFirstName(request.getFirstName());
+        staff.setLastName(request.getLastName());
+        staff.setEmail(request.getEmail());
+        staff.setUsername(request.getUsername());
+        staff.setActive(request.getActive());
+
+        if (request.getPassword() != null) {
+            staff.setPassword(request.getPassword());
+        }
+
+        Store store = storeRepository.findById(request.getStoreId())
+                .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
+        staff.setStore(store);
+
+        // 🔥 ADDRESS LOGIC (SAME AS CUSTOMER)
+        City city = getOrCreateCity(request.getAddress());
+
+        Address address = addressRepository
+                .findByAddressAndCity(request.getAddress().getAddress(), city)
+                .orElseGet(() -> {
+                    Address a = new Address();
+                    a.setAddress(request.getAddress().getAddress());
+                    a.setAddress2(request.getAddress().getAddress2());
+                    a.setDistrict(request.getAddress().getDistrict());
+                    a.setPostalCode(request.getAddress().getPostalCode());
+                    a.setPhone(request.getAddress().getPhone());
+                    a.setCity(city);
+                    return addressRepository.save(a);
+                });
+
+        staff.setAddress(address);
+
+        Staff saved = staffRepository.save(staff);
+
+        if (Boolean.TRUE.equals(request.getIsManager())) {
+            store.setManagerStaff(saved);
+            storeRepository.save(store);
+        }
+
+        return StaffMapper.toResponseDTO(saved);
     }
 
+    // ================= PATCH =================
     @Override
-    public StaffDTO patchStaff(Integer id, Map<String, Object> updates) {
-        Staff staff = getStaffEntityById(id);
+    @Transactional
+    public StaffResponseDTO patchStaff(Short id, StaffPatchDTO dto) {
 
-        updates.forEach((key, value) -> {
-            if (key.equals("staffId") || key.equals("lastUpdate")) return;
+        Staff staff = staffRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Staff not found"));
 
-            switch (key) {
-                case "firstName" -> staff.setFirstName((String) value);
-                case "lastName" -> staff.setLastName((String) value);
-                case "email" -> staff.setEmail((String) value);
-                case "addressId" -> staff.setAddressId((Integer) value);
-                case "storeId" -> staff.setStoreId((Integer) value);
-                case "active" -> staff.setActive((Boolean) value);
-                case "username" -> staff.setUsername((String) value);
-                case "password" -> staff.setPassword((String) value);
-            }
-        });
+        if (dto.getFirstName() != null)
+            staff.setFirstName(dto.getFirstName());
 
-        return mapToDTO(staffRepository.save(staff));
-    }
+        if (dto.getLastName() != null)
+            staff.setLastName(dto.getLastName());
 
-    @Override
-    public void deleteStaff(Integer id) {
-        Staff staff = getStaffEntityById(id);
-        staffRepository.delete(staff);
+        if (dto.getEmail() != null)
+            staff.setEmail(dto.getEmail());
+
+        if (dto.getUsername() != null)
+            staff.setUsername(dto.getUsername());
+
+        if (dto.getActive() != null)
+            staff.setActive(dto.getActive());
+
+        if (dto.getPassword() != null)
+            staff.setPassword(dto.getPassword());
+
+        if (dto.getStoreId() != null) {
+            Store store = storeRepository.findById(dto.getStoreId())
+                    .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+            staff.setStore(store);
+        }
+
+        if (dto.getAddress() != null) {
+            City city = getOrCreateCity(dto.getAddress());
+
+            Address address = addressRepository
+                    .findByAddressAndCity(dto.getAddress().getAddress(), city)
+                    .orElseGet(() -> {
+                        Address a = new Address();
+                        a.setAddress(dto.getAddress().getAddress());
+                        a.setAddress2(dto.getAddress().getAddress2());
+                        a.setDistrict(dto.getAddress().getDistrict());
+                        a.setPostalCode(dto.getAddress().getPostalCode());
+                        a.setPhone(dto.getAddress().getPhone());
+                        a.setCity(city);
+                        return addressRepository.save(a);
+                    });
+
+            staff.setAddress(address);
+        }
+
+        Staff saved = staffRepository.save(staff);
+
+        return StaffMapper.toResponseDTO(saved);
     }
 }

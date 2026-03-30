@@ -1,56 +1,100 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.InventoryDTO;
+import com.iem.FilmRentalStore.dto.inventory.InventoryDTO;
+import com.iem.FilmRentalStore.dto.inventory.InventoryRequestDTO;
+import com.iem.FilmRentalStore.dto.inventory.InventoryResponseDTO;
 import com.iem.FilmRentalStore.service.InventoryService;
-import org.springframework.http.*;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
-@RequestMapping("/api/v1/inventories")
+@RequestMapping("/api/inventory")
+@RequiredArgsConstructor
 public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    public InventoryController(InventoryService inventoryService) {
-        this.inventoryService = inventoryService;
+    // 🔥 Helper → Ignore sorting globally
+    private Pageable sanitizePageable(Pageable pageable) {
+        return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
     }
 
-    @GetMapping
-    public ResponseEntity<List<InventoryDTO>> getInventories(@RequestParam Map<String, String> params) {
-        if (params.isEmpty())
-            return ResponseEntity.ok(inventoryService.getAllInventories());
-
-        return ResponseEntity.ok(inventoryService.getInventoriesByFields(params));
+    // ✅ CREATE
+    @PostMapping
+    public ResponseEntity<InventoryDTO> createInventory(
+            @Valid @RequestBody InventoryRequestDTO request) {
+        return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
+    // ✅ GET BY ID (LIGHTWEIGHT)
     @GetMapping("/{id}")
     public ResponseEntity<InventoryDTO> getInventoryById(@PathVariable Integer id) {
         return ResponseEntity.ok(inventoryService.getInventoryById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<InventoryDTO> createInventory(@RequestBody InventoryDTO dto) {
-        return new ResponseEntity<>(inventoryService.createInventory(dto), HttpStatus.CREATED);
+    // ✅ GET BY ID (DETAILED)
+    @GetMapping("/{id}/details")
+    public ResponseEntity<InventoryResponseDTO> getInventoryDetails(@PathVariable Integer id) {
+        return ResponseEntity.ok(inventoryService.getInventoryDetails(id));
     }
 
+    // ✅ GET ALL (PAGINATION + FILTER)
+    @GetMapping
+    public ResponseEntity<Page<InventoryDTO>> getAllInventory(
+            @RequestParam(required = false) Short filmId,
+            @RequestParam(required = false) Short storeId,
+            Pageable pageable
+    ) {
+        pageable = sanitizePageable(pageable);
+
+        return ResponseEntity.ok(
+                inventoryService.getAllInventory(filmId, storeId, pageable)
+        );
+    }
+
+    // ✅ UPDATE (FULL)
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryDTO> updateInventory(@PathVariable Integer id,
-                                                        @RequestBody InventoryDTO dto) {
-        return ResponseEntity.ok(inventoryService.updateInventory(id, dto));
+    public ResponseEntity<InventoryDTO> updateInventory(
+            @PathVariable Integer id,
+            @Valid @RequestBody InventoryRequestDTO request) {
+        return ResponseEntity.ok(inventoryService.updateInventory(id, request));
     }
 
+    // ✅ PATCH (PARTIAL)
     @PatchMapping("/{id}")
-    public ResponseEntity<InventoryDTO> patchInventory(@PathVariable Integer id,
-                                                       @RequestBody Map<String, Object> updates) {
-        return ResponseEntity.ok(inventoryService.patchInventory(id, updates));
+    public ResponseEntity<InventoryDTO> patchInventory(
+            @PathVariable Integer id,
+            @RequestBody InventoryRequestDTO request) {
+        return ResponseEntity.ok(inventoryService.patchInventory(id, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInventory(@PathVariable Integer id) {
-        inventoryService.deleteInventory(id);
-        return ResponseEntity.noContent().build();
+    // ✅ BULK FETCH BY FILM
+    @GetMapping("/film/{filmId}")
+    public ResponseEntity<Page<InventoryDTO>> getByFilmId(
+            @PathVariable Short filmId,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable);
+
+        return ResponseEntity.ok(inventoryService.getByFilmId(filmId, pageable));
+    }
+
+    // ✅ BULK FETCH BY STORE
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<Page<InventoryDTO>> getByStoreId(
+            @PathVariable Short storeId,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable);
+
+        return ResponseEntity.ok(inventoryService.getByStoreId(storeId, pageable));
     }
 }

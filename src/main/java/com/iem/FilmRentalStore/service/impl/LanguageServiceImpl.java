@@ -1,100 +1,110 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.LanguageDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageRequestDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageResponseDTO;
 import com.iem.FilmRentalStore.entity.Language;
+import com.iem.FilmRentalStore.mapper.LanguageMapper;
 import com.iem.FilmRentalStore.repository.LanguageRepository;
 import com.iem.FilmRentalStore.service.LanguageService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class LanguageServiceImpl implements LanguageService {
 
-    private final LanguageRepository repo;
+    private final LanguageRepository languageRepository;
+    private final LanguageMapper languageMapper;
 
-    public LanguageServiceImpl(LanguageRepository repo) {
-        this.repo = repo;
-    }
-
-    // DTO → Response
-    private LanguageDTO mapToDTO(Language l) {
-        LanguageDTO dto = new LanguageDTO();
-        dto.setLanguageId(l.getLanguageId());
-        dto.setName(l.getName());
-        return dto;
-    }
-
-    // DTO → Entity (safe mapping)
-    private Language mapToEntity(LanguageDTO dto) {
-        Language l = new Language();
-        l.setName(dto.getName());
-
-        if (dto.getLanguageId() != null) {
-            l.setLanguageId(dto.getLanguageId());
-        }
-
-        return l;
-    }
-
-    // GET ALL
     @Override
-    public List<LanguageDTO> getAll() {
-        return repo.findAll()
+    public LanguageResponseDTO createLanguage(LanguageRequestDTO request) {
+
+        // 🔒 Check duplicate
+        languageRepository.findByNameIgnoreCase(request.getName())
+                .ifPresent(l -> {
+                    throw new RuntimeException("Language already exists with name: " + request.getName());
+                });
+
+        Language language = LanguageMapper.toEntity(request);
+        Language saved = languageRepository.save(language);
+
+        return LanguageMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public LanguageResponseDTO getLanguageById(Integer id) {
+        Language language = languageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Language not found with id: " + id));
+
+        return languageMapper.toResponseDTO(language);
+    }
+
+    @Override
+    public LanguageResponseDTO getLanguageByName(String name) {
+
+        Language language = languageRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new EntityNotFoundException("Language not found with name: " + name));
+
+        return LanguageMapper.toResponseDTO(language);
+    }
+
+    @Override
+    public List<LanguageResponseDTO> getAllLanguages() {
+        return languageRepository.findAll()
                 .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .map(LanguageMapper::toResponseDTO)
+                .toList();
     }
 
-    // GET BY ID
     @Override
-    public LanguageDTO getById(int id) {
-        return mapToDTO(repo.findById(id).orElseThrow());
+    public LanguageResponseDTO updateLanguage(Integer id, LanguageRequestDTO request) {
+
+        Language language = languageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Language not found with id: " + id));
+
+        // 🔒 Check if another language already has this name
+        languageRepository.findByNameIgnoreCase(request.getName())
+                .ifPresent(existing -> {
+                    if (!existing.getLanguageId().equals(id)) {
+                        throw new RuntimeException("Language already exists with name: " + request.getName());
+                    }
+                });
+
+        language.setName(request.getName());
+
+        Language updated = languageRepository.save(language);
+        return LanguageMapper.toResponseDTO(updated);
     }
 
-    // GET BY NAME
-    @Override
-    public List<LanguageDTO> getByName(String name) {
-        return repo.findByName(name)
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    private String normalize(String value) {
+        return value == null ? null : value.trim().toLowerCase();
     }
 
-    // POST (CREATE)
-    @Override
-    public LanguageDTO create(LanguageDTO dto) {
-        Language l = new Language();
-        l.setName(dto.getName());   // ignore ID
-        return mapToDTO(repo.save(l));
+    private Language getOrCreateLanguage(String name) {
+
+        String normalized = normalize(name);
+
+        return languageRepository.findByNameIgnoreCase(normalized)
+                .orElseGet(() -> {
+                    try {
+                        Language lang = new Language();
+                        lang.setName(normalized);
+                        return languageRepository.save(lang);
+                    } catch (Exception e) {
+                        // 🔥 If duplicate inserted by another thread
+                        try {
+                            return languageRepository.findByNameIgnoreCase(normalized)
+                                    .orElseThrow(() -> e);
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                });
     }
 
-    // PUT (FULL UPDATE)
-    @Override
-    public LanguageDTO update(int id, LanguageDTO dto) {
-        Language existing = repo.findById(id).orElseThrow();
 
-        existing.setName(dto.getName());
-
-        return mapToDTO(repo.save(existing));
-    }
-
-    // PATCH (PARTIAL UPDATE)
-    @Override
-    public LanguageDTO patch(int id, LanguageDTO dto) {
-        Language existing = repo.findById(id).orElseThrow();
-
-        if (dto.getName() != null) {
-            existing.setName(dto.getName());
-        }
-
-        return mapToDTO(repo.save(existing));
-    }
-
-    // DELETE
-    @Override
-    public void delete(int id) {
-        repo.deleteById(id);
-    }
 }

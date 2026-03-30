@@ -1,21 +1,20 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.LanguageDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageRequestDTO;
+import com.iem.FilmRentalStore.dto.language.LanguageResponseDTO;
+
 import java.util.List;
 
 public interface LanguageService {
 
-    List<LanguageDTO> getAll();
+    LanguageResponseDTO createLanguage(LanguageRequestDTO request);
 
-    LanguageDTO getById(int id);
+    LanguageResponseDTO getLanguageById(Integer id);
 
-    List<LanguageDTO> getByName(String name);
+    List<LanguageResponseDTO> getAllLanguages();
 
-    LanguageDTO create(LanguageDTO dto);
+    LanguageResponseDTO updateLanguage(Integer id, LanguageRequestDTO request);
 
-    LanguageDTO update(int id, LanguageDTO dto);
-
-    LanguageDTO patch(int id, LanguageDTO dto);
-
-    void delete(int id);
+    LanguageResponseDTO getLanguageByName(String name);
 }

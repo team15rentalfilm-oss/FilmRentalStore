@@ -1,56 +1,118 @@
 package com.iem.FilmRentalStore.controller;
 
-import com.iem.FilmRentalStore.dto.StaffDTO;
+import com.iem.FilmRentalStore.dto.staff.*;
 import com.iem.FilmRentalStore.service.StaffService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/staff")
+@RequestMapping("/api/staff")
 @RequiredArgsConstructor
 public class StaffController {
 
     private final StaffService staffService;
 
-    @GetMapping
-    public ResponseEntity<List<StaffDTO>> getStaff(@RequestParam Map<String, String> searchParams) {
-        if (searchParams.isEmpty()) {
-            return ResponseEntity.ok(staffService.getAllStaff());
-        }
-        return ResponseEntity.ok(staffService.getStaffByFields(searchParams));
+    @PostMapping
+    public StaffResponseDTO create(@Valid @RequestBody StaffRequestDTO request) {
+        return staffService.createStaff(request);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StaffDTO> getStaffById(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(staffService.getStaffById(id));
+    public StaffResponseDTO getById(@PathVariable Short id) {
+        return staffService.getStaffById(id);
     }
 
-    @PostMapping
-    public ResponseEntity<StaffDTO> createStaff(@Valid @RequestBody StaffDTO staffDTO) {
-        return new ResponseEntity<>(staffService.createStaff(staffDTO), HttpStatus.CREATED);
+    @GetMapping
+    public Page<StaffResponseDTO> getAll(Pageable pageable) {
+
+        pageable = sanitizePageable(pageable);
+
+        return staffService.getAllStaff(pageable);
+    }
+
+    private static final List<String> ALLOWED_SORTS =
+            List.of("staffId", "firstName", "lastName", "email");
+
+    private Pageable sanitizePageable(Pageable pageable) {
+
+        if (pageable.getSort().isSorted()) {
+
+            for (Sort.Order order : pageable.getSort()) {
+
+                String property = order.getProperty();
+
+                // ❌ Invalid Swagger format
+                if (property.contains("[") || property.contains("]") || property.contains("\"")) {
+                    return defaultPage(pageable);
+                }
+
+                // ❌ Unknown field
+                if (!ALLOWED_SORTS.contains(property)) {
+                    return defaultPage(pageable);
+                }
+            }
+        }
+
+        return pageable;
+    }
+
+    private Pageable defaultPage(Pageable pageable) {
+        return PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("staffId").ascending()
+        );
+    }
+
+    @GetMapping("/search")
+    public Page<StaffResponseDTO> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Short storeId,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable); // 🔥 ADD THIS
+
+        return staffService.searchStaff(name, storeId, pageable);
+    }
+
+    @GetMapping("/city")
+    public Page<StaffResponseDTO> getByCity(
+            @RequestParam String city,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable); // 🔥 ADD
+
+        return staffService.getStaffByCity(city, pageable);
+    }
+
+    @GetMapping("/country")
+    public Page<StaffResponseDTO> getByCountry(
+            @RequestParam String country,
+            Pageable pageable) {
+
+        pageable = sanitizePageable(pageable); // 🔥 ADD
+
+        return staffService.getStaffByCountry(country, pageable);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StaffDTO> updateStaff(@PathVariable("id") Integer id,
-                                                @Valid @RequestBody StaffDTO staffDTO) {
-        return ResponseEntity.ok(staffService.updateStaff(id, staffDTO));
+    public StaffResponseDTO update(
+            @PathVariable Short id,
+            @Valid @RequestBody StaffRequestDTO request) {
+
+        return staffService.updateStaff(id, request);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<StaffDTO> patchStaff(@PathVariable("id") Integer id,
-                                               @RequestBody Map<String, Object> updates) {
-        return ResponseEntity.ok(staffService.patchStaff(id, updates));
-    }
+    public StaffResponseDTO patch(
+            @PathVariable Short id,
+            @RequestBody StaffPatchDTO dto) {
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStaff(@PathVariable("id") Integer id) {
-        staffService.deleteStaff(id);
-        return ResponseEntity.noContent().build();
+        return staffService.patchStaff(id, dto);
     }
 }

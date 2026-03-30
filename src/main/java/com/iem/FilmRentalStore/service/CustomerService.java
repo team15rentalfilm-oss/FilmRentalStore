@@ -1,22 +1,29 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.entity.Customer;
+import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerPatchDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
+import com.iem.FilmRentalStore.dto.customer.CustomerResponseDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CustomerService {
 
-    List<Customer> getAll();
+    CustomerDTO createCustomer(CustomerRequestDTO request);
 
-    Customer getById(Short id);
+    CustomerResponseDTO getCustomerById(Short id);
 
-    List<Customer> search(String firstName, String lastName, String email, Byte storeId);
+    List<CustomerDTO> getAllCustomers();
 
-    Customer create(Customer c);
+    CustomerDTO updateCustomer(Short id, CustomerRequestDTO request);
 
-    Customer update(Short id, Customer c);
+    List<CustomerDTO> getByFirstName(String firstName);
+    List<CustomerDTO> getByLastName(String lastName);
+    List<CustomerDTO> getByEmail(String email);
+    List<CustomerDTO> getByActive(Boolean active);
+    List<CustomerDTO> getByCity(String city);
+    List<CustomerDTO> getByCountry(String country);
 
-    Customer patch(Short id, Customer c);
-
-    void delete(Short id);
+    CustomerDTO patchCustomer(Short id, CustomerPatchDTO dto);
 }

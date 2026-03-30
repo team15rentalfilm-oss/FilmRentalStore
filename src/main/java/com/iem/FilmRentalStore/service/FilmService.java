@@ -1,24 +1,29 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.FilmDTO;
+import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
+import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
+import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface FilmService {
 
-    FilmDTO createFilm(FilmDTO filmDTO);
+    FilmResponseDTO createFilm(FilmRequestDTO request);
 
-    FilmDTO getFilmById(Short id);
+    FilmResponseDTO getFilmById(Short id);
 
-    List<FilmDTO> getAllFilms();
+    Page<FilmResponseDTO> getAllFilms(int page, int size);
 
-    FilmDTO updateFilm(Short id, FilmDTO filmDTO);
+    FilmResponseDTO updateFilm(Short id, FilmRequestDTO request);
 
-    void deleteFilm(Short id);
+    FilmResponseDTO patchFilm(Short id, FilmPatchDTO request);
 
-
-
-    List<FilmDTO> searchFilms(String title, Integer year);
-    FilmDTO patchFilm(Short id, FilmDTO filmDTO);
-
+    public Page<FilmResponseDTO> searchFilms(
+            String title,
+            Integer year,
+            String category,
+            String actor,
+            int page,
+            int size) ;
 }

@@ -1,0 +1,52 @@
+package com.iem.FilmRentalStore.dto.film;
+
+import com.iem.FilmRentalStore.dto.actor.ActorDTO;
+import com.iem.FilmRentalStore.dto.category.CategoryDTO;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Setter;
+
+import java.util.List;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import java.math.BigDecimal;
+
+import java.util.Set;
+
+@Getter
+@Setter
+public class FilmRequestDTO {
+
+    @NotBlank(message = "Title is required")
+    @Size(max = 255)
+    private String title;
+
+    private String description;
+
+    private Integer releaseYear;
+
+    @NotBlank(message = "Language is required")
+    private String language;
+
+    @NotEmpty(message = "At least one category is required")
+    private Set<String> categories;
+
+    @NotEmpty(message = "At least one actor is required")
+    private Set<String> actors;
+
+    @Min(1)
+    private Integer rentalDuration;
+
+    @DecimalMin(value = "0.0", inclusive = false)
+    private BigDecimal rentalRate;
+
+    private Integer length;
+
+    @DecimalMin(value = "0.0", inclusive = false)
+    private BigDecimal replacementCost;
+
+    private String rating;
+
+    private Set<String> specialFeatures;
+}

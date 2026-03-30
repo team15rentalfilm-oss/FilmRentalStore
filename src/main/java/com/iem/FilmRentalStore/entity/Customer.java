@@ -1,80 +1,57 @@
 package com.iem.FilmRentalStore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+@Data
 @Entity
-@Table(name = "customer")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "customer")
 public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id", columnDefinition = "SMALLINT UNSIGNED")
+    @Column(name = "customer_id")
     private Short customerId;
 
-    @Column(name = "store_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Byte storeId;
-
-    @Column(name = "first_name", nullable = false, length = 45)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false, length = 45)
-    private String lastName;
-
-    @Column(name = "email", length = 50)
-    private String email;
-
-    @Column(name = "address_id", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private Short addressId;
-
-    @Column(name = "active")
-    private Boolean active;
-
-    @Column(name = "create_date", nullable = false)
-    private LocalDateTime createDate;
-
-    @Column(name = "last_update", nullable = false)
-    private LocalDateTime lastUpdate;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", insertable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id", insertable = false, updatable = false)
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private List<Payment> payments = new ArrayList<>();
+    private Boolean active;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private List<Rental> rentals = new ArrayList<>();
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
+
+    @Column(name = "last_update")
+    private LocalDateTime lastUpdate;
 
     @PrePersist
     public void prePersist() {
         if (createDate == null) {
             createDate = LocalDateTime.now();
         }
+        lastUpdate = LocalDateTime.now();
         if (active == null) {
             active = true;
         }
-        lastUpdate = LocalDateTime.now();
     }
 
     @PreUpdate
