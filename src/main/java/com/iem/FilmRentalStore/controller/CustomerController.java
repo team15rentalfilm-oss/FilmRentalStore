@@ -18,7 +18,7 @@ public class CustomerController {
 
     // 🔒 Allowed fields for sorting (prevents errors & SQL injection)
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
-            "customerId", "firstName", "lastName", "email", "active", "createDate"
+            "customerId"
     );
 
     private static final String DEFAULT_SORT_FIELD = "customerId";
