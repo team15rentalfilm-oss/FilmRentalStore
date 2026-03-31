@@ -189,20 +189,22 @@ class ControllerUnitTest {
         CityRequestDTO request = TestDataFactory.cityRequest("Bengaluru", "India");
         CityPatchDTO patch = TestDataFactory.cityPatch("Mumbai", "India");
         CityResponseDTO response = new CityResponseDTO();
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<CityResponseDTO> page = new PageImpl<>(List.of(response));
         when(cityService.createCity(request)).thenReturn(new com.iem.FilmRentalStore.dto.city.CityDTO());
         when(cityService.updateCity((short) 1, request)).thenReturn(response);
         when(cityService.getCityById((short) 1)).thenReturn(response);
-        when(cityService.getAllCities()).thenReturn(List.of(response));
-        when(cityService.searchCitiesByName("Ben")).thenReturn(List.of(response));
-        when(cityService.searchCitiesByCountry("India")).thenReturn(List.of(response));
+        when(cityService.getAllCities(pageable)).thenReturn(page);
+        when(cityService.searchCitiesByName("Ben", pageable)).thenReturn(page);
+        when(cityService.searchCitiesByCountry("India", pageable)).thenReturn(page);
         when(cityService.patchCity((short) 1, patch)).thenReturn(response);
 
         assertThat(cityController.createCity(request)).isNotNull();
         assertThat(cityController.updateCity((short) 1, request)).isSameAs(response);
         assertThat(cityController.getCityById((short) 1)).isSameAs(response);
-        assertThat(cityController.getAllCities()).containsExactly(response);
-        assertThat(cityController.searchCities("Ben")).containsExactly(response);
-        assertThat(cityController.searchCitiesByCountry("India")).containsExactly(response);
+        assertThat(cityController.getAllCities(pageable)).isSameAs(page);
+        assertThat(cityController.searchCities("Ben", pageable)).isSameAs(page);
+        assertThat(cityController.searchCitiesByCountry("India", pageable)).isSameAs(page);
         assertThat(cityController.patchCity((short) 1, patch)).isSameAs(response);
     }
 

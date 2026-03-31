@@ -15,7 +15,10 @@ import com.iem.FilmRentalStore.service.CityService;
 import com.iem.FilmRentalStore.service.CountryService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -58,12 +61,26 @@ public class CityServiceImpl implements CityService {
         return cityMapper.toResponseDTO(city);
     }
 
+
     @Override
-    public List<CityResponseDTO> getAllCities() {
-        return cityRepository.findAllWithCountry()
-                .stream()
-                .map(cityMapper::toResponseDTO)
-                .toList();
+    @Transactional
+    public Page<CityResponseDTO> getAllCities(Pageable pageable) {
+        return cityRepository.findAll(pageable)
+                .map(cityMapper::toResponseDTO);
+    }
+
+    @Override
+    @Transactional
+    public Page<CityResponseDTO> searchCitiesByName(String city, Pageable pageable) {
+        return cityRepository.findByCityContainingIgnoreCase(city, pageable)
+                .map(cityMapper::toResponseDTO);
+    }
+
+    @Override
+    @Transactional
+    public Page<CityResponseDTO> searchCitiesByCountry(String country, Pageable pageable) {
+        return cityRepository.findByCountry_CountryContainingIgnoreCase(country, pageable)
+                .map(cityMapper::toResponseDTO);
     }
 
 
@@ -100,20 +117,7 @@ public class CityServiceImpl implements CityService {
         return input == null ? null : input.trim();
     }
 
-    @Override
-    public List<CityResponseDTO> searchCitiesByName(String city) {
-        return cityRepository.findByCityWithCountry(city)
-                .stream()
-                .map(cityMapper::toResponseDTO)
-                .toList();
-    }
-    @Override
-    public List<CityResponseDTO> searchCitiesByCountry(String country) {
-        return cityRepository.findByCountryNameWithCountry(country)
-                .stream()
-                .map(cityMapper::toResponseDTO)
-                .toList();
-    }
+
 
     @Override
     public CityResponseDTO patchCity(Short id, CityPatchDTO request) {

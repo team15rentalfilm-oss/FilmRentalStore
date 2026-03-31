@@ -2,6 +2,8 @@ package com.iem.FilmRentalStore.repository;
 
 import com.iem.FilmRentalStore.entity.City;
 import com.iem.FilmRentalStore.entity.Country;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,8 +15,6 @@ import java.util.Optional;
 @Repository
 public interface CityRepository extends JpaRepository<City, Short> {
 
-    List<City> findByCityContainingIgnoreCase(String city);
-    List<City> findByCountry_CountryContainingIgnoreCase(String country);
     Optional<City> findByCityIgnoreCaseAndCountry(String city, Country country);
     @Query("SELECT c FROM City c JOIN FETCH c.country")
     List<City> findAllWithCountry();
@@ -28,5 +28,8 @@ public interface CityRepository extends JpaRepository<City, Short> {
     @Query("SELECT c FROM City c JOIN FETCH c.country WHERE LOWER(c.country.country) LIKE LOWER(CONCAT('%', :country, '%'))")
     List<City> findByCountryNameWithCountry(@Param("country") String country);
 
+    Page<City> findByCityContainingIgnoreCase(String city, Pageable pageable);
+
+    Page<City> findByCountry_CountryContainingIgnoreCase(String country, Pageable pageable);
 
 }
