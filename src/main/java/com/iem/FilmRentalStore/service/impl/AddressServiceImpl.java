@@ -2,19 +2,14 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
-import com.iem.FilmRentalStore.entity.Address;
-import com.iem.FilmRentalStore.entity.City;
-import com.iem.FilmRentalStore.entity.Country;
+import com.iem.FilmRentalStore.entity.*;
 import com.iem.FilmRentalStore.mapper.AddressMapper;
-import com.iem.FilmRentalStore.repository.AddressRepository;
-import com.iem.FilmRentalStore.repository.CityRepository;
-import com.iem.FilmRentalStore.repository.CountryRepository;
+import com.iem.FilmRentalStore.repository.*;
 import com.iem.FilmRentalStore.service.AddressService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +19,7 @@ public class AddressServiceImpl implements AddressService {
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
 
-    // 🔥 COMMON METHOD (Reusable Logic)
+    // 🔥 COMMON
     private City getOrCreateCity(AddressRequestDTO request) {
 
         if (request.getCity() == null || request.getCity().getCountry() == null) {
@@ -63,37 +58,33 @@ public class AddressServiceImpl implements AddressService {
 
         Address saved = addressRepository.save(address);
 
-        // 🔥 Re-fetch to avoid lazy issue
-        Address fullAddress = addressRepository.findByIdWithFetch(saved.getAddressId())
-                .orElseThrow(() -> new EntityNotFoundException("Address not found after save"));
+        Address full = addressRepository.findByIdWithFetch(saved.getAddressId())
+                .orElseThrow();
 
-        return AddressMapper.toDTO(fullAddress);
+        return AddressMapper.toDTO(full);
     }
 
     // ✅ GET BY ID
     @Override
     public AddressDTO getAddressById(Short id) {
-        Address address = addressRepository.findByIdWithFetch(id)
-                .orElseThrow(() -> new EntityNotFoundException("Address not found with id: " + id));
-
-        return AddressMapper.toDTO(address);
-    }
-
-    // ✅ GET ALL
-    @Override
-    public List<AddressDTO> getAllAddresses() {
-        return addressRepository.findAllWithFetch()
-                .stream()
+        return addressRepository.findByIdWithFetch(id)
                 .map(AddressMapper::toDTO)
-                .toList();
+                .orElseThrow(() -> new EntityNotFoundException("Address not found"));
     }
 
-    // ✅ UPDATE (FULL)
+    // ✅ PAGINATION
+    @Override
+    public Page<AddressDTO> getAllAddresses(Pageable pageable) {
+        return addressRepository.findAllWithFetch(pageable)
+                .map(AddressMapper::toDTO);
+    }
+
+    // ✅ UPDATE
     @Override
     public AddressDTO updateAddress(Short id, AddressRequestDTO request) {
 
         Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Address not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Address not found"));
 
         City city = getOrCreateCity(request);
 
@@ -106,94 +97,65 @@ public class AddressServiceImpl implements AddressService {
 
         Address updated = addressRepository.save(address);
 
-        // 🔥 Re-fetch
-        Address fullAddress = addressRepository.findByIdWithFetch(updated.getAddressId())
-                .orElseThrow(() -> new EntityNotFoundException("Address not found after update"));
-
-        return AddressMapper.toDTO(fullAddress);
+        return addressRepository.findByIdWithFetch(updated.getAddressId())
+                .map(AddressMapper::toDTO)
+                .orElseThrow();
     }
 
-    // 🔥 PATCH (PARTIAL UPDATE)
+    // 🔥 PATCH
     @Override
     public AddressDTO patchAddress(Short id, AddressRequestDTO request) {
 
         Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Address not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Address not found"));
 
-        if (request.getAddress() != null)
-            address.setAddress(request.getAddress());
-
-        if (request.getAddress2() != null)
-            address.setAddress2(request.getAddress2());
-
-        if (request.getDistrict() != null)
-            address.setDistrict(request.getDistrict());
-
-        if (request.getPostalCode() != null)
-            address.setPostalCode(request.getPostalCode());
-
-        if (request.getPhone() != null)
-            address.setPhone(request.getPhone());
+        if (request.getAddress() != null) address.setAddress(request.getAddress());
+        if (request.getAddress2() != null) address.setAddress2(request.getAddress2());
+        if (request.getDistrict() != null) address.setDistrict(request.getDistrict());
+        if (request.getPostalCode() != null) address.setPostalCode(request.getPostalCode());
+        if (request.getPhone() != null) address.setPhone(request.getPhone());
 
         if (request.getCity() != null && request.getCity().getCountry() != null) {
-            City city = getOrCreateCity(request);
-            address.setCity(city);
+            address.setCity(getOrCreateCity(request));
         }
 
         Address updated = addressRepository.save(address);
 
-        // 🔥 Re-fetch
-        Address fullAddress = addressRepository.findByIdWithFetch(updated.getAddressId())
-                .orElseThrow(() -> new EntityNotFoundException("Address not found after patch"));
-
-        return AddressMapper.toDTO(fullAddress);
+        return addressRepository.findByIdWithFetch(updated.getAddressId())
+                .map(AddressMapper::toDTO)
+                .orElseThrow();
     }
 
-    // ✅ CREATE + RETURN ENTITY (for reuse in Customer/Store)
+    // ✅ SEARCH
+    @Override
+    public Page<AddressDTO> searchByAddress(String address, Pageable pageable) {
+        return addressRepository.findByAddressWithFetch(address, pageable)
+                .map(AddressMapper::toDTO);
+    }
+
+    @Override
+    public Page<AddressDTO> searchByDistrict(String district, Pageable pageable) {
+        return addressRepository.findByDistrictWithFetch(district, pageable)
+                .map(AddressMapper::toDTO);
+    }
+
+    @Override
+    public Page<AddressDTO> searchByCity(String city, Pageable pageable) {
+        return addressRepository.findByCityWithFetch(city, pageable)
+                .map(AddressMapper::toDTO);
+    }
+
+    @Override
+    public Page<AddressDTO> getByCountry(String country, Pageable pageable) {
+        return addressRepository.findByCountryWithFetch(country, pageable)
+                .map(AddressMapper::toDTO);
+    }
+
+    // ✅ REUSE
     @Override
     public Address createAndReturnEntity(AddressRequestDTO request) {
-
-        City city = getOrCreateCity(request);
-
         Address address = AddressMapper.toEntity(request);
-        address.setCity(city);
-
+        address.setCity(getOrCreateCity(request));
         return addressRepository.save(address);
-    }
-
-    // ✅ SEARCH BY ADDRESS
-    @Override
-    public List<AddressDTO> searchByAddress(String address) {
-        return addressRepository.findByAddressWithFetch(address)
-                .stream()
-                .map(AddressMapper::toDTO)
-                .toList();
-    }
-
-    // ✅ SEARCH BY DISTRICT
-    @Override
-    public List<AddressDTO> searchByDistrict(String district) {
-        return addressRepository.findByDistrictWithFetch(district)
-                .stream()
-                .map(AddressMapper::toDTO)
-                .toList();
-    }
-
-    // ✅ SEARCH BY CITY
-    @Override
-    public List<AddressDTO> searchByCity(String city) {
-        return addressRepository.findByCityWithFetch(city)
-                .stream()
-                .map(AddressMapper::toDTO)
-                .toList();
-    }
-
-    // ✅ SEARCH BY COUNTRY
-    @Override
-    public List<AddressDTO> getByCountry(String country) {
-        return addressRepository.findByCountryWithFetch(country)
-                .stream()
-                .map(AddressMapper::toDTO)
-                .toList();
     }
 }

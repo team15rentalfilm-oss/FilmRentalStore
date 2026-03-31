@@ -3,8 +3,8 @@ package com.iem.FilmRentalStore.service;
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
 import com.iem.FilmRentalStore.entity.Address;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface AddressService {
 
@@ -12,19 +12,19 @@ public interface AddressService {
 
     AddressDTO getAddressById(Short id);
 
-    List<AddressDTO> getAllAddresses();
+    Page<AddressDTO> getAllAddresses(Pageable pageable);
 
     AddressDTO updateAddress(Short id, AddressRequestDTO request);
 
     Address createAndReturnEntity(AddressRequestDTO request);
 
-    List<AddressDTO> getByCountry(String country);
+    Page<AddressDTO> getByCountry(String country, Pageable pageable);
 
     AddressDTO patchAddress(Short id, AddressRequestDTO request);
 
-    List<AddressDTO> searchByAddress(String address);
+    Page<AddressDTO> searchByAddress(String address, Pageable pageable);
 
-    List<AddressDTO> searchByDistrict(String district);
+    Page<AddressDTO> searchByDistrict(String district, Pageable pageable);
 
-    List<AddressDTO> searchByCity(String city);
+    Page<AddressDTO> searchByCity(String city, Pageable pageable);
 }

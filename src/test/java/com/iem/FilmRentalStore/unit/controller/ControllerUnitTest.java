@@ -145,25 +145,27 @@ class ControllerUnitTest {
     void addressControllerDelegatesAllEndpoints() {
         AddressRequestDTO request = TestDataFactory.addressRequest();
         AddressDTO dto = new AddressDTO();
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<AddressDTO> page = new PageImpl<>(List.of(dto));
         when(addressService.createAddress(request)).thenReturn(dto);
         when(addressService.getAddressById((short) 1)).thenReturn(dto);
-        when(addressService.getAllAddresses()).thenReturn(List.of(dto));
+        when(addressService.getAllAddresses(pageable)).thenReturn(page);
         when(addressService.updateAddress((short) 1, request)).thenReturn(dto);
         when(addressService.patchAddress((short) 1, request)).thenReturn(dto);
-        when(addressService.getByCountry("India")).thenReturn(List.of(dto));
-        when(addressService.searchByAddress("221")).thenReturn(List.of(dto));
-        when(addressService.searchByDistrict("Central")).thenReturn(List.of(dto));
-        when(addressService.searchByCity("Bengaluru")).thenReturn(List.of(dto));
+        when(addressService.getByCountry("India", pageable)).thenReturn(page);
+        when(addressService.searchByAddress("221", pageable)).thenReturn(page);
+        when(addressService.searchByDistrict("Central", pageable)).thenReturn(page);
+        when(addressService.searchByCity("Bengaluru", pageable)).thenReturn(page);
 
         assertThat(addressController.createAddress(request)).isSameAs(dto);
         assertThat(addressController.getAddressById((short) 1)).isSameAs(dto);
-        assertThat(addressController.getAllAddresses()).containsExactly(dto);
+        assertThat(addressController.getAllAddresses(pageable)).isSameAs(page);
         assertThat(addressController.updateAddress((short) 1, request)).isSameAs(dto);
         assertThat(addressController.patchAddress((short) 1, request)).isSameAs(dto);
-        assertThat(addressController.getByCountry("India")).containsExactly(dto);
-        assertThat(addressController.searchByAddress("221")).containsExactly(dto);
-        assertThat(addressController.searchByDistrict("Central")).containsExactly(dto);
-        assertThat(addressController.searchByCity("Bengaluru")).containsExactly(dto);
+        assertThat(addressController.getByCountry("India", pageable)).isSameAs(page);
+        assertThat(addressController.searchByAddress("221", pageable)).isSameAs(page);
+        assertThat(addressController.searchByDistrict("Central", pageable)).isSameAs(page);
+        assertThat(addressController.searchByCity("Bengaluru", pageable)).isSameAs(page);
     }
 
     @Test
