@@ -76,25 +76,4 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.patchInventory(id, request));
     }
 
-    // ✅ BULK FETCH BY FILM
-    @GetMapping("/film/{filmId}")
-    public ResponseEntity<Page<InventoryDTO>> getByFilmId(
-            @PathVariable Short filmId,
-            Pageable pageable) {
-
-        pageable = sanitizePageable(pageable);
-
-        return ResponseEntity.ok(inventoryService.getByFilmId(filmId, pageable));
-    }
-
-    // ✅ BULK FETCH BY STORE
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<Page<InventoryDTO>> getByStoreId(
-            @PathVariable Short storeId,
-            Pageable pageable) {
-
-        pageable = sanitizePageable(pageable);
-
-        return ResponseEntity.ok(inventoryService.getByStoreId(storeId, pageable));
-    }
 }

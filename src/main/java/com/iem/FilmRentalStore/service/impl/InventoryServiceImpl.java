@@ -99,21 +99,6 @@ public class InventoryServiceImpl implements InventoryService {
         return InventoryMapper.toDTO(fetched);
     }
 
-    @Override
-    public Page<InventoryDTO> getByFilmId(Short filmId, Pageable pageable) {
-
-        Page<Inventory> page = inventoryRepository.findByFilmIdWithFetch(filmId, pageable);
-
-        return page.map(InventoryMapper::toDTO);
-    }
-
-    @Override
-    public Page<InventoryDTO> getByStoreId(Short storeId, Pageable pageable) {
-
-        Page<Inventory> page = inventoryRepository.findByStoreIdWithFetch(storeId, pageable);
-
-        return page.map(InventoryMapper::toDTO);
-    }
 
 
     @Transactional

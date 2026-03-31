@@ -18,9 +18,5 @@ public interface InventoryService {
 
     InventoryDTO updateInventory(Integer id, InventoryRequestDTO request);
 
-    Page<InventoryDTO> getByFilmId(Short filmId, Pageable pageable);
-
-    Page<InventoryDTO> getByStoreId(Short storeId, Pageable pageable);
-
     InventoryDTO patchInventory(Integer id, InventoryRequestDTO request);
 }

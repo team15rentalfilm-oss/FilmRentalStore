@@ -24,9 +24,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Integer>, 
     Optional<Inventory> findByIdWithFilmAndStore(Integer id);
 
 
-    Page<Inventory> findByFilm_FilmId(Short filmId, Pageable pageable);
-
-    Page<Inventory> findByStore_StoreId(Short storeId, Pageable pageable);
 
     @Query(
             value = "SELECT i FROM Inventory i JOIN FETCH i.film JOIN FETCH i.store WHERE i.film.filmId = :filmId",

@@ -26,7 +26,7 @@ public class StoreMapper {
 
         dto.setStoreId(store.getStoreId());
         dto.setAddress(AddressMapper.toDTO(store.getAddress()));
-        dto.setManager(StaffMapper.toDTO(store.getManagerStaff()));
+        dto.setManager(StaffMapper.toResponseDTO(store.getManagerStaff()));
 
         return dto;
     }
