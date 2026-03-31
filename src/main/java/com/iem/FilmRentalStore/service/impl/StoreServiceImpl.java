@@ -67,6 +67,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public StoreResponseDTO updateStore(Short id, StoreRequestDTO request) {
 
         Store store = storeRepository.findById(id)

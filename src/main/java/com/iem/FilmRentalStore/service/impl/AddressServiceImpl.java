@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class AddressServiceImpl implements AddressService {
 
     // ✅ CREATE
     @Override
+    @Transactional
     public AddressDTO createAddress(AddressRequestDTO request) {
 
         City city = getOrCreateCity(request);
@@ -66,6 +68,7 @@ public class AddressServiceImpl implements AddressService {
 
     // ✅ GET BY ID
     @Override
+    @Transactional
     public AddressDTO getAddressById(Short id) {
         return addressRepository.findByIdWithFetch(id)
                 .map(AddressMapper::toDTO)
@@ -74,6 +77,7 @@ public class AddressServiceImpl implements AddressService {
 
     // ✅ PAGINATION
     @Override
+    @Transactional
     public Page<AddressDTO> getAllAddresses(Pageable pageable) {
         return addressRepository.findAllWithFetch(pageable)
                 .map(AddressMapper::toDTO);
@@ -81,6 +85,7 @@ public class AddressServiceImpl implements AddressService {
 
     // ✅ UPDATE
     @Override
+    @Transactional
     public AddressDTO updateAddress(Short id, AddressRequestDTO request) {
 
         Address address = addressRepository.findById(id)
@@ -104,6 +109,7 @@ public class AddressServiceImpl implements AddressService {
 
     // 🔥 PATCH
     @Override
+    @Transactional
     public AddressDTO patchAddress(Short id, AddressRequestDTO request) {
 
         Address address = addressRepository.findById(id)
@@ -128,24 +134,28 @@ public class AddressServiceImpl implements AddressService {
 
     // ✅ SEARCH
     @Override
+    @Transactional
     public Page<AddressDTO> searchByAddress(String address, Pageable pageable) {
         return addressRepository.findByAddressWithFetch(address, pageable)
                 .map(AddressMapper::toDTO);
     }
 
     @Override
+    @Transactional
     public Page<AddressDTO> searchByDistrict(String district, Pageable pageable) {
         return addressRepository.findByDistrictWithFetch(district, pageable)
                 .map(AddressMapper::toDTO);
     }
 
     @Override
+    @Transactional
     public Page<AddressDTO> searchByCity(String city, Pageable pageable) {
         return addressRepository.findByCityWithFetch(city, pageable)
                 .map(AddressMapper::toDTO);
     }
 
     @Override
+    @Transactional
     public Page<AddressDTO> getByCountry(String country, Pageable pageable) {
         return addressRepository.findByCountryWithFetch(country, pageable)
                 .map(AddressMapper::toDTO);
@@ -153,6 +163,7 @@ public class AddressServiceImpl implements AddressService {
 
     // ✅ REUSE
     @Override
+    @Transactional
     public Address createAndReturnEntity(AddressRequestDTO request) {
         Address address = AddressMapper.toEntity(request);
         address.setCity(getOrCreateCity(request));
