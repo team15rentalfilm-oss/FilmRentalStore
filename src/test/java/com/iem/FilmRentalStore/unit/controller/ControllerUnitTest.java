@@ -454,13 +454,13 @@ class ControllerUnitTest {
         StoreDTO dto = new StoreDTO();
         StoreResponseDTO response = new StoreResponseDTO();
         when(storeService.createStore(request)).thenReturn(response);
-        when(storeService.getStoreById((short) 1)).thenReturn(dto);
+        when(storeService.getStoreById((short) 1)).thenReturn(response);
         when(storeService.getAllStores()).thenReturn(List.of(dto));
-        when(storeService.updateStore((short) 1, request)).thenReturn(dto);
+        when(storeService.updateStore((short) 1, request)).thenReturn(response);
 
         assertThat(storeController.createStore(request)).isSameAs(response);
-        assertThat(storeController.getStoreById((short) 1)).isSameAs(dto);
+        assertThat(storeController.getStoreById((short) 1)).isSameAs(response);
         assertThat(storeController.getAllStores()).containsExactly(dto);
-        assertThat(storeController.updateStore((short) 1, request)).isSameAs(dto);
+        assertThat(storeController.updateStore((short) 1, request)).isSameAs(response);
     }
 }

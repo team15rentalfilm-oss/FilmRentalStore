@@ -50,11 +50,12 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public StoreDTO getStoreById(Short id) {
+    @Transactional
+    public StoreResponseDTO getStoreById(Short id) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + id));
 
-        return StoreMapper.toDTO(store);
+        return StoreMapper.toResponseDTO(store);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public StoreDTO updateStore(Short id, StoreRequestDTO request) {
+    public StoreResponseDTO updateStore(Short id, StoreRequestDTO request) {
 
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + id));
@@ -88,6 +89,6 @@ public class StoreServiceImpl implements StoreService {
 
         Store updated = storeRepository.save(store);
 
-        return StoreMapper.toDTO(updated);
+        return StoreMapper.toResponseDTO(updated);
     }
 }

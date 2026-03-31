@@ -10,9 +10,9 @@ public interface StoreService {
 
     StoreResponseDTO createStore(StoreRequestDTO request);
 
-    StoreDTO getStoreById(Short id);
+    StoreResponseDTO getStoreById(Short id);
 
     List<StoreDTO> getAllStores();
 
-    StoreDTO updateStore(Short id, StoreRequestDTO request);
+    StoreResponseDTO updateStore(Short id, StoreRequestDTO request);
 }

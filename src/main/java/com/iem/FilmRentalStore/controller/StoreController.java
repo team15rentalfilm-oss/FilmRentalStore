@@ -23,7 +23,7 @@ public class StoreController {
     }
 
     @GetMapping("/{id}")
-    public StoreDTO getStoreById(@PathVariable Short id) {
+    public StoreResponseDTO getStoreById(@PathVariable Short id) {
         return storeService.getStoreById(id);
     }
 
@@ -33,7 +33,7 @@ public class StoreController {
     }
 
     @PutMapping("/{id}")
-    public StoreDTO updateStore(@PathVariable Short id,
+    public StoreResponseDTO updateStore(@PathVariable Short id,
                                 @Valid @RequestBody StoreRequestDTO request) {
         return storeService.updateStore(id, request);
     }
