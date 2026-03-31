@@ -1,0 +1,2557 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R 31 0 R 33 0 R 35 0 R 37 0 R 39 0 R 41 0 R 43 0 R] /Count 20 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 3674 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(# FilmRentalStore - Project Documentation) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(_Generated: 2026-03-31 22:53:23 IST_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Overview) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(FilmRentalStore is a Spring Boot 4.x application \(Java 17\) with REST APIs and Thymeleaf UI, backed) Tj
+0 -12 Td
+(by a MySQL database \(Sakila schema\).) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Runtime & configuration) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Java: 17) Tj
+0 -12 Td
+(- Spring Boot: 4.0.4) Tj
+0 -12 Td
+(- Server port: 8089 \(see src/main/resources/application.properties\)) Tj
+0 -12 Td
+(- DB: MySQL sakila \(see spring.datasource.* properties\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Architecture \(how requests flow\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Controller layer \(controller/*Controller.java\): defines /api/... endpoints, validates inputs) Tj
+0 -12 Td
+(\(@Valid\), and delegates to services.) Tj
+0 -12 Td
+(- Service layer \(service/* + service/impl/*Impl.java\): business logic, orchestration, paging) Tj
+0 -12 Td
+(sanitization, and error rules.) Tj
+0 -12 Td
+(- Repository layer \(repository/*Repository.java\): Spring Data JPA interfaces for) Tj
+0 -12 Td
+(persistence/querying.) Tj
+0 -12 Td
+(- Entities \(entity/*.java\): JPA mappings to the Sakila schema.) Tj
+0 -12 Td
+(- DTOs \(dto/\): request/response models and validation constraints.) Tj
+0 -12 Td
+(- Mappers \(mapper/*Mapper.java\): conversions between entities and DTOs.) Tj
+0 -12 Td
+(- Exception handling \(exception/*\): centralized error mapping to structured JSON.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Annotations used in this project \(definitions\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(These are the key annotations you will see throughout the codebase, and what they mean in this) Tj
+0 -12 Td
+(project.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- @AllArgsConstructor: Lombok: generates an all-args constructor.) Tj
+0 -12 Td
+(- @Builder: Lombok: adds a fluent builder API.) Tj
+0 -12 Td
+(- @Column: Configures column mapping, constraints, and definition details.) Tj
+0 -12 Td
+(- @Data: Lombok: generates getters/setters/toString/equals/hashCode.) Tj
+0 -12 Td
+(- @DeleteMapping: Maps HTTP DELETE requests to a handler method.) Tj
+0 -12 Td
+(- @Disabled: JUnit 5: disables a test \(often used when external dependencies are required\).) Tj
+0 -12 Td
+(- @Email: Bean Validation: validates email format.) Tj
+0 -12 Td
+(- @Entity: Marks a class as a JPA entity mapped to a database table.) Tj
+0 -12 Td
+(- @EqualsAndHashCode: Lombok: generates equals/hashCode; can include/exclude fields.) Tj
+0 -12 Td
+(- @ExceptionHandler: Maps a thrown exception type to a handler method inside controller advice.) Tj
+0 -12 Td
+(- @ExtendWith: JUnit 5 extension hook \(e.g., MockitoExtension\).) Tj
+0 -12 Td
+(- @GeneratedValue: Configures how the primary key value is generated.) Tj
+0 -12 Td
+(- @GetMapping: Maps HTTP GET requests to a handler method.) Tj
+0 -12 Td
+(- @Getter: Lombok: generates getters at compile time.) Tj
+0 -12 Td
+(- @Id: Marks the primary key field of a JPA entity.) Tj
+0 -12 Td
+(- @InjectMocks: Mockito: injects mocks into the class under test.) Tj
+0 -12 Td
+(- @JoinColumn: Specifies the foreign key column used for a relationship.) Tj
+0 -12 Td
+(- @JoinTable: Specifies join table mapping for many-to-many.) Tj
+0 -12 Td
+(- @LocalServerPort: Injects the random port used by Spring Boot tests with a web environment.) Tj
+0 -12 Td
+(- @ManyToMany: Defines a many-to-many relationship \(usually via a join table\).) Tj
+0 -12 Td
+(- @ManyToOne: Defines a many-to-one relationship \(foreign key\) to another entity.) Tj
+0 -12 Td
+(- @Min: Bean Validation: numeric value must be >= minimum.) Tj
+0 -12 Td
+(- @Mock: Mockito: marks a field as a mock.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 3815 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(- @NoArgsConstructor: Lombok: generates a no-args constructor.) Tj
+0 -12 Td
+(- @NotBlank: Bean Validation: string must not be null/empty/whitespace.) Tj
+0 -12 Td
+(- @NotEmpty: Bean Validation: collection/string must not be empty.) Tj
+0 -12 Td
+(- @NotNull: Bean Validation: value must not be null.) Tj
+0 -12 Td
+(- @OneToMany: Defines a one-to-many relationship to child entities.) Tj
+0 -12 Td
+(- @PageableDefault: Sets default pagination/sorting when a Pageable argument is provided.) Tj
+0 -12 Td
+(- @PatchMapping: Maps HTTP PATCH requests to a handler method.) Tj
+0 -12 Td
+(- @PathVariable: Binds a URI template variable \(e.g., /api/x/{id}\) to a method parameter.) Tj
+0 -12 Td
+(- @PostMapping: Maps HTTP POST requests to a handler method.) Tj
+0 -12 Td
+(- @PrePersist: Lifecycle callback before an entity is inserted.) Tj
+0 -12 Td
+(- @PreUpdate: Lifecycle callback before an entity is updated.) Tj
+0 -12 Td
+(- @PutMapping: Maps HTTP PUT requests to a handler method.) Tj
+0 -12 Td
+(- @RequestBody: Binds the HTTP request body JSON to a DTO parameter.) Tj
+0 -12 Td
+(- @RequestMapping: Declares the base URL path \(and optionally HTTP methods/produces/consumes\) for a) Tj
+0 -12 Td
+(controller.) Tj
+0 -12 Td
+(- @RequestParam: Binds a query parameter \(e.g., ?q=...\) to a method parameter.) Tj
+0 -12 Td
+(- @RequiredArgsConstructor: Lombok: generates a constructor for final/required fields \(used for DI\).) Tj
+0 -12 Td
+(- @RestController: Marks a class as a REST controller; return values are serialized to JSON by) Tj
+0 -12 Td
+(default.) Tj
+0 -12 Td
+(- @RestControllerAdvice: Global exception handler for REST controllers; returns JSON error bodies.) Tj
+0 -12 Td
+(- @Setter: Lombok: generates setters at compile time.) Tj
+0 -12 Td
+(- @Size: Bean Validation: size constraints for strings/collections.) Tj
+0 -12 Td
+(- @SpringBootTest: Bootstraps a Spring Boot test ApplicationContext \(can start an embedded server\).) Tj
+0 -12 Td
+(- @SuppressWarnings: Java compiler directive for warning suppression.) Tj
+0 -12 Td
+(- @Table: Specifies the table name and table-level mapping details.) Tj
+0 -12 Td
+(- @Test: JUnit 5 test method.) Tj
+0 -12 Td
+(- @ToString: Lombok: generates toString; can exclude fields to avoid recursion.) Tj
+0 -12 Td
+(- @Transient: Marks a field/getter as not persisted to the DB \(derived at runtime\).) Tj
+0 -12 Td
+(- @Valid: Triggers Jakarta Bean Validation on the annotated argument \(commonly @RequestBody DTOs\).) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Source files \(src/main/java\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Each entry lists the file, its role, and the annotations used in it \(where applicable\).) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/FilmRentalStoreApplication.java) Tj
+0 -12 Td
+(  - Type: FilmRentalStoreApplication) Tj
+0 -12 Td
+(  - Kind: Other) Tj
+0 -12 Td
+(  - Functionality: Spring Boot entry point; boots the application.) Tj
+0 -12 Td
+(  - Annotations: @SpringBootApplication) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/config/JpaConfig.java) Tj
+0 -12 Td
+(  - Type: JpaConfig) Tj
+0 -12 Td
+(  - Kind: Other) Tj
+0 -12 Td
+(  - Functionality: Project source file.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/config/PageableConfig.java) Tj
+0 -12 Td
+(  - Type: PageableConfig) Tj
+0 -12 Td
+(  - Kind: Other) Tj
+0 -12 Td
+(  - Functionality: Project source file.) Tj
+0 -12 Td
+(  - Annotations: @Configuration, @Bean) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/ActorController.java) Tj
+0 -12 Td
+(  - Type: ActorController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 3730 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PageableDefault, @RequestParam, @PutMapping, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/AddressController.java) Tj
+0 -12 Td
+(  - Type: AddressController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PageableDefault, @PutMapping, @Valid, @PatchMapping, @RequestBody, @RequestParam) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/CategoryController.java) Tj
+0 -12 Td
+(  - Type: CategoryController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping, @Valid,) Tj
+0 -12 Td
+(@GetMapping, @PutMapping, @PathVariable) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/CityController.java) Tj
+0 -12 Td
+(  - Type: CityController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@PutMapping, @Valid, @GetMapping, @PageableDefault, @RequestParam, @PatchMapping, @RequestBody) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/CountryController.java) Tj
+0 -12 Td
+(  - Type: CountryController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PutMapping, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/CustomerController.java) Tj
+0 -12 Td
+(  - Type: CustomerController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PutMapping, @Valid, @PatchMapping, @RequestBody) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/FilmActorController.java) Tj
+0 -12 Td
+(  - Type: FilmActorController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @GetMapping) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/FilmCategoryController.java) Tj
+0 -12 Td
+(  - Type: FilmCategoryController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @GetMapping,) Tj
+0 -12 Td
+(@PostMapping, @DeleteMapping, @RequestParam) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 3657 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/FilmController.java) Tj
+0 -12 Td
+(  - Type: FilmController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PutMapping, @Valid, @PatchMapping, @RequestBody, @RequestParam, @PageableDefault) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/InventoryController.java) Tj
+0 -12 Td
+(  - Type: InventoryController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping, @Valid,) Tj
+0 -12 Td
+(@GetMapping, @RequestParam, @PutMapping, @PathVariable, @PatchMapping, @RequestBody) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/LanguageController.java) Tj
+0 -12 Td
+(  - Type: LanguageController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PutMapping, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/PaymentController.java) Tj
+0 -12 Td
+(  - Type: PaymentController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PageableDefault, @PatchMapping, @PathVariable, @RequestBody, @RequestParam) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/RentalController.java) Tj
+0 -12 Td
+(  - Type: RentalController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PageableDefault, @PathVariable) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/StaffController.java) Tj
+0 -12 Td
+(  - Type: StaffController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @RequestParam, @PutMapping, @PathVariable, @Valid, @PatchMapping, @RequestBody) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/controller/StoreController.java) Tj
+0 -12 Td
+(  - Type: StoreController) Tj
+0 -12 Td
+(  - Kind: Controller \(REST API layer\)) Tj
+0 -12 Td
+(  - Functionality: Defines REST endpoints under /api/...; validates requests and delegates to a) Tj
+0 -12 Td
+(service.) Tj
+0 -12 Td
+(  - Annotations: @RestController, @RequestMapping, @RequiredArgsConstructor, @PostMapping,) Tj
+0 -12 Td
+(@GetMapping, @PutMapping, @Valid) Tj
+0 -12 Td
+() Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 3224 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/FilmCategoryDTO.java) Tj
+0 -12 Td
+(  - Type: FilmCategoryDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/actor/ActorDTO.java) Tj
+0 -12 Td
+(  - Type: ActorDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/actor/ActorRequestDTO.java) Tj
+0 -12 Td
+(  - Type: ActorRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/actor/ActorResponseDTO.java) Tj
+0 -12 Td
+(  - Type: ActorResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/address/AddressDTO.java) Tj
+0 -12 Td
+(  - Type: AddressDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/address/AddressRequestDTO.java) Tj
+0 -12 Td
+(  - Type: AddressRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/address/AddressResponseDTO.java) Tj
+0 -12 Td
+(  - Type: AddressResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/category/CategoryDTO.java) Tj
+0 -12 Td
+(  - Type: CategoryDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/category/CategoryRequestDTO.java) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 3206 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Type: CategoryRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/category/CategoryResponseDTO.java) Tj
+0 -12 Td
+(  - Type: CategoryResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/city/CityDTO.java) Tj
+0 -12 Td
+(  - Type: CityDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/city/CityPatchDTO.java) Tj
+0 -12 Td
+(  - Type: CityPatchDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/city/CityRequestDTO.java) Tj
+0 -12 Td
+(  - Type: CityRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/city/CityResponseDTO.java) Tj
+0 -12 Td
+(  - Type: CityResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/country/CountryDTO.java) Tj
+0 -12 Td
+(  - Type: CountryDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/country/CountryRequestDTO.java) Tj
+0 -12 Td
+(  - Type: CountryRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/country/CountryResponseDTO.java) Tj
+0 -12 Td
+(  - Type: CountryResponseDTO) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 3255 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/customer/CustomerDTO.java) Tj
+0 -12 Td
+(  - Type: CustomerDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/customer/CustomerPatchDTO.java) Tj
+0 -12 Td
+(  - Type: CustomerPatchDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/customer/CustomerRequestDTO.java) Tj
+0 -12 Td
+(  - Type: CustomerRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size, @Email, @NotNull, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/customer/CustomerResponseDTO.java) Tj
+0 -12 Td
+(  - Type: CustomerResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/film/FilmDTO.java) Tj
+0 -12 Td
+(  - Type: FilmDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/film/FilmPatchDTO.java) Tj
+0 -12 Td
+(  - Type: FilmPatchDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/film/FilmRequestDTO.java) Tj
+0 -12 Td
+(  - Type: FilmRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size, @NotEmpty, @Min, @DecimalMin) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/film/FilmResponseDTO.java) Tj
+0 -12 Td
+(  - Type: FilmResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 3290 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @JsonInclude) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/inventory/InventoryDTO.java) Tj
+0 -12 Td
+(  - Type: InventoryDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/inventory/InventoryRequestDTO.java) Tj
+0 -12 Td
+(  - Type: InventoryRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/inventory/InventoryResponseDTO.java) Tj
+0 -12 Td
+(  - Type: InventoryResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/language/LanguageDTO.java) Tj
+0 -12 Td
+(  - Type: LanguageDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/language/LanguageRequestDTO.java) Tj
+0 -12 Td
+(  - Type: LanguageRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/language/LanguageResponseDTO.java) Tj
+0 -12 Td
+(  - Type: LanguageResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/payment/PaymentDTO.java) Tj
+0 -12 Td
+(  - Type: PaymentDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/payment/PaymentPatchDTO.java) Tj
+0 -12 Td
+(  - Type: PaymentPatchDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 3164 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/payment/PaymentRequestDTO.java) Tj
+0 -12 Td
+(  - Type: PaymentRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotNull, @DecimalMin) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/payment/PaymentResponseDTO.java) Tj
+0 -12 Td
+(  - Type: PaymentResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/rental/RentalDTO.java) Tj
+0 -12 Td
+(  - Type: RentalDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/rental/RentalPatchDTO.java) Tj
+0 -12 Td
+(  - Type: RentalPatchDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/rental/RentalRequestDTO.java) Tj
+0 -12 Td
+(  - Type: RentalRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotNull) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/rental/RentalResponseDTO.java) Tj
+0 -12 Td
+(  - Type: RentalResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/staff/StaffDTO.java) Tj
+0 -12 Td
+(  - Type: StaffDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/staff/StaffPatchDTO.java) Tj
+0 -12 Td
+(  - Type: StaffPatchDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Length 3513 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Annotations: @Data, @NoArgsConstructor, @AllArgsConstructor, @Builder, @Size, @Email, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/staff/StaffRequestDTO.java) Tj
+0 -12 Td
+(  - Type: StaffRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotBlank, @Size, @Email, @NotNull, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/staff/StaffResponseDTO.java) Tj
+0 -12 Td
+(  - Type: StaffResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/store/StoreDTO.java) Tj
+0 -12 Td
+(  - Type: StoreDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/store/StoreRequestDTO.java) Tj
+0 -12 Td
+(  - Type: StoreRequestDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NotNull, @Valid) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/dto/store/StoreResponseDTO.java) Tj
+0 -12 Td
+(  - Type: StoreResponseDTO) Tj
+0 -12 Td
+(  - Kind: DTO \(API/request/response model\)) Tj
+0 -12 Td
+(  - Functionality: DTO used for request payloads and/or response shaping; often carries validation) Tj
+0 -12 Td
+(annotations.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Actor.java) Tj
+0 -12 Td
+(  - Type: Actor) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,) Tj
+0 -12 Td
+(@ToString, @EqualsAndHashCode, @Id, @GeneratedValue, @Column, @Include, @OneToMany, @PrePersist,) Tj
+0 -12 Td
+(@PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Address.java) Tj
+0 -12 Td
+(  - Type: Address) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Data, @NoArgsConstructor, @AllArgsConstructor, @Entity, @Table, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @PrePersist, @PreUpdate, @ManyToOne, @JoinColumn) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Category.java) Tj
+0 -12 Td
+(  - Type: Category) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @Id, @GeneratedValue, @Column, @ManyToMany,) Tj
+ET
+endstream
+endobj
+23 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 22 0 R >>
+endobj
+24 0 obj
+<< /Length 3901 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(@PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/City.java) Tj
+0 -12 Td
+(  - Type: City) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @ManyToOne, @JoinColumn, @JsonIgnore, @OneToMany, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Country.java) Tj
+0 -12 Td
+(  - Type: Country) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @JsonIgnore, @OneToMany, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Customer.java) Tj
+0 -12 Td
+(  - Type: Customer) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Data, @Entity, @NoArgsConstructor, @AllArgsConstructor, @Table, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @ManyToOne, @JoinColumn, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Film.java) Tj
+0 -12 Td
+(  - Type: Film) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor, @ToString,) Tj
+0 -12 Td
+(@EqualsAndHashCode, @Entity, @Table, @Id, @GeneratedValue, @Column, @Include, @ManyToOne,) Tj
+0 -12 Td
+(@JoinColumn, @ManyToMany, @JoinTable, @OneToMany, @PrePersist, @PreUpdate, @Transient) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/FilmActor.java) Tj
+0 -12 Td
+(  - Type: FilmActor) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,) Tj
+0 -12 Td
+(@ToString, @EqualsAndHashCode, @EmbeddedId, @Include, @ManyToOne, @MapsId, @JoinColumn, @Column,) Tj
+0 -12 Td
+(@PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/FilmActorId.java) Tj
+0 -12 Td
+(  - Type: FilmActorId) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Embeddable, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,) Tj
+0 -12 Td
+(@EqualsAndHashCode, @Serial, @Column) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/FilmCategory.java) Tj
+0 -12 Td
+(  - Type: FilmCategory) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,) Tj
+0 -12 Td
+(@EmbeddedId, @ManyToOne, @MapsId, @JoinColumn, @Column, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/FilmCategoryId.java) Tj
+0 -12 Td
+(  - Type: FilmCategoryId) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+ET
+endstream
+endobj
+25 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 24 0 R >>
+endobj
+26 0 obj
+<< /Length 3706 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Annotations: @Embeddable, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,) Tj
+0 -12 Td
+(@EqualsAndHashCode, @Serial, @Column) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Inventory.java) Tj
+0 -12 Td
+(  - Type: Inventory) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Data, @NoArgsConstructor, @AllArgsConstructor, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @ManyToOne, @JoinColumn, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Language.java) Tj
+0 -12 Td
+(  - Type: Language) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Data, @NoArgsConstructor, @AllArgsConstructor, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @PrePersist, @PreUpdate, @OneToMany) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Payment.java) Tj
+0 -12 Td
+(  - Type: Payment) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,) Tj
+0 -12 Td
+(@ToString, @EqualsAndHashCode, @Id, @GeneratedValue, @Column, @ManyToOne, @JoinColumn, @PrePersist,) Tj
+0 -12 Td
+(@PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Rental.java) Tj
+0 -12 Td
+(  - Type: Rental) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Table, @UniqueConstraint, @Getter, @Setter, @NoArgsConstructor,) Tj
+0 -12 Td
+(@AllArgsConstructor, @ToString, @EqualsAndHashCode, @Id, @GeneratedValue, @Column, @ManyToOne,) Tj
+0 -12 Td
+(@JoinColumn, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Staff.java) Tj
+0 -12 Td
+(  - Type: Staff) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @NoArgsConstructor, @AllArgsConstructor, @Table, @Data, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @ManyToOne, @JoinColumn, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/entity/Store.java) Tj
+0 -12 Td
+(  - Type: Store) Tj
+0 -12 Td
+(  - Kind: Entity \(JPA persistence model\)) Tj
+0 -12 Td
+(  - Functionality: JPA entity mapped to the Sakila schema; used by repositories and services.) Tj
+0 -12 Td
+(  - Annotations: @Entity, @Data, @NoArgsConstructor, @AllArgsConstructor, @Table, @Id,) Tj
+0 -12 Td
+(@GeneratedValue, @Column, @ManyToOne, @JoinColumn, @PrePersist, @PreUpdate) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/exception/ErrorResponse.java) Tj
+0 -12 Td
+(  - Type: ErrorResponse) Tj
+0 -12 Td
+(  - Kind: Exception handling) Tj
+0 -12 Td
+(  - Functionality: Exception types and centralized error handling for consistent API error) Tj
+0 -12 Td
+(responses.) Tj
+0 -12 Td
+(  - Annotations: @Getter, @AllArgsConstructor) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/exception/GlobalExceptionHandler.java) Tj
+0 -12 Td
+(  - Type: GlobalExceptionHandler) Tj
+0 -12 Td
+(  - Kind: Exception handling) Tj
+ET
+endstream
+endobj
+27 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 26 0 R >>
+endobj
+28 0 obj
+<< /Length 3087 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Functionality: Exception types and centralized error handling for consistent API error) Tj
+0 -12 Td
+(responses.) Tj
+0 -12 Td
+(  - Annotations: @RestControllerAdvice, @ExceptionHandler) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/exception/ResourceNotFoundException.java) Tj
+0 -12 Td
+(  - Type: ResourceNotFoundException) Tj
+0 -12 Td
+(  - Kind: Exception handling) Tj
+0 -12 Td
+(  - Functionality: Exception types and centralized error handling for consistent API error) Tj
+0 -12 Td
+(responses.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/ActorMapper.java) Tj
+0 -12 Td
+(  - Type: ActorMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/AddressMapper.java) Tj
+0 -12 Td
+(  - Type: AddressMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/CategoryMapper.java) Tj
+0 -12 Td
+(  - Type: CategoryMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/CityMapper.java) Tj
+0 -12 Td
+(  - Type: CityMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/CountryMapper.java) Tj
+0 -12 Td
+(  - Type: CountryMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/CustomerMapper.java) Tj
+0 -12 Td
+(  - Type: CustomerMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/FilmMapper.java) Tj
+0 -12 Td
+(  - Type: FilmMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/InventoryMapper.java) Tj
+0 -12 Td
+(  - Type: InventoryMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+ET
+endstream
+endobj
+29 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 28 0 R >>
+endobj
+30 0 obj
+<< /Length 3190 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/LanguageMapper.java) Tj
+0 -12 Td
+(  - Type: LanguageMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/PaymentMapper.java) Tj
+0 -12 Td
+(  - Type: PaymentMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/RentalMapper.java) Tj
+0 -12 Td
+(  - Type: RentalMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/StaffMapper.java) Tj
+0 -12 Td
+(  - Type: StaffMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/mapper/StoreMapper.java) Tj
+0 -12 Td
+(  - Type: StoreMapper) Tj
+0 -12 Td
+(  - Kind: Mapper \(entity <-> DTO conversions\)) Tj
+0 -12 Td
+(  - Functionality: Mapper that converts between entities and DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Component) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/ActorRepository.java) Tj
+0 -12 Td
+(  - Type: ActorRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Query) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/AddressRepository.java) Tj
+0 -12 Td
+(  - Type: AddressRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository, @Query) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/CategoryRepository.java) Tj
+0 -12 Td
+(  - Type: CategoryRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/CityRepository.java) Tj
+0 -12 Td
+(  - Type: CityRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository, @Query) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/CountryRepository.java) Tj
+ET
+endstream
+endobj
+31 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 30 0 R >>
+endobj
+32 0 obj
+<< /Length 3553 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Type: CountryRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/CustomerRepository.java) Tj
+0 -12 Td
+(  - Type: CustomerRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/FilmActorRepository.java) Tj
+0 -12 Td
+(  - Type: FilmActorRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/FilmCategoryRepository.java) Tj
+0 -12 Td
+(  - Type: FilmCategoryRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/FilmRepository.java) Tj
+0 -12 Td
+(  - Type: FilmRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository, @EntityGraph, @Query, @Param) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/InventoryRepository.java) Tj
+0 -12 Td
+(  - Type: InventoryRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository, @Query) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/LanguageRepository.java) Tj
+0 -12 Td
+(  - Type: LanguageRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/PaymentRepository.java) Tj
+0 -12 Td
+(  - Type: PaymentRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository, @EntityGraph) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/RentalRepository.java) Tj
+0 -12 Td
+(  - Type: RentalRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository, @EntityGraph) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/StaffRepository.java) Tj
+0 -12 Td
+(  - Type: StaffRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+ET
+endstream
+endobj
+33 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 32 0 R >>
+endobj
+34 0 obj
+<< /Length 3119 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Annotations: @EntityGraph) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/repository/StoreRepository.java) Tj
+0 -12 Td
+(  - Type: StoreRepository) Tj
+0 -12 Td
+(  - Kind: Repository \(data access / Spring Data JPA\)) Tj
+0 -12 Td
+(  - Functionality: Spring Data JPA repository interface providing CRUD and query methods.) Tj
+0 -12 Td
+(  - Annotations: @Repository) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/ActorService.java) Tj
+0 -12 Td
+(  - Type: ActorService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/AddressService.java) Tj
+0 -12 Td
+(  - Type: AddressService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/CategoryService.java) Tj
+0 -12 Td
+(  - Type: CategoryService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/CityService.java) Tj
+0 -12 Td
+(  - Type: CityService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/CountryService.java) Tj
+0 -12 Td
+(  - Type: CountryService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/CustomerService.java) Tj
+0 -12 Td
+(  - Type: CustomerService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/FilmActorService.java) Tj
+0 -12 Td
+(  - Type: FilmActorService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/FilmCategoryService.java) Tj
+0 -12 Td
+(  - Type: FilmCategoryService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/FilmService.java) Tj
+ET
+endstream
+endobj
+35 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 34 0 R >>
+endobj
+36 0 obj
+<< /Length 3234 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Type: FilmService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/InventoryService.java) Tj
+0 -12 Td
+(  - Type: InventoryService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/LanguageService.java) Tj
+0 -12 Td
+(  - Type: LanguageService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/PaymentService.java) Tj
+0 -12 Td
+(  - Type: PaymentService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/RentalService.java) Tj
+0 -12 Td
+(  - Type: RentalService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/StaffService.java) Tj
+0 -12 Td
+(  - Type: StaffService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/StoreService.java) Tj
+0 -12 Td
+(  - Type: StoreService) Tj
+0 -12 Td
+(  - Kind: Service interface \(business contracts\)) Tj
+0 -12 Td
+(  - Functionality: Declares service operations used by controllers.) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/ActorServiceImpl.java) Tj
+0 -12 Td
+(  - Type: ActorServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Transactional, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/AddressServiceImpl.java) Tj
+0 -12 Td
+(  - Type: AddressServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/CategoryServiceImpl.java) Tj
+0 -12 Td
+(  - Type: CategoryServiceImpl) Tj
+ET
+endstream
+endobj
+37 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 36 0 R >>
+endobj
+38 0 obj
+<< /Length 3644 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/CityServiceImpl.java) Tj
+0 -12 Td
+(  - Type: CityServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/CountryServiceImpl.java) Tj
+0 -12 Td
+(  - Type: CountryServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/CustomerServiceImpl.java) Tj
+0 -12 Td
+(  - Type: CustomerServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/FilmActorServiceImpl.java) Tj
+0 -12 Td
+(  - Type: FilmActorServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Transactional, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/FilmCategoryServiceImpl.java) Tj
+0 -12 Td
+(  - Type: FilmCategoryServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/FilmServiceImpl.java) Tj
+0 -12 Td
+(  - Type: FilmServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Transactional, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/InventoryServiceImpl.java) Tj
+0 -12 Td
+(  - Type: InventoryServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/LanguageServiceImpl.java) Tj
+0 -12 Td
+(  - Type: LanguageServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+ET
+endstream
+endobj
+39 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 38 0 R >>
+endobj
+40 0 obj
+<< /Length 3441 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/PaymentServiceImpl.java) Tj
+0 -12 Td
+(  - Type: PaymentServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/RentalServiceImpl.java) Tj
+0 -12 Td
+(  - Type: RentalServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/StaffServiceImpl.java) Tj
+0 -12 Td
+(  - Type: StaffServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Transactional, @Override) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/service/impl/StoreServiceImpl.java) Tj
+0 -12 Td
+(  - Type: StoreServiceImpl) Tj
+0 -12 Td
+(  - Kind: Service implementation \(business logic\)) Tj
+0 -12 Td
+(  - Functionality: Implements business rules; orchestrates repositories, validates state, and maps) Tj
+0 -12 Td
+(entities/DTOs.) Tj
+0 -12 Td
+(  - Annotations: @Service, @RequiredArgsConstructor, @Override, @Transactional) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/util/DateUtil.java) Tj
+0 -12 Td
+(  - Type: DateUtil) Tj
+0 -12 Td
+(  - Kind: Utility) Tj
+0 -12 Td
+(  - Functionality: Shared helper utilities \(dates, fee calculation, etc.\).) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/java/com/iem/FilmRentalStore/util/FeeCalculator.java) Tj
+0 -12 Td
+(  - Type: FeeCalculator) Tj
+0 -12 Td
+(  - Kind: Utility) Tj
+0 -12 Td
+(  - Functionality: Shared helper utilities \(dates, fee calculation, etc.\).) Tj
+0 -12 Td
+(  - Annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Test suite \(src/test/java\) â?? special focus) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(The tests are primarily JUnit 5 + Mockito + AssertJ. Two tests are intentionally disabled because) Tj
+0 -12 Td
+(they require a reachable local MySQL instance.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### How the tests work \(patterns\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Unit tests \(unit/...\): create the class under test directly and pass Mockito mocks; assertions) Tj
+0 -12 Td
+(verify behavior without starting Spring.) Tj
+0 -12 Td
+(- Controller unit tests: ensure each controller method delegates to the corresponding service call;) Tj
+0 -12 Td
+(some tests verify pageable sanitization.) Tj
+0 -12 Td
+(- Service unit tests: validate business rules \(duplicates, missing entities, patch semantics\) and) Tj
+0 -12 Td
+(error types/messages.) Tj
+ET
+endstream
+endobj
+41 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 40 0 R >>
+endobj
+42 0 obj
+<< /Length 3491 >>
+stream
+BT
+/F1 10 Tf
+54 738 Td
+(- Exception handler tests: call methods on GlobalExceptionHandler to validate HTTP status mapping) Tj
+0 -12 Td
+(and error payload content.) Tj
+0 -12 Td
+(- Integration-style tests \(disabled\): @SpringBootTest tests that require the DB and/or an embedded) Tj
+0 -12 Td
+(server.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/FilmRentalStoreApplicationTests.java) Tj
+0 -12 Td
+(  - Type: FilmRentalStoreApplicationTests) Tj
+0 -12 Td
+(  - Purpose: Spring context smoke-test \(disabled unless local MySQL is reachable\).) Tj
+0 -12 Td
+(  - Key annotations: @Disabled, @SpringBootTest, @Test) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/SwaggerApiDocsTest.java) Tj
+0 -12 Td
+(  - Type: SwaggerApiDocsTest) Tj
+0 -12 Td
+(  - Purpose: Integration test that starts the app on a random port and asserts /v3/api-docs contains) Tj
+0 -12 Td
+(all REST endpoints \(disabled unless local MySQL is reachable\).) Tj
+0 -12 Td
+(  - Key annotations: @Disabled, @SpringBootTest, @LocalServerPort, @Test) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/unit/controller/ControllerUnitTest.java) Tj
+0 -12 Td
+(  - Type: ControllerUnitTest) Tj
+0 -12 Td
+(  - Purpose: Unit tests for controllers using Mockito; verifies controllers delegate to services and) Tj
+0 -12 Td
+(\(where applicable\) sanitize Pageable input.) Tj
+0 -12 Td
+(  - Key annotations: @ExtendWith, @Mock, @InjectMocks, @Test) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/unit/service/ReferenceServicesUnitTest.java) Tj
+0 -12 Td
+(  - Type: ReferenceServicesUnitTest) Tj
+0 -12 Td
+(  - Purpose: Unit tests for service-layer business logic using Mockito; verifies validation rules,) Tj
+0 -12 Td
+(entity resolution, paging sanitization, and error behavior.) Tj
+0 -12 Td
+(  - Key annotations: @ExtendWith, @Mock, @Test) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/unit/service/TransactionalServicesUnitTest.java) Tj
+0 -12 Td
+(  - Type: TransactionalServicesUnitTest) Tj
+0 -12 Td
+(  - Purpose: Unit tests for service-layer business logic using Mockito; verifies validation rules,) Tj
+0 -12 Td
+(entity resolution, paging sanitization, and error behavior.) Tj
+0 -12 Td
+(  - Key annotations: @ExtendWith, @Mock, @Test) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/unit/support/TestDataFactory.java) Tj
+0 -12 Td
+(  - Type: PageData) Tj
+0 -12 Td
+(  - Purpose: Test fixture builder/factory used across unit tests to create consistent DTOs and) Tj
+0 -12 Td
+(entities.) Tj
+0 -12 Td
+(  - Key annotations: _\(none\)_) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/test/java/com/iem/FilmRentalStore/unit/util/UtilityAndExceptionUnitTest.java) Tj
+0 -12 Td
+(  - Type: UtilityAndExceptionUnitTest) Tj
+0 -12 Td
+(  - Purpose: Unit tests for utility classes and the global exception handler; verifies formatting,) Tj
+0 -12 Td
+(fee calculations, and error payload mapping.) Tj
+0 -12 Td
+(  - Key annotations: @Test, @SuppressWarnings) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Key non-code files) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- src/main/resources/application.properties: Spring Boot runtime configuration \(server port,) Tj
+0 -12 Td
+(datasource, JPA flags, Thymeleaf setting\).) Tj
+0 -12 Td
+(- pom.xml: Maven build definition and dependencies \(Spring Boot, JPA, Validation, Thymeleaf,) Tj
+0 -12 Td
+(Springdoc OpenAPI, MySQL driver, Lombok, test starter\).) Tj
+0 -12 Td
+(- README.md: short project description.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+ET
+endstream
+endobj
+43 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 42 0 R >>
+endobj
+xref
+0 44
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000247 00000 n 
+0000000317 00000 n 
+0000004043 00000 n 
+0000004169 00000 n 
+0000008036 00000 n 
+0000008162 00000 n 
+0000011944 00000 n 
+0000012070 00000 n 
+0000015780 00000 n 
+0000015908 00000 n 
+0000019185 00000 n 
+0000019313 00000 n 
+0000022572 00000 n 
+0000022700 00000 n 
+0000026008 00000 n 
+0000026136 00000 n 
+0000029479 00000 n 
+0000029607 00000 n 
+0000032824 00000 n 
+0000032952 00000 n 
+0000036518 00000 n 
+0000036646 00000 n 
+0000040600 00000 n 
+0000040728 00000 n 
+0000044487 00000 n 
+0000044615 00000 n 
+0000047755 00000 n 
+0000047883 00000 n 
+0000051126 00000 n 
+0000051254 00000 n 
+0000054860 00000 n 
+0000054988 00000 n 
+0000058160 00000 n 
+0000058288 00000 n 
+0000061575 00000 n 
+0000061703 00000 n 
+0000065400 00000 n 
+0000065528 00000 n 
+0000069022 00000 n 
+0000069150 00000 n 
+0000072694 00000 n 
+trailer
+<< /Size 44 /Root 1 0 R >>
+startxref
+72822
+%%EOF
