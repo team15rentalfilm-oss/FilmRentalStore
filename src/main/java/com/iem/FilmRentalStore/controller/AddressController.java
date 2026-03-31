@@ -20,40 +20,34 @@ public class AddressController {
 
     private final AddressService addressService;
 
-    // ✅ CREATE
     @PostMapping
     public AddressDTO createAddress(@Valid @RequestBody AddressRequestDTO request) {
         return addressService.createAddress(request);
     }
 
-    // ✅ GET BY ID
     @GetMapping("/{id}")
     public AddressResponseDTO getAddressById(@PathVariable Short id) {
         return addressService.getAddressById(id);
     }
 
-    // ✅ GET ALL WITH PAGINATION
     @GetMapping
     public Page<AddressResponseDTO> getAllAddresses(
             @PageableDefault(size = 10, sort = "addressId") Pageable pageable) {
         return addressService.getAllAddresses(pageable);
     }
 
-    // ✅ UPDATE (FULL)
     @PutMapping("/{id}")
     public AddressDTO updateAddress(@PathVariable Short id,
                                     @Valid @RequestBody AddressRequestDTO request) {
         return addressService.updateAddress(id, request);
     }
 
-    // 🔥 PATCH
     @PatchMapping("/{id}")
     public AddressDTO patchAddress(@PathVariable Short id,
                                    @RequestBody AddressRequestDTO request) {
         return addressService.patchAddress(id, request);
     }
 
-    // 🔥 GET BY COUNTRY (PAGINATED)
     @GetMapping("/country")
     public Page<AddressResponseDTO> getByCountry(
             @RequestParam String name,
@@ -61,7 +55,6 @@ public class AddressController {
         return addressService.getByCountry(name, pageable);
     }
 
-    // 🔎 SEARCH APIs (PAGINATED)
     @GetMapping("/search/address")
     public Page<AddressResponseDTO> searchByAddress(
             @RequestParam String value,

@@ -7,7 +7,6 @@ public class DateUtil {
 
     private static final String DEFAULT_PATTERN = "yyyy-MM-dd";
 
-    // Convert LocalDate to String
     public static String formatDate(LocalDate date) {
         return formatDate(date, DEFAULT_PATTERN);
     }
@@ -18,7 +17,6 @@ public class DateUtil {
         return date.format(formatter);
     }
 
-    // Convert String to LocalDate
     public static LocalDate parseDate(String dateStr) {
         return parseDate(dateStr, DEFAULT_PATTERN);
     }

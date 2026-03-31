@@ -67,7 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         String normalizedName = request.getName().trim();
 
-        // 🔴 Duplicate check (exclude current category)
         categoryRepository.findByNameIgnoreCase(normalizedName)
                 .filter(existing -> !existing.getId().equals(id))
                 .ifPresent(existing -> {

@@ -31,17 +31,14 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public InventoryDTO createInventory(InventoryRequestDTO request) {
 
-        // 🔥 Step 1: Fetch Film
         Film film = filmRepository.findById(request.getFilmId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Film not found with id: " + request.getFilmId()));
 
-        // 🔥 Step 2: Fetch Store
         Store store = storeRepository.findById(request.getStoreId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Store not found with id: " + request.getStoreId()));
 
-        // 🔥 Step 3: Map
         Inventory inventory = InventoryMapper.toEntity(film, store);
         Inventory saved = inventoryRepository.save(inventory);
 
@@ -92,7 +89,6 @@ public class InventoryServiceImpl implements InventoryService {
 
         inventoryRepository.save(inventory);
 
-        // ✅ FETCH AGAIN WITH JOIN
         Inventory fetched = inventoryRepository.findByIdWithFilmAndStore(id)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory not found"));
 
@@ -122,7 +118,6 @@ public class InventoryServiceImpl implements InventoryService {
 
         inventoryRepository.save(inventory);
 
-        // ✅ FETCH AGAIN
         Inventory fetched = inventoryRepository.findByIdWithFilmAndStore(id)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory not found"));
 

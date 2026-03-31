@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class AddressMapper {
 
-    // DTO → Entity
     public static Address toEntity(AddressRequestDTO dto) {
         Address address = new Address();
         address.setAddress(dto.getAddress());
@@ -23,8 +22,6 @@ public class AddressMapper {
         return address;
     }
 
-    // Entity → DTO
-    // Entity → DTO (RESPONSE)
     public static AddressDTO toDTO(Address address) {
         AddressDTO dto = new AddressDTO();
 
@@ -34,7 +31,7 @@ public class AddressMapper {
         dto.setPostalCode(address.getPostalCode());
         dto.setPhone(address.getPhone());
 
-        dto.setCity(CityMapper.toDTO(address.getCity())); // ✅ now correct
+        dto.setCity(CityMapper.toDTO(address.getCity()));
 
         return dto;
     }
@@ -46,14 +43,14 @@ public class AddressMapper {
 
         AddressResponseDTO dto = new AddressResponseDTO();
 
-        dto.setAddressId(address.getAddressId()); // ✅ include ID
+        dto.setAddressId(address.getAddressId());
         dto.setAddress(address.getAddress());
         dto.setAddress2(address.getAddress2());
         dto.setDistrict(address.getDistrict());
         dto.setPostalCode(address.getPostalCode());
         dto.setPhone(address.getPhone());
 
-        dto.setCity(CityMapper.toDTO(address.getCity())); // ✅ nested mapping
+        dto.setCity(CityMapper.toDTO(address.getCity()));
 
         return dto;
     }

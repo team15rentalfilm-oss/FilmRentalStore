@@ -150,10 +150,8 @@ public class CityServiceImpl implements CityService {
         String normalizedCity = normalize(cityName);
         String normalizedCountry = normalize(countryName);
 
-        // 🔗 Get or create country first
         Country country = countryService.getOrCreateCountry(normalizedCountry);
 
-        // 🔍 Check if city already exists in that country
         return cityRepository
                 .findByCityIgnoreCaseAndCountry(normalizedCity, country)
                 .orElseGet(() -> {

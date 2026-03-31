@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class StaffMapper {
 
-    //RequestDTO → Entity
     public static Staff toEntity(StaffRequestDTO dto, Address address, Store store) {
         Staff staff = new Staff();
 
@@ -18,7 +17,6 @@ public class StaffMapper {
         staff.setEmail(dto.getEmail());
         staff.setUsername(dto.getUsername());
 
-        // ⚠️ Password set here but NOT encoded
         staff.setPassword(dto.getPassword());
 
         staff.setActive(dto.getActive() != null ? dto.getActive() : true);
@@ -29,7 +27,6 @@ public class StaffMapper {
         return staff;
     }
 
-    // Entity → ResponseDTO
     public static StaffResponseDTO toResponseDTO(Staff staff) {
         StaffResponseDTO dto = new StaffResponseDTO();
 
@@ -45,7 +42,6 @@ public class StaffMapper {
         return dto;
     }
 
-    //Entity → Lightweight DTO
     public static StaffDTO toDTO(Staff staff) {
         StaffDTO dto = new StaffDTO();
 

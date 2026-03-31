@@ -17,8 +17,8 @@ public class PaymentResponseDTO {
     private Integer rentalId;
 
     private Short staffId;
-    private String staffName;        // ✅ NEW
+    private String staffName;
 
     private Short customerId;
-    private String customerName;     // ✅ NEW
+    private String customerName;
 }

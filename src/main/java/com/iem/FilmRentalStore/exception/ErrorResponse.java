@@ -13,5 +13,5 @@ public class ErrorResponse {
     private LocalDateTime timestamp;
     private int status;
     private String message;
-    private Map<String, String> errors; // for validation
+    private Map<String, String> errors;
 }

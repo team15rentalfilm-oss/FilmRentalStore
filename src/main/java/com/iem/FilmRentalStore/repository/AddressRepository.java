@@ -12,14 +12,12 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Short> {
 
-    // ✅ PAGINATED FETCH
     @Query(
             value = "SELECT a FROM Address a JOIN a.city c JOIN c.country",
             countQuery = "SELECT COUNT(a) FROM Address a"
     )
     Page<Address> findAllWithFetch(Pageable pageable);
 
-    // ✅ SEARCH ADDRESS
     @Query(
             value = "SELECT a FROM Address a JOIN a.city c JOIN c.country " +
                     "WHERE LOWER(a.address) LIKE LOWER(CONCAT('%', :address, '%'))",
@@ -27,7 +25,6 @@ public interface AddressRepository extends JpaRepository<Address, Short> {
     )
     Page<Address> findByAddressWithFetch(String address, Pageable pageable);
 
-    // ✅ DISTRICT
     @Query(
             value = "SELECT a FROM Address a JOIN a.city c JOIN c.country " +
                     "WHERE LOWER(a.district) LIKE LOWER(CONCAT('%', :district, '%'))",
@@ -35,7 +32,6 @@ public interface AddressRepository extends JpaRepository<Address, Short> {
     )
     Page<Address> findByDistrictWithFetch(String district, Pageable pageable);
 
-    // ✅ CITY
     @Query(
             value = "SELECT a FROM Address a JOIN a.city c JOIN c.country " +
                     "WHERE LOWER(c.city) LIKE LOWER(CONCAT('%', :city, '%'))",
@@ -43,7 +39,6 @@ public interface AddressRepository extends JpaRepository<Address, Short> {
     )
     Page<Address> findByCityWithFetch(String city, Pageable pageable);
 
-    // ✅ COUNTRY
     @Query(
             value = "SELECT a FROM Address a JOIN a.city c JOIN c.country " +
                     "WHERE LOWER(c.country.country) LIKE LOWER(CONCAT('%', :country, '%'))",
@@ -52,10 +47,8 @@ public interface AddressRepository extends JpaRepository<Address, Short> {
     )
     Page<Address> findByCountryWithFetch(String country, Pageable pageable);
 
-    // ✅ STILL USED
     Optional<Address> findByAddressAndCity(String address, City city);
 
-    // 🔥 KEEP THIS FOR SINGLE FETCH (NO PAGINATION)
     @Query("SELECT a FROM Address a JOIN FETCH a.city c JOIN FETCH c.country WHERE a.addressId = :id")
     Optional<Address> findByIdWithFetch(Short id);
 }

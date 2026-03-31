@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class StoreMapper {
 
-    // RequestDTO → Entity
     public static Store toEntity(StoreRequestDTO dto, Address address, Staff manager) {
         Store store = new Store();
 
@@ -20,7 +19,6 @@ public class StoreMapper {
         return store;
     }
 
-    // Entity → ResponseDTO
     public static StoreResponseDTO toResponseDTO(Store store) {
         StoreResponseDTO dto = new StoreResponseDTO();
 
@@ -31,7 +29,6 @@ public class StoreMapper {
         return dto;
     }
 
-    // Entity → Lightweight DTO
     public static StoreDTO toDTO(Store store) {
         StoreDTO dto = new StoreDTO();
 

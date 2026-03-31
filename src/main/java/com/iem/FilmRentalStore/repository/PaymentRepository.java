@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
-    // ID-based (internal use)
-    // ✅ PAGINATED VERSIONS
 
     @EntityGraph(attributePaths = {
             "customer",

@@ -23,7 +23,6 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public LanguageResponseDTO createLanguage(LanguageRequestDTO request) {
 
-        // 🔒 Check duplicate
         languageRepository.findByNameIgnoreCase(request.getName())
                 .ifPresent(l -> {
                     throw new RuntimeException("Language already exists with name: " + request.getName());
@@ -66,7 +65,6 @@ public class LanguageServiceImpl implements LanguageService {
         Language language = languageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Language not found with id: " + id));
 
-        // 🔒 Check if another language already has this name
         languageRepository.findByNameIgnoreCase(request.getName())
                 .ifPresent(existing -> {
                     if (!existing.getLanguageId().equals(id)) {
@@ -95,7 +93,6 @@ public class LanguageServiceImpl implements LanguageService {
                         lang.setName(normalized);
                         return languageRepository.save(lang);
                     } catch (Exception e) {
-                        // 🔥 If duplicate inserted by another thread
                         try {
                             return languageRepository.findByNameIgnoreCase(normalized)
                                     .orElseThrow(() -> e);

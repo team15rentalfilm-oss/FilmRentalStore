@@ -24,13 +24,11 @@ public class FilmActor {
     @EqualsAndHashCode.Include
     private FilmActorId id;
 
-    // Actor relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("actorId")
     @JoinColumn(name = "actor_id")
     private Actor actor;
 
-    //Film relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("filmId")
     @JoinColumn(name = "film_id")

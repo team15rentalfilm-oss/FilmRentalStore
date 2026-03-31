@@ -15,13 +15,11 @@ public class FilmCategory {
     @EmbeddedId
     private FilmCategoryId id;
 
-    // Film relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("filmId")
     @JoinColumn(name = "film_id")
     private Film film;
 
-    // Category relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("categoryId")
     @JoinColumn(name = "category_id")

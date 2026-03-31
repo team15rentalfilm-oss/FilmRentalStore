@@ -34,6 +34,5 @@ public class StaffPatchDTO {
     @Valid
     private AddressRequestDTO address;
 
-    // Optional: manager flag
     private Boolean isManager;
 }

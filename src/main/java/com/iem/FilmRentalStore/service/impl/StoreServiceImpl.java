@@ -30,20 +30,16 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     public StoreResponseDTO createStore(StoreRequestDTO request) {
 
-        // ✅ Step 1: Resolve Address
         Address address = addressService.createAndReturnEntity(request.getAddress());
 
-        // ✅ Step 2: Fetch Manager (MANDATORY)
         Staff manager = staffRepository.findById(request.getManagerStaffId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Staff not found with id: " + request.getManagerStaffId()));
 
-        // ✅ Step 3: Create Store properly
         Store store = new Store();
         store.setAddress(address);
-        store.setManagerStaff(manager); // 🔥 IMPORTANT
+        store.setManagerStaff(manager);
 
-        // ✅ Step 4: Save
         Store saved = storeRepository.save(store);
 
         return StoreMapper.toResponseDTO(saved);
@@ -73,13 +69,11 @@ public class StoreServiceImpl implements StoreService {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Store not found with id: " + id));
 
-        // 🔥 Update Address if provided
         if (request.getAddress() != null) {
             Address address = addressService.createAndReturnEntity(request.getAddress());
             store.setAddress(address);
         }
 
-        // 🔥 Set manager (after store exists)
         if (request.getManagerStaffId() != null) {
             Staff manager = staffRepository.findById(request.getManagerStaffId())
                     .orElseThrow(() -> new EntityNotFoundException(

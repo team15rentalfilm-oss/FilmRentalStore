@@ -40,7 +40,6 @@ public class ActorServiceImpl implements ActorService {
         return ActorMapper.toResponseDTO(actor);
     }
 
-    // ✅ PAGINATED GET ALL
     @Override
     @Transactional(readOnly = true)
     public Page<ActorResponseDTO> getAllActors(Pageable pageable) {
@@ -60,7 +59,6 @@ public class ActorServiceImpl implements ActorService {
         return ActorMapper.toResponseDTO(updated);
     }
 
-    // ✅ PAGINATED SEARCH
     @Override
     @Transactional(readOnly = true)
     public Page<ActorResponseDTO> searchActors(String name, Pageable pageable) {

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "staff")
-@Data // Generates Getters, Setters, toString, equals, hashCode, and RequiredArgsConstructor
+@Data
 public class Staff {
 
     @Id

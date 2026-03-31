@@ -15,6 +15,5 @@ public class RentalRequestDTO {
     @NotNull(message = "Customer ID is required")
     private Short customerId;
 
-    // Optional (can be auto-filled from logged-in staff)
     private Short staffId;
 }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class InventoryMapper {
 
-    // 🔹 Request → Entity
     public static Inventory toEntity(Film film, Store store) {
         Inventory inventory = new Inventory();
         inventory.setFilm(film);
@@ -17,7 +16,6 @@ public class InventoryMapper {
         return inventory;
     }
 
-    // 🔹 Entity → Lightweight DTO
     public static InventoryDTO toDTO(Inventory inventory) {
         InventoryDTO dto = new InventoryDTO();
         dto.setInventoryId(inventory.getInventoryId());
@@ -26,7 +24,6 @@ public class InventoryMapper {
         return dto;
     }
 
-    // 🔹 Entity → Response DTO (Detailed)
     public static InventoryResponseDTO toResponseDTO(Inventory inventory) {
         InventoryResponseDTO dto = new InventoryResponseDTO();
 

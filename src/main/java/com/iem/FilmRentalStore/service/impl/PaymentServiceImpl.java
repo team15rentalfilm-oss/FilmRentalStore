@@ -24,7 +24,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final RentalRepository rentalRepository;
     private final StaffRepository staffRepository;
 
-    // 🔥 CREATE PAYMENT
     @Override
     @Transactional
     public PaymentResponseDTO createPayment(PaymentRequestDTO request) {
@@ -45,7 +44,6 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentMapper.toResponseDTO(paymentRepository.save(payment));
     }
 
-    // 🔥 GET BY ID
     @Override
     public PaymentResponseDTO getPaymentById(Integer id) {
         return paymentRepository.findById(id)
@@ -79,7 +77,6 @@ public class PaymentServiceImpl implements PaymentService {
         return PageRequest.of(Math.max(page, 0), size, safeSort);
     }
 
-    // 🔥 GET ALL (PAGINATED)
     @Override
     public Page<PaymentResponseDTO> getAllPayments(Pageable pageable) {
 
@@ -89,7 +86,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .map(PaymentMapper::toResponseDTO);
     }
 
-    // 🔥 SEARCH BY CUSTOMER NAME (NO PAGINATION)
     @Override
     public List<PaymentResponseDTO> getPaymentsByCustomerName(String name) {
         return paymentRepository
@@ -99,7 +95,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .toList();
     }
 
-    // 🔥 GET BY RENTAL ID (NO PAGINATION)
     @Override
     public List<PaymentResponseDTO> getPaymentsByRentalId(Integer rentalId) {
         return paymentRepository.findByRental_RentalId(rentalId)
@@ -108,7 +103,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .toList();
     }
 
-    // 🔥 PATCH PAYMENT
     @Override
     @Transactional
     public PaymentResponseDTO patchPayment(Integer id, PaymentPatchDTO request) {
@@ -129,31 +123,28 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentMapper.toResponseDTO(paymentRepository.save(payment));
     }
 
-    // 🔥 GET BY CUSTOMER ID (PAGINATED)
     @Override
     public Page<PaymentResponseDTO> getByCustomerId(Short customerId, Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIXED
+        pageable = sanitizePageable(pageable);
 
         return paymentRepository.findByCustomer_CustomerId(customerId, pageable)
                 .map(PaymentMapper::toResponseDTO);
     }
 
-    // 🔥 GET BY STAFF ID (PAGINATED)
     @Override
     public Page<PaymentResponseDTO> getByStaffId(Byte staffId, Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIXED
+        pageable = sanitizePageable(pageable);
 
         return paymentRepository.findByStaff_StaffId(staffId, pageable)
                 .map(PaymentMapper::toResponseDTO);
     }
 
-    // 🔥 SEARCH STAFF NAME (PAGINATED)
     @Override
     public Page<PaymentResponseDTO> searchByStaffName(String name, Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIXED
+        pageable = sanitizePageable(pageable);
 
         return paymentRepository
                 .findByStaff_FirstNameContainingIgnoreCaseOrStaff_LastNameContainingIgnoreCase(name, name, pageable)

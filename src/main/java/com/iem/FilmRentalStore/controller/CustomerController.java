@@ -16,32 +16,27 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    // 🔒 Allowed fields for sorting (prevents errors & SQL injection)
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
             "customerId"
     );
 
     private static final String DEFAULT_SORT_FIELD = "customerId";
 
-    // ================= CREATE =================
     @PostMapping
     public CustomerDTO createCustomer(@Valid @RequestBody CustomerRequestDTO request) {
         return customerService.createCustomer(request);
     }
 
-    // ================= GET BY ID =================
     @GetMapping("/{id}")
     public CustomerResponseDTO getCustomer(@PathVariable Short id) {
         return customerService.getCustomerById(id);
     }
 
-    // ================= GET ALL =================
     @GetMapping
     public Page<CustomerDTO> getCustomers(Pageable pageable) {
         return customerService.getAllCustomers(sanitize(pageable));
     }
 
-    // ================= SEARCH =================
 
     @GetMapping("/search/first-name")
     public Page<CustomerDTO> getByFirstName(@RequestParam String firstName,
@@ -79,21 +74,18 @@ public class CustomerController {
         return customerService.getByCountry(country, sanitize(pageable));
     }
 
-    // ================= UPDATE =================
     @PutMapping("/{id}")
     public CustomerDTO updateCustomer(@PathVariable Short id,
                                       @Valid @RequestBody CustomerRequestDTO request) {
         return customerService.updateCustomer(id, request);
     }
 
-    // ================= PATCH =================
     @PatchMapping("/{id}")
     public CustomerDTO patchCustomer(@PathVariable Short id,
                                      @RequestBody CustomerPatchDTO dto) {
         return customerService.patchCustomer(id, dto);
     }
 
-    // ================= PAGINATION + SORT SANITIZER =================
 
     private Pageable sanitize(Pageable pageable) {
 
@@ -102,11 +94,9 @@ public class CustomerController {
 
         Sort sort = pageable.getSort();
 
-        // ✅ If no sort → apply default
         if (!sort.isSorted()) {
             sort = Sort.by(DEFAULT_SORT_FIELD).ascending();
         } else {
-            // ✅ Validate fields
             for (Sort.Order order : sort) {
                 if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
                     throw new IllegalArgumentException(

@@ -26,7 +26,6 @@ public class RentalServiceImpl implements RentalService {
     private final StaffRepository staffRepository;
 
 
-    // 🔥 CREATE RENTAL
     @Override
     @Transactional
     public RentalResponseDTO createRental(RentalRequestDTO request) {
@@ -50,7 +49,6 @@ public class RentalServiceImpl implements RentalService {
         return RentalMapper.toResponseDTO(rentalRepository.save(rental));
     }
 
-    // 🔥 RETURN RENTAL
     @Override
     @Transactional
     public RentalResponseDTO returnRental(Integer rentalId) {
@@ -67,7 +65,6 @@ public class RentalServiceImpl implements RentalService {
         return RentalMapper.toResponseDTO(rentalRepository.save(rental));
     }
 
-    // 🔥 GET BY ID
     @Override
     @Transactional
     public RentalResponseDTO getRentalById(Integer id) {
@@ -103,17 +100,15 @@ public class RentalServiceImpl implements RentalService {
         return PageRequest.of(Math.max(page, 0), size, safeSort);
     }
 
-    // 🔥 GET ALL
     @Override
     public Page<RentalResponseDTO> getAllRentals(Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIX
+        pageable = sanitizePageable(pageable);
 
         return rentalRepository.findAll(pageable)
                 .map(RentalMapper::toResponseDTO);
     }
 
-    // 🔥 SEARCH BY CUSTOMER NAME
     @Override
     @Transactional
     public List<RentalResponseDTO> getByCustomerName(String name) {
@@ -124,7 +119,6 @@ public class RentalServiceImpl implements RentalService {
                 .toList();
     }
 
-    // 🔥 PATCH RENTAL
     @Override
     public RentalResponseDTO patchRental(Integer id, RentalPatchDTO request) {
 
@@ -144,31 +138,28 @@ public class RentalServiceImpl implements RentalService {
         return RentalMapper.toResponseDTO(rentalRepository.save(rental));
     }
 
-    // 🔥 GET BY CUSTOMER ID
     @Override
     public Page<RentalResponseDTO> getByCustomerId(Short customerId, Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIX
+        pageable = sanitizePageable(pageable);
 
         return rentalRepository.findByCustomer_CustomerId(customerId, pageable)
                 .map(RentalMapper::toResponseDTO);
     }
 
-    // 🔥 GET BY INVENTORY ID
     @Override
     public Page<RentalResponseDTO> getByInventoryId(Integer inventoryId, Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIX
+        pageable = sanitizePageable(pageable);
 
         return rentalRepository.findByInventory_InventoryId(inventoryId, pageable)
                 .map(RentalMapper::toResponseDTO);
     }
 
-    // 🔥 GET BY STAFF ID
     @Override
     public Page<RentalResponseDTO> getByStaffId(Byte staffId, Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // ✅ FIX
+        pageable = sanitizePageable(pageable);
 
         return rentalRepository.findByStaff_StaffId(staffId, pageable)
                 .map(RentalMapper::toResponseDTO);

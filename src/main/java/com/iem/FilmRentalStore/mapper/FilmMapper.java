@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 @Component
 public class FilmMapper {
 
-    // CREATE
     public static Film toEntity(FilmRequestDTO dto,
                                 Language language,
                                 Set<Category> categories,
@@ -24,7 +23,6 @@ public class FilmMapper {
         return film;
     }
 
-    // UPDATE (FULL)
     public static void updateEntity(Film film,
                                     FilmRequestDTO dto,
                                     Language language,
@@ -52,7 +50,6 @@ public class FilmMapper {
         film.setActors(actors);
     }
 
-    // PATCH
     public static void patchEntity(Film film, FilmPatchDTO dto) {
 
         if (dto.getTitle() != null) film.setTitle(dto.getTitle());
@@ -68,7 +65,6 @@ public class FilmMapper {
         }
     }
 
-    // RESPONSE
     public static FilmResponseDTO toResponseDTO(Film film) {
 
         FilmResponseDTO dto = new FilmResponseDTO();
@@ -109,7 +105,6 @@ public class FilmMapper {
         return dto;
     }
 
-    // LIGHTWEIGHT
     public static FilmDTO toDTO(Film film) {
         FilmDTO dto = new FilmDTO();
         dto.setFilmId(film.getFilmId());

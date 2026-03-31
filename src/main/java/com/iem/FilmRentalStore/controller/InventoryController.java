@@ -19,7 +19,6 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    // 🔥 Helper → Ignore sorting globally
     private Pageable sanitizePageable(Pageable pageable) {
         return PageRequest.of(
                 pageable.getPageNumber(),
@@ -27,26 +26,22 @@ public class InventoryController {
         );
     }
 
-    // ✅ CREATE
     @PostMapping
     public ResponseEntity<InventoryDTO> createInventory(
             @Valid @RequestBody InventoryRequestDTO request) {
         return ResponseEntity.ok(inventoryService.createInventory(request));
     }
 
-    // ✅ GET BY ID (LIGHTWEIGHT)
     @GetMapping("/{id}")
     public ResponseEntity<InventoryDTO> getInventoryById(@PathVariable Integer id) {
         return ResponseEntity.ok(inventoryService.getInventoryById(id));
     }
 
-    // ✅ GET BY ID (DETAILED)
     @GetMapping("/{id}/details")
     public ResponseEntity<InventoryResponseDTO> getInventoryDetails(@PathVariable Integer id) {
         return ResponseEntity.ok(inventoryService.getInventoryDetails(id));
     }
 
-    // ✅ GET ALL (PAGINATION + FILTER)
     @GetMapping
     public ResponseEntity<Page<InventoryDTO>> getAllInventory(
             @RequestParam(required = false) Short filmId,
@@ -60,7 +55,6 @@ public class InventoryController {
         );
     }
 
-    // ✅ UPDATE (FULL)
     @PutMapping("/{id}")
     public ResponseEntity<InventoryDTO> updateInventory(
             @PathVariable Integer id,
@@ -68,7 +62,6 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.updateInventory(id, request));
     }
 
-    // ✅ PATCH (PARTIAL)
     @PatchMapping("/{id}")
     public ResponseEntity<InventoryDTO> patchInventory(
             @PathVariable Integer id,

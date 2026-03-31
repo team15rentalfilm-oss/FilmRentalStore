@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActorMapper {
 
-    // RequestDTO → Entity
     public static Actor toEntity(ActorRequestDTO dto) {
         Actor actor = new Actor();
         actor.setFirstName(dto.getFirstName());
@@ -17,7 +16,6 @@ public class ActorMapper {
         return actor;
     }
 
-    // Entity → ResponseDTO
     public static ActorResponseDTO toResponseDTO(Actor actor) {
         ActorResponseDTO dto = new ActorResponseDTO();
         dto.setActorId(actor.getActorId());
@@ -26,7 +24,6 @@ public class ActorMapper {
         return dto;
     }
 
-    // Entity → Lightweight DTO
     public static ActorDTO toDTO(Actor actor) {
         ActorDTO dto = new ActorDTO();
         dto.setActorId(actor.getActorId());

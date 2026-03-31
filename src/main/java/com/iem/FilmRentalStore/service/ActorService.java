@@ -14,9 +14,9 @@ public interface ActorService {
 
     ActorResponseDTO getActorById(Short id);
 
-    Page<ActorResponseDTO> getAllActors(Pageable pageable);   // ✅ changed
+    Page<ActorResponseDTO> getAllActors(Pageable pageable);
 
     ActorResponseDTO updateActor(Short id, ActorRequestDTO request);
 
-    Page<ActorResponseDTO> searchActors(String name, Pageable pageable); // ✅ changed
+    Page<ActorResponseDTO> searchActors(String name, Pageable pageable);
 }

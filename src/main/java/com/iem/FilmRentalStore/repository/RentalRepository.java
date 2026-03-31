@@ -13,8 +13,6 @@ import java.util.List;
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Integer> {
 
-    // ID-based (internal use)
-    // ✅ PAGINATED VERSIONS
 
     @EntityGraph(attributePaths = {
             "inventory",

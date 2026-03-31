@@ -30,14 +30,12 @@ public class ActorController {
         return actorService.getActorById(id);
     }
 
-    // ✅ PAGINATED GET ALL
     @GetMapping
     public Page<ActorResponseDTO> getAllActors(
             @PageableDefault(size = 10, sort = "firstName") Pageable pageable) {
         return actorService.getAllActors(pageable);
     }
 
-    // ✅ PAGINATED SEARCH
     @GetMapping("/search")
     public Page<ActorResponseDTO> searchActors(
             @RequestParam String name,

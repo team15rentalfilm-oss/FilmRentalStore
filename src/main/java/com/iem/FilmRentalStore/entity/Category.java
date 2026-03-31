@@ -21,7 +21,6 @@ public class Category {
     @Column(name = "name", nullable = false, unique=true, length = 25)
     private String name;
 
-    //Many-to-Many with Film (inverse side)
     @ManyToMany(mappedBy = "categories")
     private Set<Film> films = new HashSet<>();
 
@@ -38,7 +37,6 @@ public class Category {
         this.lastUpdate = java.time.LocalDateTime.now();
     }
 
-    // Constructors
     public Category() {}
 
     public Category(String name) {

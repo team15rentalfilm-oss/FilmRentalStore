@@ -46,12 +46,10 @@ public class StaffController {
 
                 String property = order.getProperty();
 
-                // ❌ Invalid Swagger format
                 if (property.contains("[") || property.contains("]") || property.contains("\"")) {
                     return defaultPage(pageable);
                 }
 
-                // ❌ Unknown field
                 if (!ALLOWED_SORTS.contains(property)) {
                     return defaultPage(pageable);
                 }
@@ -75,7 +73,7 @@ public class StaffController {
             @RequestParam(required = false) Short storeId,
             Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // 🔥 ADD THIS
+        pageable = sanitizePageable(pageable);
 
         return staffService.searchStaff(name, storeId, pageable);
     }
@@ -85,7 +83,7 @@ public class StaffController {
             @RequestParam String city,
             Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // 🔥 ADD
+        pageable = sanitizePageable(pageable);
 
         return staffService.getStaffByCity(city, pageable);
     }
@@ -95,7 +93,7 @@ public class StaffController {
             @RequestParam String country,
             Pageable pageable) {
 
-        pageable = sanitizePageable(pageable); // 🔥 ADD
+        pageable = sanitizePageable(pageable);
 
         return staffService.getStaffByCountry(country, pageable);
     }

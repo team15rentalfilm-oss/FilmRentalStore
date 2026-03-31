@@ -15,7 +15,6 @@ public class PageableConfig {
 
             pageableResolver.setMaxPageSize(50);
 
-            // ✅ NO SORT HERE
             pageableResolver.setFallbackPageable(
                     PageRequest.of(0, 10)
             );

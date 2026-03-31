@@ -25,7 +25,6 @@ public interface StaffRepository extends JpaRepository<Staff, Short> {
             "store"
     })
     Page<Staff> findByStore_StoreId(Short storeId, Pageable pageable);
-    // ✅ FIXED (City name inside City entity)
     @EntityGraph(attributePaths = {
             "address",
             "address.city",
@@ -33,7 +32,6 @@ public interface StaffRepository extends JpaRepository<Staff, Short> {
             "store"
     })
     Page<Staff> findByAddress_City_CityContainingIgnoreCase(String city, Pageable pageable);
-    // ✅ FIXED (Country inside City → Country)
     @EntityGraph(attributePaths = {
             "address",
             "address.city",

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerMapper {
 
-    // 🔹 RequestDTO → Entity
     public static Customer toEntity(CustomerRequestDTO dto, Address address, Store store) {
         Customer customer = new Customer();
 
@@ -24,7 +23,6 @@ public class CustomerMapper {
         return customer;
     }
 
-    // 🔹 Entity → ResponseDTO
     public static CustomerResponseDTO toResponseDTO(Customer customer) {
         CustomerResponseDTO dto = new CustomerResponseDTO();
 
@@ -42,7 +40,6 @@ public class CustomerMapper {
         return dto;
     }
 
-    // 🔹 Entity → Lightweight DTO
     public static CustomerDTO toDTO(Customer customer) {
         CustomerDTO dto = new CustomerDTO();
         dto.setId(customer.getCustomerId());

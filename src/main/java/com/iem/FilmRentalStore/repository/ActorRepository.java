@@ -13,13 +13,10 @@ import java.util.Optional;
 
 public interface ActorRepository extends JpaRepository<Actor, Short> {
 
-    // Search by first name (partial)
     List<Actor> findByFirstNameContainingIgnoreCase(String firstName);
 
-    // Search by last name (partial)
     List<Actor> findByLastNameContainingIgnoreCase(String lastName);
 
-    // Combined search (best one)
     List<Actor> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
             String firstName, String lastName);
 

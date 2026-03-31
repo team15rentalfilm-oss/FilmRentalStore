@@ -19,12 +19,10 @@ public class Inventory {
     @Column(name = "inventory_id")
     private Integer inventoryId;
 
-    // Film relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "film_id", nullable = false)
     private Film film;
 
-    //Store relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;

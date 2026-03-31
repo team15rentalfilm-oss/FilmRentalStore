@@ -25,7 +25,6 @@ public class StaffServiceImpl implements StaffService {
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
 
-    // 🔥 SAME LOGIC AS CUSTOMER
     @Transactional
     private City getOrCreateCity(AddressRequestDTO request) {
 
@@ -50,7 +49,6 @@ public class StaffServiceImpl implements StaffService {
                 });
     }
 
-    // ================= CREATE =================
     @Transactional
     @Override
     public StaffResponseDTO createStaff(StaffRequestDTO request) {
@@ -84,7 +82,6 @@ public class StaffServiceImpl implements StaffService {
 
         Staff staff = StaffMapper.toEntity(request, address, store);
 
-        // simple password (no encoding)
         staff.setPassword(request.getPassword());
 
         Staff saved = staffRepository.save(staff);
@@ -100,7 +97,6 @@ public class StaffServiceImpl implements StaffService {
         return StaffMapper.toResponseDTO(saved);
     }
 
-    // ================= GET =================
     @Transactional(readOnly = true)
     @Override
     public StaffResponseDTO getStaffById(Short id) {
@@ -118,7 +114,6 @@ public class StaffServiceImpl implements StaffService {
     }
 
 
-    // ================= SEARCH =================
     @Override
     @Transactional(readOnly = true)
     public Page<StaffResponseDTO> searchStaff(String name, Short storeId, Pageable pageable) {
@@ -138,7 +133,6 @@ public class StaffServiceImpl implements StaffService {
         return getAllStaff(pageable);
     }
 
-    // ================= CITY =================
     @Override
     @Transactional(readOnly = true)
     public Page<StaffResponseDTO> getStaffByCity(String city, Pageable pageable) {
@@ -147,7 +141,6 @@ public class StaffServiceImpl implements StaffService {
                 .map(StaffMapper::toResponseDTO);
     }
 
-    // ================= COUNTRY =================
     @Override
     @Transactional(readOnly = true)
     public Page<StaffResponseDTO> getStaffByCountry(String country, Pageable pageable) {
@@ -156,7 +149,6 @@ public class StaffServiceImpl implements StaffService {
                 .map(StaffMapper::toResponseDTO);
     }
 
-    // ================= UPDATE =================
     @Override
     @Transactional
     public StaffResponseDTO updateStaff(Short id, StaffRequestDTO request) {
@@ -179,7 +171,6 @@ public class StaffServiceImpl implements StaffService {
 
         staff.setStore(store);
 
-        // 🔥 ADDRESS LOGIC (SAME AS CUSTOMER)
         City city = getOrCreateCity(request.getAddress());
 
         Address address = addressRepository
@@ -207,7 +198,6 @@ public class StaffServiceImpl implements StaffService {
         return StaffMapper.toResponseDTO(saved);
     }
 
-    // ================= PATCH =================
     @Override
     @Transactional
     public StaffResponseDTO patchStaff(Short id, StaffPatchDTO dto) {

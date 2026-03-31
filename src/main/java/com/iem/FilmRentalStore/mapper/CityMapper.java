@@ -7,14 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class CityMapper {
 
-    //RequestDTO → Entity
     public City toEntity(CityRequestDTO dto) {
         City city = new City();
         city.setCity(dto.getCity());
         return city;
     }
 
-    // Entity → ResponseDTO
     public CityResponseDTO toResponseDTO(City city) {
         CityResponseDTO dto = new CityResponseDTO();
         dto.setCityId(city.getCityId());
@@ -23,7 +21,6 @@ public class CityMapper {
         return dto;
     }
 
-    // Entity → Lightweight DTO
     public static CityDTO toDTO(City city) {
         CityDTO dto = new CityDTO();
         dto.setCity(city.getCity());

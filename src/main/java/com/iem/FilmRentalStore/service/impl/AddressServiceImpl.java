@@ -21,7 +21,6 @@ public class AddressServiceImpl implements AddressService {
     private final CityRepository cityRepository;
     private final CountryRepository countryRepository;
 
-    // 🔥 COMMON
     private City getOrCreateCity(AddressRequestDTO request) {
 
         if (request.getCity() == null || request.getCity().getCountry() == null) {
@@ -49,7 +48,6 @@ public class AddressServiceImpl implements AddressService {
                 });
     }
 
-    // ✅ CREATE
     @Override
     @Transactional
     public AddressDTO createAddress(AddressRequestDTO request) {
@@ -67,7 +65,6 @@ public class AddressServiceImpl implements AddressService {
         return AddressMapper.toDTO(full);
     }
 
-    // ✅ GET BY ID
     @Override
     @Transactional
     public AddressResponseDTO getAddressById(Short id) {
@@ -76,7 +73,6 @@ public class AddressServiceImpl implements AddressService {
                 .orElseThrow(() -> new EntityNotFoundException("Address not found"));
     }
 
-    // ✅ PAGINATION
     @Override
     @Transactional
     public Page<AddressResponseDTO> getAllAddresses(Pageable pageable) {
@@ -84,7 +80,6 @@ public class AddressServiceImpl implements AddressService {
                 .map(AddressMapper::toResponseDTO);
     }
 
-    // ✅ UPDATE
     @Override
     @Transactional
     public AddressDTO updateAddress(Short id, AddressRequestDTO request) {
@@ -108,7 +103,6 @@ public class AddressServiceImpl implements AddressService {
                 .orElseThrow();
     }
 
-    // 🔥 PATCH
     @Override
     @Transactional
     public AddressDTO patchAddress(Short id, AddressRequestDTO request) {
@@ -133,7 +127,6 @@ public class AddressServiceImpl implements AddressService {
                 .orElseThrow();
     }
 
-    // ✅ SEARCH
     @Override
     @Transactional
     public Page<AddressResponseDTO> searchByAddress(String address, Pageable pageable) {
@@ -162,7 +155,6 @@ public class AddressServiceImpl implements AddressService {
                 .map(AddressMapper::toResponseDTO);
     }
 
-    // ✅ REUSE
     @Override
     @Transactional
     public Address createAndReturnEntity(AddressRequestDTO request) {

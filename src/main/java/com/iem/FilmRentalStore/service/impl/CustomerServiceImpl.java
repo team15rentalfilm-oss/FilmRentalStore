@@ -25,7 +25,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CountryService countryService;
     private final CityService cityService;
 
-    // ================= CREATE =================
     @Override
     public CustomerDTO createCustomer(CustomerRequestDTO request) {
 
@@ -43,7 +42,6 @@ public class CustomerServiceImpl implements CustomerService {
         return CustomerMapper.toDTO(saved);
     }
 
-    // ================= GET =================
     @Override
     @Transactional(readOnly = true)
     public CustomerResponseDTO getCustomerById(Short id) {
@@ -55,7 +53,6 @@ public class CustomerServiceImpl implements CustomerService {
         return CustomerMapper.toResponseDTO(customer);
     }
 
-    // ✅ PAGINATED GET ALL
     @Override
     @Transactional(readOnly = true)
     public Page<CustomerDTO> getAllCustomers(Pageable pageable) {
@@ -64,7 +61,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(CustomerMapper::toDTO);
     }
 
-    // ================= UPDATE =================
     @Override
     public CustomerDTO updateCustomer(Short id, CustomerRequestDTO request) {
 
@@ -92,7 +88,6 @@ public class CustomerServiceImpl implements CustomerService {
         return CustomerMapper.toDTO(saved);
     }
 
-    // ================= SEARCH (PAGINATED) =================
 
     @Override
     @Transactional(readOnly = true)
@@ -148,7 +143,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(CustomerMapper::toDTO);
     }
 
-    // ================= PATCH =================
     @Override
     @Transactional
     public CustomerDTO patchCustomer(Short id, CustomerPatchDTO dto) {
@@ -157,7 +151,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Customer not found with id: " + id));
 
-        // 🔹 BASIC
         if (dto.getFirstName() != null)
             customer.setFirstName(dto.getFirstName());
 
@@ -170,7 +163,6 @@ public class CustomerServiceImpl implements CustomerService {
         if (dto.getActive() != null)
             customer.setActive(dto.getActive());
 
-        // 🔹 STORE
         if (dto.getStoreId() != null) {
             Store store = storeRepository.findById(dto.getStoreId())
                     .orElseThrow(() -> new EntityNotFoundException(
@@ -179,7 +171,6 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setStore(store);
         }
 
-        // 🔹 ADDRESS FLOW
         if (dto.getAddress() != null || dto.getCity() != null || dto.getCountry() != null) {
 
             if (dto.getCity() == null || dto.getCountry() == null) {

@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
 public class StoreRequestDTO {
 
     @NotNull(message = "Manager is required")
-    private Short managerStaffId; // practical: staff already exists
+    private Short managerStaffId;
 
     @NotNull(message = "Address is required")
     @Valid

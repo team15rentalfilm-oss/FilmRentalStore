@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RentalMapper {
 
-    // 🔹 Entity creation (no dto needed)
     public static Rental toEntity(Inventory inventory,
                                   Customer customer,
                                   Staff staff) {
@@ -19,7 +18,6 @@ public class RentalMapper {
         return rental;
     }
 
-    // 🔹 Lightweight DTO (matches your RentalDTO)
     public static RentalDTO toDTO(Rental rental) {
         RentalDTO dto = new RentalDTO();
 
@@ -36,7 +34,6 @@ public class RentalMapper {
         return dto;
     }
 
-    // 🔹 Detailed Response DTO
     public static RentalResponseDTO toResponseDTO(Rental rental) {
         RentalResponseDTO dto = new RentalResponseDTO();
 

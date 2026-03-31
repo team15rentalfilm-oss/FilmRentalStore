@@ -20,19 +20,16 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
     private final CountryMapper countryMapper;
 
-    // 🔥 STRICT CREATE (throws error if exists)
     @Override
     public CountryDTO createCountry(CountryRequestDTO request) {
 
         String normalized = normalize(request.getCountry());
 
-        // ❌ Check if already exists
         countryRepository.findByCountryIgnoreCase(normalized)
                 .ifPresent(c -> {
                     throw new IllegalArgumentException("Country already exists: " + normalized);
                 });
 
-        // ✅ Create new
         Country country = new Country();
         country.setCountry(normalized);
 
@@ -81,7 +78,6 @@ public class CountryServiceImpl implements CountryService {
 
         String normalized = normalize(request.getCountry());
 
-        // ❌ Prevent duplicate update
         countryRepository.findByCountryIgnoreCase(normalized)
                 .filter(c -> !c.getCountryId().equals(id))
                 .ifPresent(c -> {
@@ -95,7 +91,6 @@ public class CountryServiceImpl implements CountryService {
         return countryMapper.toDTO(updated);
     }
 
-    // 🔥 REUSABLE METHOD (internal use)
     @Override
     public Country getOrCreateCountry(String countryName) {
 
@@ -110,7 +105,6 @@ public class CountryServiceImpl implements CountryService {
                 });
     }
 
-    // 🔧 Utility
     private String normalize(String input) {
         return input == null ? null : input.trim().replaceAll("\\s+", " ");
     }

@@ -29,7 +29,6 @@ public class CustomerRequestDTO {
     @Valid
     private AddressRequestDTO address;
 
-    // Since store is predefined, we use ID here (practical exception)
     @NotNull(message = "Store ID is required")
     private Short storeId;
 

@@ -12,10 +12,8 @@ public class CustomerPatchDTO {
     private String email;
     private Boolean active;
 
-    // 🔹 Store by name (optional)
     private Short storeId;
 
-    // 🔹 Address fields directly
     private String address;
     private String address2;
     private String district;
