@@ -30,6 +30,49 @@ public interface FilmRepository extends JpaRepository<Film, Short> {
     @EntityGraph(attributePaths = {"categories", "filmActors.actor", "specialFeatures"})
     Page<Film> findAll(Pageable pageable);
 
+    @EntityGraph(attributePaths = {"categories", "filmActors.actor", "specialFeatures"})
+    @Query(
+            value = """
+                    select distinct f
+                    from Film f
+                    left join f.categories c
+                    left join f.filmActors fa
+                    left join fa.actor a
+                    where (:title is null or trim(:title) = '' or lower(f.title) like lower(concat('%', :title, '%')))
+                      and (:year is null or f.releaseYear = :year)
+                      and (:category is null or trim(:category) = '' or lower(c.name) like lower(concat('%', :category, '%')))
+                      and (
+                            :actor is null or trim(:actor) = ''
+                            or lower(concat(a.firstName, ' ', a.lastName)) like lower(concat('%', :actor, '%'))
+                            or lower(a.firstName) like lower(concat('%', :actor, '%'))
+                            or lower(a.lastName) like lower(concat('%', :actor, '%'))
+                      )
+                    """,
+            countQuery = """
+                    select count(distinct f)
+                    from Film f
+                    left join f.categories c
+                    left join f.filmActors fa
+                    left join fa.actor a
+                    where (:title is null or trim(:title) = '' or lower(f.title) like lower(concat('%', :title, '%')))
+                      and (:year is null or f.releaseYear = :year)
+                      and (:category is null or trim(:category) = '' or lower(c.name) like lower(concat('%', :category, '%')))
+                      and (
+                            :actor is null or trim(:actor) = ''
+                            or lower(concat(a.firstName, ' ', a.lastName)) like lower(concat('%', :actor, '%'))
+                            or lower(a.firstName) like lower(concat('%', :actor, '%'))
+                            or lower(a.lastName) like lower(concat('%', :actor, '%'))
+                      )
+                    """
+    )
+    Page<Film> searchFilms(
+            @Param("title") String title,
+            @Param("year") Integer year,
+            @Param("category") String category,
+            @Param("actor") String actor,
+            Pageable pageable
+    );
+
     @Query("""
             select distinct f
             from Film f

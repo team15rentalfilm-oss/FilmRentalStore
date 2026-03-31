@@ -20,6 +20,7 @@ import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
+import com.iem.FilmRentalStore.dto.address.AddressResponseDTO;
 import com.iem.FilmRentalStore.dto.category.CategoryDTO;
 import com.iem.FilmRentalStore.dto.category.CategoryRequestDTO;
 import com.iem.FilmRentalStore.dto.category.CategoryResponseDTO;
@@ -128,27 +129,30 @@ class ControllerUnitTest {
     void actorControllerDelegatesAllEndpoints() {
         ActorRequestDTO request = TestDataFactory.actorRequest("Tom", "Hanks");
         ActorResponseDTO response = new ActorResponseDTO();
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<ActorResponseDTO> page = new PageImpl<>(List.of(response));
         when(actorService.createActor(request)).thenReturn(response);
         when(actorService.getActorById((short) 1)).thenReturn(response);
-        when(actorService.getAllActors()).thenReturn(List.of(response));
-        when(actorService.searchActors("tom")).thenReturn(List.of(response));
+        when(actorService.getAllActors(pageable)).thenReturn(page);
+        when(actorService.searchActors("tom", pageable)).thenReturn(page);
         when(actorService.updateActor((short) 1, request)).thenReturn(response);
 
         assertThat(actorController.createActor(request)).isSameAs(response);
         assertThat(actorController.getActorById((short) 1)).isSameAs(response);
-        assertThat(actorController.getAllActors()).containsExactly(response);
-        assertThat(actorController.searchActors("tom")).containsExactly(response);
+        assertThat(actorController.getAllActors(pageable)).isSameAs(page);
+        assertThat(actorController.searchActors("tom", pageable)).isSameAs(page);
         assertThat(actorController.updateActor((short) 1, request)).isSameAs(response);
     }
 
     @Test
     void addressControllerDelegatesAllEndpoints() {
         AddressRequestDTO request = TestDataFactory.addressRequest();
+        AddressResponseDTO response = new AddressResponseDTO();
         AddressDTO dto = new AddressDTO();
         Pageable pageable = PageRequest.of(0, 10);
-        Page<AddressDTO> page = new PageImpl<>(List.of(dto));
+        Page<AddressResponseDTO> page = new PageImpl<>(List.of(response));
         when(addressService.createAddress(request)).thenReturn(dto);
-        when(addressService.getAddressById((short) 1)).thenReturn(dto);
+        when(addressService.getAddressById((short) 1)).thenReturn(response);
         when(addressService.getAllAddresses(pageable)).thenReturn(page);
         when(addressService.updateAddress((short) 1, request)).thenReturn(dto);
         when(addressService.patchAddress((short) 1, request)).thenReturn(dto);
@@ -158,7 +162,7 @@ class ControllerUnitTest {
         when(addressService.searchByCity("Bengaluru", pageable)).thenReturn(page);
 
         assertThat(addressController.createAddress(request)).isSameAs(dto);
-        assertThat(addressController.getAddressById((short) 1)).isSameAs(dto);
+        assertThat(addressController.getAddressById((short) 1)).isSameAs(response);
         assertThat(addressController.getAllAddresses(pageable)).isSameAs(page);
         assertThat(addressController.updateAddress((short) 1, request)).isSameAs(dto);
         assertThat(addressController.patchAddress((short) 1, request)).isSameAs(dto);
@@ -272,20 +276,22 @@ class ControllerUnitTest {
         FilmDTO suggestion = new FilmDTO();
         FilmResponseDTO response = new FilmResponseDTO();
         Page<FilmResponseDTO> page = new PageImpl<>(List.of(response));
+        Pageable pageable = PageRequest.of(0, 10);
         when(filmService.createFilm(request)).thenReturn(response);
         when(filmService.getFilmById((short) 1)).thenReturn(response);
-        when(filmService.getAllFilms(0, 10)).thenReturn(page);
+        when(filmService.getAllFilms(pageable)).thenReturn(page);
         when(filmService.updateFilm((short) 1, request)).thenReturn(response);
         when(filmService.patchFilm((short) 1, patch)).thenReturn(response);
-        when(filmService.searchFilms("Inception", 2010, "Sci-Fi", "Leonardo DiCaprio", 0, 10)).thenReturn(page);
+        when(filmService.searchFilms("Inception", 2010, "Sci-Fi", "Leonardo DiCaprio", pageable)).thenReturn(page);
         when(filmService.suggestFilms("Inception")).thenReturn(List.of(suggestion));
 
         assertThat(filmController.createFilm(request)).isSameAs(response);
         assertThat(filmController.getFilmById((short) 1)).isSameAs(response);
-        assertThat(filmController.getAllFilms(0, 10)).isSameAs(page);
+        assertThat(filmController.getAllFilms(pageable)).isSameAs(page);
         assertThat(filmController.updateFilm((short) 1, request)).isSameAs(response);
         assertThat(filmController.patchFilm((short) 1, patch)).isSameAs(response);
-        assertThat(filmController.searchFilms("Inception", 2010, "Sci-Fi", "Leonardo DiCaprio", 0, 10)).isSameAs(page);
+        assertThat(filmController.searchFilms("Inception", 2010, null, "Sci-Fi", "Leonardo DiCaprio", pageable)).isSameAs(page);
+        assertThat(filmController.searchFilms("Inception", null, 2010, "Sci-Fi", "Leonardo DiCaprio", pageable)).isSameAs(page);
         assertThat(filmController.suggestFilms("Inception")).containsExactly(suggestion);
     }
 
@@ -329,8 +335,6 @@ class ControllerUnitTest {
         when(inventoryService.getAllInventory(eq((short) 1), eq((short) 1), any(Pageable.class))).thenReturn(page);
         when(inventoryService.updateInventory(1, request)).thenReturn(dto);
         when(inventoryService.patchInventory(1, request)).thenReturn(dto);
-        when(inventoryService.getByFilmId(eq((short) 1), any(Pageable.class))).thenReturn(page);
-        when(inventoryService.getByStoreId(eq((short) 1), any(Pageable.class))).thenReturn(page);
 
         assertThat(inventoryController.createInventory(request).getBody()).isSameAs(dto);
         assertThat(inventoryController.getInventoryById(1).getBody()).isSameAs(dto);
@@ -338,8 +342,6 @@ class ControllerUnitTest {
         assertThat(inventoryController.getAllInventory((short) 1, (short) 1, incoming).getBody()).isSameAs(page);
         assertThat(inventoryController.updateInventory(1, request).getBody()).isSameAs(dto);
         assertThat(inventoryController.patchInventory(1, request).getBody()).isSameAs(dto);
-        assertThat(inventoryController.getByFilmId((short) 1, incoming).getBody()).isSameAs(page);
-        assertThat(inventoryController.getByStoreId((short) 1, incoming).getBody()).isSameAs(page);
 
         verify(inventoryService).getAllInventory(eq((short) 1), eq((short) 1), pageableCaptor.capture());
         assertThat(pageableCaptor.getValue().getSort().isUnsorted()).isTrue();

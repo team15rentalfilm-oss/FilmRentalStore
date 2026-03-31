@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.hibernate.Hibernate;
@@ -58,18 +59,47 @@ public class FilmServiceImpl implements FilmService {
         return FilmMapper.toResponseDTO(film);
     }
 
+
+    private Pageable sanitizePageable(Pageable pageable) {
+
+        int page = pageable.getPageNumber();
+        int size = 10;
+
+        List<String> allowed = List.of(
+                "title",
+                "releaseYear",
+                "rentalRate"
+        );
+
+        Sort safeSort = Sort.unsorted();
+
+        for (Sort.Order order : pageable.getSort()) {
+            if (allowed.contains(order.getProperty())) {
+                safeSort = safeSort.and(Sort.by(order));
+            }
+        }
+
+        if (safeSort.isUnsorted()) {
+            safeSort = Sort.by(Sort.Direction.ASC, "title");
+        }
+
+        return PageRequest.of(
+                Math.max(page, 0),
+                size,
+                safeSort
+        );
+    }
+
     @Override
     @Transactional(readOnly = true)
-    public Page<FilmResponseDTO> getAllFilms(int page, int size) {
+    public Page<FilmResponseDTO> getAllFilms(Pageable pageable) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        pageable = sanitizePageable(pageable);
 
         return filmRepository.findAll(pageable)
                 .map(film -> {
-
                     Hibernate.initialize(film.getCategories());
                     Hibernate.initialize(film.getActors());
-
                     return FilmMapper.toResponseDTO(film);
                 });
     }
@@ -98,6 +128,16 @@ public class FilmServiceImpl implements FilmService {
 
         FilmMapper.patchEntity(film, request);
 
+        if (request.getLanguage() != null) {
+            film.setLanguage(getOrCreateLanguage(request.getLanguage()));
+        }
+        if (request.getCategories() != null) {
+            film.setCategories(getOrCreateCategories(request.getCategories()));
+        }
+        if (request.getActors() != null) {
+            film.setActors(getOrCreateActors(request.getActors()));
+        }
+
         Film updated = filmRepository.save(film);
 
         return FilmMapper.toResponseDTO(updated);
@@ -110,46 +150,18 @@ public class FilmServiceImpl implements FilmService {
             Integer year,
             String category,
             String actor,
-            int page,
-            int size) {
+            Pageable pageable) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        pageable = sanitizePageable(pageable);
 
-        Page<Film> pageData = filmRepository.findAll(pageable);
+        Page<Film> pageData = filmRepository.searchFilms(title, year, category, actor, pageable);
 
-        List<Film> filtered = pageData.getContent().stream()
-
-                // Title filter
-                .filter(f -> title == null ||
-                        f.getTitle().toLowerCase().contains(title.toLowerCase()))
-
-                // Year filter
-                .filter(f -> year == null ||
-                        year.equals(f.getReleaseYear()))
-
-                // Category filter
-                .filter(f -> category == null ||
-                        f.getCategories().stream()
-                                .anyMatch(c -> c.getName().equalsIgnoreCase(category)))
-
-                // Actor filter
-                .filter(f -> actor == null ||
-                        f.getActors().stream()
-                                .anyMatch(a ->
-                                        (a.getFirstName() + " " + a.getLastName())
-                                                .equalsIgnoreCase(actor)))
-
-                .toList();
-
-        List<FilmResponseDTO> content = filtered.stream()
-                .map(FilmMapper::toResponseDTO)
-                .toList();
-
-        return new org.springframework.data.domain.PageImpl<>(
-                content,
-                pageable,
-                filtered.size()
-        );
+        return pageData
+                .map(film -> {
+                    Hibernate.initialize(film.getCategories());
+                    Hibernate.initialize(film.getActors());
+                    return FilmMapper.toResponseDTO(film);
+                });
     }
 
 

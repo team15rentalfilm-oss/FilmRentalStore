@@ -5,6 +5,7 @@ import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
 import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,8 +15,7 @@ public interface FilmService {
 
     FilmResponseDTO getFilmById(Short id);
 
-    Page<FilmResponseDTO> getAllFilms(int page, int size);
-
+    Page<FilmResponseDTO> getAllFilms(Pageable pageable);
     FilmResponseDTO updateFilm(Short id, FilmRequestDTO request);
 
     FilmResponseDTO patchFilm(Short id, FilmPatchDTO request);
@@ -25,8 +25,7 @@ public interface FilmService {
             Integer year,
             String category,
             String actor,
-            int page,
-            int size) ;
+            Pageable pageable);
 
     List<FilmDTO> suggestFilms(String title);
 }

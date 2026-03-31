@@ -38,6 +38,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,16 +69,16 @@ class ReferenceServicesUnitTest {
         ActorServiceImpl service = new ActorServiceImpl(actorRepository, new ActorMapper());
         Actor actor = TestDataFactory.actor((short) 1, "Tom", "Hanks");
         when(actorRepository.save(any(Actor.class))).thenReturn(actor);
-        when(actorRepository.searchByName(anyString()))
-                .thenReturn(List.of(actor));
+        when(actorRepository.searchByName(anyString(), eq(PageRequest.of(0, 10))))
+                .thenReturn(new PageImpl<>(List.of(actor)));
 
         var created = service.createActor(TestDataFactory.actorRequest("Tom", "Hanks"));
-        var results = service.searchActors("tom");
+        var results = service.searchActors("tom", PageRequest.of(0, 10));
 
         assertThat(created.getActorId()).isEqualTo((short) 1);
         assertThat(created.getFirstName()).isEqualTo("Tom");
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).getLastName()).isEqualTo("Hanks");
+        assertThat(results.getContent()).hasSize(1);
+        assertThat(results.getContent().get(0).getLastName()).isEqualTo("Hanks");
     }
 
     @Test

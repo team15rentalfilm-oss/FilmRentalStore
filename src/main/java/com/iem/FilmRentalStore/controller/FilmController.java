@@ -8,6 +8,8 @@ import com.iem.FilmRentalStore.service.FilmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +32,9 @@ public class FilmController {
     }
 
     @GetMapping
-    public Page<FilmResponseDTO> getAllFilms(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        return filmService.getAllFilms(page, size);
+    public Page<FilmResponseDTO> getAllFilms( @PageableDefault(size = 10) Pageable pageable){
+
+        return filmService.getAllFilms(pageable);
     }
 
     @PutMapping("/{id}")
@@ -50,16 +50,18 @@ public class FilmController {
     }
 
 
+
     @GetMapping("/search")
     public Page<FilmResponseDTO> searchFilms(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer releaseYear,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String actor,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @PageableDefault(size = 10) Pageable pageable
     ) {
-        return filmService.searchFilms(title, year, category, actor, page, size);
+        Integer effectiveYear = year != null ? year : releaseYear;
+        return filmService.searchFilms(title, effectiveYear, category, actor, pageable);
     }
 
     @GetMapping("/suggestions")

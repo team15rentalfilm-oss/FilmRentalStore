@@ -170,7 +170,15 @@ public final class TestDataFactory {
         dto.setTitle("Updated Title");
         dto.setDescription("Updated Description");
         dto.setReleaseYear(2011);
+        dto.setRentalDuration(10);
+        dto.setRentalRate(BigDecimal.valueOf(5.99));
+        dto.setLength(150);
+        dto.setReplacementCost(BigDecimal.valueOf(24.99));
         dto.setRating("R");
+        dto.setSpecialFeatures(Set.of("Deleted Scenes", "Commentary"));
+        dto.setLanguage("Spanish");
+        dto.setCategories(Set.of("Thriller"));
+        dto.setActors(Set.of("Brad Pitt"));
         return dto;
     }
 

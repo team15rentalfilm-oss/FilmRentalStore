@@ -58,7 +58,14 @@ public class FilmMapper {
         if (dto.getTitle() != null) film.setTitle(dto.getTitle());
         if (dto.getDescription() != null) film.setDescription(dto.getDescription());
         if (dto.getReleaseYear() != null) film.setReleaseYear(dto.getReleaseYear());
+        if (dto.getRentalDuration() != null) film.setRentalDuration(dto.getRentalDuration());
+        if (dto.getRentalRate() != null) film.setRentalRate(dto.getRentalRate());
+        if (dto.getLength() != null) film.setLength(dto.getLength());
+        if (dto.getReplacementCost() != null) film.setReplacementCost(dto.getReplacementCost());
         if (dto.getRating() != null) film.setRating(dto.getRating());
+        if (dto.getSpecialFeatures() != null) {
+            film.setSpecialFeatures(String.join(",", dto.getSpecialFeatures()));
+        }
     }
 
     // RESPONSE

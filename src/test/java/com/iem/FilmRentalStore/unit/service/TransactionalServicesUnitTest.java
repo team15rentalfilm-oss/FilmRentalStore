@@ -16,6 +16,7 @@ import com.iem.FilmRentalStore.entity.Country;
 import com.iem.FilmRentalStore.entity.Customer;
 import com.iem.FilmRentalStore.entity.Film;
 import com.iem.FilmRentalStore.entity.Inventory;
+import com.iem.FilmRentalStore.entity.Language;
 import com.iem.FilmRentalStore.entity.Payment;
 import com.iem.FilmRentalStore.entity.Rental;
 import com.iem.FilmRentalStore.entity.Staff;
@@ -58,12 +59,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -154,18 +157,36 @@ class TransactionalServicesUnitTest {
         PageData data = TestDataFactory.pageData();
         FilmRequestDTO request = TestDataFactory.filmRequest();
         Film film = data.film();
+        Pageable pageable = PageRequest.of(0, 10);
+        Pageable sanitizedPageable = PageRequest.of(0, 10, Sort.by("title").ascending());
         when(languageRepository.findByNameIgnoreCase("English")).thenReturn(Optional.of(data.language()));
         when(categoryRepository.findByNameIgnoreCase("Sci-Fi")).thenReturn(Optional.of(data.category()));
         when(actorRepository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase("Leonardo", "DiCaprio")).thenReturn(Optional.of(data.actor()));
         when(filmRepository.save(any(Film.class))).thenReturn(film);
-        when(filmRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(film)));
+        when(filmRepository.searchFilms("incep", 2010, "Sci-Fi", "Leonardo DiCaprio", sanitizedPageable))
+                .thenReturn(new PageImpl<>(List.of(film)));
 
         var created = service.createFilm(request);
-        var search = service.searchFilms("incep", 2010, "Sci-Fi", "Leonardo DiCaprio", 0, 10);
+        var search = service.searchFilms("incep", 2010, "Sci-Fi", "Leonardo DiCaprio", pageable);
 
         assertThat(created.getFilmId()).isEqualTo((short) 1);
         assertThat(search.getContent()).hasSize(1);
         assertThat(search.getContent().get(0).getTitle()).isEqualTo("Inception");
+    }
+
+    @Test
+    void filmServiceForcesTenItemsPerPage() {
+        FilmServiceImpl service = new FilmServiceImpl(filmRepository, categoryRepository, languageRepository, actorRepository);
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        when(filmRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+
+        service.getAllFilms(PageRequest.of(0, 51, Sort.by("releaseYear")));
+
+        verify(filmRepository).findAll(pageableCaptor.capture());
+        assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(0);
+        assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(10);
+        assertThat(pageableCaptor.getValue().getSort().getOrderFor("releaseYear")).isNotNull();
     }
 
     @Test
@@ -176,6 +197,36 @@ class TransactionalServicesUnitTest {
         assertThatThrownBy(() -> service.getFilmById((short) 99))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Film");
+    }
+
+    @Test
+    void filmServicePatchUpdatesRelationsAndScalarFields() {
+        FilmServiceImpl service = new FilmServiceImpl(filmRepository, categoryRepository, languageRepository, actorRepository);
+        PageData data = TestDataFactory.pageData();
+        Film existing = data.film();
+        var patch = TestDataFactory.filmPatch();
+        Language spanish = TestDataFactory.language(2, "Spanish");
+        var thriller = TestDataFactory.category((byte) 2, "Thriller");
+        var bradPitt = TestDataFactory.actor((short) 2, "Brad", "Pitt");
+
+        when(filmRepository.findWithRelationsByFilmId((short) 1)).thenReturn(Optional.of(existing));
+        when(languageRepository.findByNameIgnoreCase("Spanish")).thenReturn(Optional.of(spanish));
+        when(categoryRepository.findByNameIgnoreCase("Thriller")).thenReturn(Optional.of(thriller));
+        when(actorRepository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase("Brad", "Pitt")).thenReturn(Optional.of(bradPitt));
+        when(filmRepository.save(existing)).thenReturn(existing);
+
+        var response = service.patchFilm((short) 1, patch);
+
+        assertThat(response.getTitle()).isEqualTo("Updated Title");
+        assertThat(existing.getLanguage().getName()).isEqualTo("Spanish");
+        assertThat(existing.getCategories()).extracting("name").containsExactly("Thriller");
+        assertThat(existing.getActors()).extracting("firstName", "lastName").containsExactly(tuple("Brad", "Pitt"));
+        assertThat(existing.getRentalDuration()).isEqualTo(10);
+        assertThat(existing.getRentalRate()).isEqualByComparingTo(BigDecimal.valueOf(5.99));
+        assertThat(existing.getLength()).isEqualTo(150);
+        assertThat(existing.getReplacementCost()).isEqualByComparingTo(BigDecimal.valueOf(24.99));
+        assertThat(Set.of(existing.getSpecialFeatures().split(",")))
+                .containsExactlyInAnyOrder("Deleted Scenes", "Commentary");
     }
 
     @Test
