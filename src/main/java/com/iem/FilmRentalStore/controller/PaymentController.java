@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +32,8 @@ public class PaymentController {
     }
 
     @GetMapping
-    public Page<PaymentResponseDTO> getAllPayments(Pageable pageable) {
+    public Page<PaymentResponseDTO> getAllPayments(
+            @PageableDefault(size = 10) Pageable pageable) {
         return paymentService.getAllPayments(pageable);
     }
 
@@ -42,42 +44,34 @@ public class PaymentController {
         return paymentService.patchPayment(id, request);
     }
 
-    // 🔥 SEARCH BY CUSTOMER
     @GetMapping("/search/customer")
     public List<PaymentResponseDTO> getByCustomer(@RequestParam String name) {
         return paymentService.getPaymentsByCustomerName(name);
     }
 
-    // 🔥 GET BY RENTAL
     @GetMapping("/rental/{rentalId}")
     public List<PaymentResponseDTO> getByRental(@PathVariable Integer rentalId) {
         return paymentService.getPaymentsByRentalId(rentalId);
     }
 
-    // 🔥 GET BY CUSTOMER ID
     @GetMapping("/customer/{customerId}")
     public Page<PaymentResponseDTO> getByCustomerId(
             @PathVariable Short customerId,
-            Pageable pageable) {
-
+            @PageableDefault(size = 10) Pageable pageable) {
         return paymentService.getByCustomerId(customerId, pageable);
     }
 
-    // 🔥 GET BY STAFF ID
     @GetMapping("/staff/{staffId}")
     public Page<PaymentResponseDTO> getByStaffId(
             @PathVariable Byte staffId,
-            Pageable pageable) {
-
+            @PageableDefault(size = 10) Pageable pageable) {
         return paymentService.getByStaffId(staffId, pageable);
     }
 
-    // 🔥 SEARCH STAFF NAME
     @GetMapping("/search/staff")
     public Page<PaymentResponseDTO> searchByStaff(
             @RequestParam String name,
-            Pageable pageable) {
-
+            @PageableDefault(size = 10) Pageable pageable) {
         return paymentService.searchByStaffName(name, pageable);
     }
 }

@@ -53,13 +53,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new EntityNotFoundException("Payment not found"));
     }
 
-    // 🔥 COMMON SANITIZER (VERY IMPORTANT)
     private Pageable sanitizePageable(Pageable pageable) {
 
         int page = pageable.getPageNumber();
-        int size = Math.min(pageable.getPageSize(), 50);
+        int size = 10;
 
-        // ✅ Allowed sort fields
         List<String> allowed = List.of(
                 "paymentId",
                 "amount",
@@ -74,16 +72,11 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
-        // ✅ Fallback sort (prevents crashes)
         if (safeSort.isUnsorted()) {
             safeSort = Sort.by(Sort.Direction.DESC, "paymentDate");
         }
 
-        return PageRequest.of(
-                Math.max(page, 0),
-                size <= 0 ? 10 : size,
-                safeSort
-        );
+        return PageRequest.of(Math.max(page, 0), size, safeSort);
     }
 
     // 🔥 GET ALL (PAGINATED)

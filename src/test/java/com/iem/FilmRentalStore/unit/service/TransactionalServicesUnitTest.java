@@ -273,7 +273,7 @@ class TransactionalServicesUnitTest {
         assertThat(page.getContent()).hasSize(1);
         verify(paymentRepository).findAll(pageableCaptor.capture());
         assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(0);
-        assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(50);
+        assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(10);
         assertThat(pageableCaptor.getValue().getSort().getOrderFor("paymentDate")).isNotNull();
     }
 
@@ -311,7 +311,7 @@ class TransactionalServicesUnitTest {
         assertThat(page.getContent()).hasSize(1);
         verify(rentalRepository).findByCustomer_CustomerId(eq((short) 1), pageableCaptor.capture());
         assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(0);
-        assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(50);
+        assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(10);
         assertThat(pageableCaptor.getValue().getSort().getOrderFor("rentalDate")).isNotNull();
     }
 

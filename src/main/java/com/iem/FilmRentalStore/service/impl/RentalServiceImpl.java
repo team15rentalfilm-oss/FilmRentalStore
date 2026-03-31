@@ -25,6 +25,7 @@ public class RentalServiceImpl implements RentalService {
     private final CustomerRepository customerRepository;
     private final StaffRepository staffRepository;
 
+
     // 🔥 CREATE RENTAL
     @Override
     @Transactional
@@ -75,11 +76,10 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
     }
 
-    // 🔥 PAGINATION SANITIZER (NEW)
     private Pageable sanitizePageable(Pageable pageable) {
 
         int page = pageable.getPageNumber();
-        int size = Math.min(pageable.getPageSize(), 50);
+        int size = 10;
 
         List<String> allowed = List.of(
                 "rentalId",
@@ -96,16 +96,11 @@ public class RentalServiceImpl implements RentalService {
             }
         }
 
-        // ✅ fallback sort
         if (safeSort.isUnsorted()) {
             safeSort = Sort.by(Sort.Direction.DESC, "rentalDate");
         }
 
-        return PageRequest.of(
-                Math.max(page, 0),
-                size <= 0 ? 10 : size,
-                safeSort
-        );
+        return PageRequest.of(Math.max(page, 0), size, safeSort);
     }
 
     // 🔥 GET ALL
