@@ -1,12 +1,8 @@
 package com.iem.FilmRentalStore.service;
 
-import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
-import com.iem.FilmRentalStore.dto.customer.CustomerPatchDTO;
-import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
-import com.iem.FilmRentalStore.dto.customer.CustomerResponseDTO;
-
-import java.util.List;
-import java.util.Map;
+import com.iem.FilmRentalStore.dto.customer.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CustomerService {
 
@@ -14,16 +10,16 @@ public interface CustomerService {
 
     CustomerResponseDTO getCustomerById(Short id);
 
-    List<CustomerDTO> getAllCustomers();
+    Page<CustomerDTO> getAllCustomers(Pageable pageable);
 
     CustomerDTO updateCustomer(Short id, CustomerRequestDTO request);
 
-    List<CustomerDTO> getByFirstName(String firstName);
-    List<CustomerDTO> getByLastName(String lastName);
-    List<CustomerDTO> getByEmail(String email);
-    List<CustomerDTO> getByActive(Boolean active);
-    List<CustomerDTO> getByCity(String city);
-    List<CustomerDTO> getByCountry(String country);
+    Page<CustomerDTO> getByFirstName(String firstName, Pageable pageable);
+    Page<CustomerDTO> getByLastName(String lastName, Pageable pageable);
+    Page<CustomerDTO> getByEmail(String email, Pageable pageable);
+    Page<CustomerDTO> getByActive(Boolean active, Pageable pageable);
+    Page<CustomerDTO> getByCity(String city, Pageable pageable);
+    Page<CustomerDTO> getByCountry(String country, Pageable pageable);
 
     CustomerDTO patchCustomer(Short id, CustomerPatchDTO dto);
 }

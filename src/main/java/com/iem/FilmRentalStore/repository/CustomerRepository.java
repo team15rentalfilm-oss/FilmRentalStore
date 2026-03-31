@@ -1,29 +1,21 @@
 package com.iem.FilmRentalStore.repository;
 
 import com.iem.FilmRentalStore.entity.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-@Repository
 public interface CustomerRepository extends JpaRepository<Customer, Short> {
 
-    // 🔍 Search by First Name
-    List<Customer> findByFirstNameContainingIgnoreCase(String firstName);
+    Page<Customer> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
 
-    // 🔍 Search by Last Name
-    List<Customer> findByLastNameContainingIgnoreCase(String lastName);
+    Page<Customer> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
 
-    // 🔍 Search by Email
-    List<Customer> findByEmailContainingIgnoreCase(String email);
+    Page<Customer> findByEmailContainingIgnoreCase(String email, Pageable pageable);
 
-    // 🔍 Search by Active Status
-    List<Customer> findByActive(Boolean active);
+    Page<Customer> findByActive(Boolean active, Pageable pageable);
 
-    // 🔍 Search by City
-    List<Customer> findByAddress_City_CityContainingIgnoreCase(String city);
+    Page<Customer> findByAddress_City_CityContainingIgnoreCase(String city, Pageable pageable);
 
-    // 🔍 Search by Country
-    List<Customer> findByAddress_City_Country_CountryContainingIgnoreCase(String country);
+    Page<Customer> findByAddress_City_Country_CountryContainingIgnoreCase(String country, Pageable pageable);
 }

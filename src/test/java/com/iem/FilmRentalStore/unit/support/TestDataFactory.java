@@ -186,7 +186,7 @@ public final class TestDataFactory {
         film.setLength(120);
         film.setReplacementCost(BigDecimal.valueOf(19.99));
         film.setRating("PG");
-        film.setSpecialFeatures(new HashSet<>(Set.of("Trailers")));
+        film.setSpecialFeatures("Trailers");
         film.setCategories(new HashSet<>(categories));
         film.setActors(new HashSet<>(actors));
         film.setLastUpdate(LocalDateTime.now());

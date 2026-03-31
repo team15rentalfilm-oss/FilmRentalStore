@@ -1,24 +1,18 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
-import com.iem.FilmRentalStore.dto.customer.CustomerPatchDTO;
-import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
-import com.iem.FilmRentalStore.dto.customer.CustomerResponseDTO;
+import com.iem.FilmRentalStore.dto.customer.*;
 import com.iem.FilmRentalStore.entity.*;
 import com.iem.FilmRentalStore.mapper.CustomerMapper;
 import com.iem.FilmRentalStore.repository.*;
-import com.iem.FilmRentalStore.service.AddressService;
-import com.iem.FilmRentalStore.service.CityService;
-import com.iem.FilmRentalStore.service.CountryService;
-import com.iem.FilmRentalStore.service.CustomerService;
+import com.iem.FilmRentalStore.service.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +21,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
     private final AddressService addressService;
-    private final CountryRepository countryRepository;
-    private final CityRepository cityRepository;
     private final AddressRepository addressRepository;
     private final CountryService countryService;
     private final CityService cityService;
@@ -55,19 +47,21 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true)
     public CustomerResponseDTO getCustomerById(Short id) {
+
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Customer not found with id: " + id));
 
         return CustomerMapper.toResponseDTO(customer);
     }
 
+    // ✅ PAGINATED GET ALL
     @Override
     @Transactional(readOnly = true)
-    public List<CustomerDTO> getAllCustomers() {
-        return customerRepository.findAll()
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    public Page<CustomerDTO> getAllCustomers(Pageable pageable) {
+
+        return customerRepository.findAll(pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     // ================= UPDATE =================
@@ -75,7 +69,8 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDTO updateCustomer(Short id, CustomerRequestDTO request) {
 
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Customer not found with id: " + id));
 
         Address address = addressService.createAndReturnEntity(request.getAddress());
 
@@ -83,80 +78,86 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Store not found with id: " + request.getStoreId()));
 
-        Customer updatedData = CustomerMapper.toEntity(request, address, store);
+        Customer updated = CustomerMapper.toEntity(request, address, store);
 
-        customer.setFirstName(updatedData.getFirstName());
-        customer.setLastName(updatedData.getLastName());
-        customer.setEmail(updatedData.getEmail());
-        customer.setActive(updatedData.getActive());
-        customer.setAddress(updatedData.getAddress());
-        customer.setStore(updatedData.getStore());
+        customer.setFirstName(updated.getFirstName());
+        customer.setLastName(updated.getLastName());
+        customer.setEmail(updated.getEmail());
+        customer.setActive(updated.getActive());
+        customer.setAddress(updated.getAddress());
+        customer.setStore(updated.getStore());
 
         Customer saved = customerRepository.save(customer);
 
         return CustomerMapper.toDTO(saved);
     }
 
-    // ================= SEARCH =================
+    // ================= SEARCH (PAGINATED) =================
 
     @Override
-    public List<CustomerDTO> getByFirstName(String firstName) {
-        return customerRepository.findByFirstNameContainingIgnoreCase(firstName)
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> getByFirstName(String firstName, Pageable pageable) {
+
+        return customerRepository
+                .findByFirstNameContainingIgnoreCase(firstName, pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     @Override
-    public List<CustomerDTO> getByLastName(String lastName) {
-        return customerRepository.findByLastNameContainingIgnoreCase(lastName)
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> getByLastName(String lastName, Pageable pageable) {
+
+        return customerRepository
+                .findByLastNameContainingIgnoreCase(lastName, pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     @Override
-    public List<CustomerDTO> getByEmail(String email) {
-        return customerRepository.findByEmailContainingIgnoreCase(email)
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> getByEmail(String email, Pageable pageable) {
+
+        return customerRepository
+                .findByEmailContainingIgnoreCase(email, pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     @Override
-    public List<CustomerDTO> getByActive(Boolean active) {
-        return customerRepository.findByActive(active)
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> getByActive(Boolean active, Pageable pageable) {
+
+        return customerRepository
+                .findByActive(active, pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     @Override
-    public List<CustomerDTO> getByCity(String city) {
-        return customerRepository.findByAddress_City_CityContainingIgnoreCase(city)
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> getByCity(String city, Pageable pageable) {
+
+        return customerRepository
+                .findByAddress_City_CityContainingIgnoreCase(city, pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     @Override
-    public List<CustomerDTO> getByCountry(String country) {
-        return customerRepository.findByAddress_City_Country_CountryContainingIgnoreCase(country)
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CustomerDTO> getByCountry(String country, Pageable pageable) {
+
+        return customerRepository
+                .findByAddress_City_Country_CountryContainingIgnoreCase(country, pageable)
+                .map(CustomerMapper::toDTO);
     }
 
     // ================= PATCH =================
-
     @Override
     @Transactional
     public CustomerDTO patchCustomer(Short id, CustomerPatchDTO dto) {
 
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Customer not found with id: " + id));
 
-        // ================= BASIC =================
+        // 🔹 BASIC
         if (dto.getFirstName() != null)
             customer.setFirstName(dto.getFirstName());
 
@@ -169,9 +170,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (dto.getActive() != null)
             customer.setActive(dto.getActive());
 
-        // ================= STORE =================
+        // 🔹 STORE
         if (dto.getStoreId() != null) {
-
             Store store = storeRepository.findById(dto.getStoreId())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Store not found with id: " + dto.getStoreId()));
@@ -179,21 +179,16 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setStore(store);
         }
 
-        // ================= ADDRESS FLOW (USING SERVICES 🔥) =================
+        // 🔹 ADDRESS FLOW
         if (dto.getAddress() != null || dto.getCity() != null || dto.getCountry() != null) {
 
-            // 🔹 Validate minimum required fields
-            if (dto.getCountry() == null || dto.getCity() == null) {
+            if (dto.getCity() == null || dto.getCountry() == null) {
                 throw new IllegalArgumentException("City and Country must be provided together");
             }
 
-            // 🔹 1. Country → reuse service
             Country country = countryService.getOrCreateCountry(dto.getCountry());
-
-            // 🔹 2. City → reuse service
             City city = cityService.getOrCreateCity(dto.getCity(), country.getCountry());
 
-            // 🔹 3. Address → find or create
             Address address = addressRepository
                     .findByAddressAndCity(dto.getAddress(), city)
                     .orElseGet(() -> {

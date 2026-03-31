@@ -95,8 +95,6 @@ class TransactionalServicesUnitTest {
                 customerRepository,
                 storeRepository,
                 addressService,
-                countryRepository,
-                cityRepository,
                 addressRepository,
                 countryService,
                 cityService
@@ -136,8 +134,6 @@ class TransactionalServicesUnitTest {
                 customerRepository,
                 storeRepository,
                 addressService,
-                countryRepository,
-                cityRepository,
                 addressRepository,
                 countryService,
                 cityService

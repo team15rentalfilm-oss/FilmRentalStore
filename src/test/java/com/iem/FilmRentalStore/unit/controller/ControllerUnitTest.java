@@ -6,6 +6,8 @@ import com.iem.FilmRentalStore.controller.CategoryController;
 import com.iem.FilmRentalStore.controller.CityController;
 import com.iem.FilmRentalStore.controller.CountryController;
 import com.iem.FilmRentalStore.controller.CustomerController;
+import com.iem.FilmRentalStore.controller.FilmActorController;
+import com.iem.FilmRentalStore.controller.FilmCategoryController;
 import com.iem.FilmRentalStore.controller.FilmController;
 import com.iem.FilmRentalStore.controller.InventoryController;
 import com.iem.FilmRentalStore.controller.LanguageController;
@@ -13,6 +15,7 @@ import com.iem.FilmRentalStore.controller.PaymentController;
 import com.iem.FilmRentalStore.controller.RentalController;
 import com.iem.FilmRentalStore.controller.StaffController;
 import com.iem.FilmRentalStore.controller.StoreController;
+import com.iem.FilmRentalStore.dto.FilmCategoryDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
@@ -30,6 +33,7 @@ import com.iem.FilmRentalStore.dto.customer.CustomerDTO;
 import com.iem.FilmRentalStore.dto.customer.CustomerPatchDTO;
 import com.iem.FilmRentalStore.dto.customer.CustomerRequestDTO;
 import com.iem.FilmRentalStore.dto.customer.CustomerResponseDTO;
+import com.iem.FilmRentalStore.dto.film.FilmDTO;
 import com.iem.FilmRentalStore.dto.film.FilmPatchDTO;
 import com.iem.FilmRentalStore.dto.film.FilmRequestDTO;
 import com.iem.FilmRentalStore.dto.film.FilmResponseDTO;
@@ -55,6 +59,8 @@ import com.iem.FilmRentalStore.service.CategoryService;
 import com.iem.FilmRentalStore.service.CityService;
 import com.iem.FilmRentalStore.service.CountryService;
 import com.iem.FilmRentalStore.service.CustomerService;
+import com.iem.FilmRentalStore.service.FilmActorService;
+import com.iem.FilmRentalStore.service.FilmCategoryService;
 import com.iem.FilmRentalStore.service.FilmService;
 import com.iem.FilmRentalStore.service.InventoryService;
 import com.iem.FilmRentalStore.service.LanguageService;
@@ -92,6 +98,8 @@ class ControllerUnitTest {
     @Mock private CityService cityService;
     @Mock private CountryService countryService;
     @Mock private CustomerService customerService;
+    @Mock private FilmActorService filmActorService;
+    @Mock private FilmCategoryService filmCategoryService;
     @Mock private FilmService filmService;
     @Mock private InventoryService inventoryService;
     @Mock private LanguageService languageService;
@@ -106,6 +114,8 @@ class ControllerUnitTest {
     @InjectMocks private CityController cityController;
     @InjectMocks private CountryController countryController;
     @InjectMocks private CustomerController customerController;
+    @InjectMocks private FilmActorController filmActorController;
+    @InjectMocks private FilmCategoryController filmCategoryController;
     @InjectMocks private FilmController filmController;
     @InjectMocks private InventoryController inventoryController;
     @InjectMocks private LanguageController languageController;
@@ -218,35 +228,44 @@ class ControllerUnitTest {
         CustomerPatchDTO patch = TestDataFactory.customerPatch();
         CustomerDTO dto = new CustomerDTO();
         CustomerResponseDTO response = new CustomerResponseDTO();
+        Pageable unsorted = PageRequest.of(1, 100);
+        Page<CustomerDTO> page = new PageImpl<>(List.of(dto));
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
         when(customerService.createCustomer(request)).thenReturn(dto);
         when(customerService.getCustomerById((short) 1)).thenReturn(response);
-        when(customerService.getAllCustomers()).thenReturn(List.of(dto));
+        when(customerService.getAllCustomers(any(Pageable.class))).thenReturn(page);
         when(customerService.updateCustomer((short) 1, request)).thenReturn(dto);
-        when(customerService.getByFirstName("John")).thenReturn(List.of(dto));
-        when(customerService.getByLastName("Doe")).thenReturn(List.of(dto));
-        when(customerService.getByEmail("john")).thenReturn(List.of(dto));
-        when(customerService.getByActive(true)).thenReturn(List.of(dto));
-        when(customerService.getByCity("Bengaluru")).thenReturn(List.of(dto));
-        when(customerService.getByCountry("India")).thenReturn(List.of(dto));
+        when(customerService.getByFirstName(eq("John"), any(Pageable.class))).thenReturn(page);
+        when(customerService.getByLastName(eq("Doe"), any(Pageable.class))).thenReturn(page);
+        when(customerService.getByEmail(eq("john"), any(Pageable.class))).thenReturn(page);
+        when(customerService.getByActive(eq(true), any(Pageable.class))).thenReturn(page);
+        when(customerService.getByCity(eq("Bengaluru"), any(Pageable.class))).thenReturn(page);
+        when(customerService.getByCountry(eq("India"), any(Pageable.class))).thenReturn(page);
         when(customerService.patchCustomer((short) 1, patch)).thenReturn(dto);
 
         assertThat(customerController.createCustomer(request)).isSameAs(dto);
         assertThat(customerController.getCustomer((short) 1)).isSameAs(response);
-        assertThat(customerController.getCustomers()).containsExactly(dto);
+        assertThat(customerController.getCustomers(unsorted)).isSameAs(page);
         assertThat(customerController.updateCustomer((short) 1, request)).isSameAs(dto);
-        assertThat(customerController.getByFirstName("John")).containsExactly(dto);
-        assertThat(customerController.getByLastName("Doe")).containsExactly(dto);
-        assertThat(customerController.getByEmail("john")).containsExactly(dto);
-        assertThat(customerController.getByActive(true)).containsExactly(dto);
-        assertThat(customerController.getByCity("Bengaluru")).containsExactly(dto);
-        assertThat(customerController.getByCountry("India")).containsExactly(dto);
+        assertThat(customerController.getByFirstName("John", unsorted)).isSameAs(page);
+        assertThat(customerController.getByLastName("Doe", unsorted)).isSameAs(page);
+        assertThat(customerController.getByEmail("john", unsorted)).isSameAs(page);
+        assertThat(customerController.getByActive(true, unsorted)).isSameAs(page);
+        assertThat(customerController.getByCity("Bengaluru", unsorted)).isSameAs(page);
+        assertThat(customerController.getByCountry("India", unsorted)).isSameAs(page);
         assertThat(customerController.patchCustomer((short) 1, patch)).isSameAs(dto);
+
+        verify(customerService).getAllCustomers(pageableCaptor.capture());
+        assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(1);
+        assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(50);
+        assertThat(pageableCaptor.getValue().getSort().getOrderFor("customerId")).isNotNull();
     }
 
     @Test
     void filmControllerDelegatesAllEndpoints() {
         FilmRequestDTO request = TestDataFactory.filmRequest();
         FilmPatchDTO patch = TestDataFactory.filmPatch();
+        FilmDTO suggestion = new FilmDTO();
         FilmResponseDTO response = new FilmResponseDTO();
         Page<FilmResponseDTO> page = new PageImpl<>(List.of(response));
         when(filmService.createFilm(request)).thenReturn(response);
@@ -255,6 +274,7 @@ class ControllerUnitTest {
         when(filmService.updateFilm((short) 1, request)).thenReturn(response);
         when(filmService.patchFilm((short) 1, patch)).thenReturn(response);
         when(filmService.searchFilms("Inception", 2010, "Sci-Fi", "Leonardo DiCaprio", 0, 10)).thenReturn(page);
+        when(filmService.suggestFilms("Inception")).thenReturn(List.of(suggestion));
 
         assertThat(filmController.createFilm(request)).isSameAs(response);
         assertThat(filmController.getFilmById((short) 1)).isSameAs(response);
@@ -262,6 +282,32 @@ class ControllerUnitTest {
         assertThat(filmController.updateFilm((short) 1, request)).isSameAs(response);
         assertThat(filmController.patchFilm((short) 1, patch)).isSameAs(response);
         assertThat(filmController.searchFilms("Inception", 2010, "Sci-Fi", "Leonardo DiCaprio", 0, 10)).isSameAs(page);
+        assertThat(filmController.suggestFilms("Inception")).containsExactly(suggestion);
+    }
+
+    @Test
+    void filmActorControllerDelegatesAllEndpoints() {
+        FilmResponseDTO filmResponse = new FilmResponseDTO();
+        ActorResponseDTO actorResponse = new ActorResponseDTO();
+        when(filmActorService.getFilmsByActor("Tom Hanks")).thenReturn(List.of(filmResponse));
+        when(filmActorService.getActorsByFilm("Inception")).thenReturn(List.of(actorResponse));
+
+        assertThat(filmActorController.getFilmsByActor("Tom Hanks")).containsExactly(filmResponse);
+        assertThat(filmActorController.getActorsByFilm("Inception")).containsExactly(actorResponse);
+    }
+
+    @Test
+    void filmCategoryControllerDelegatesAllEndpoints() {
+        FilmCategoryDTO dto = new FilmCategoryDTO();
+        when(filmCategoryService.getAll()).thenReturn(List.of(dto));
+        when(filmCategoryService.create(dto)).thenReturn(dto);
+
+        assertThat(filmCategoryController.getAll()).containsExactly(dto);
+        assertThat(filmCategoryController.create(dto)).isSameAs(dto);
+
+        filmCategoryController.delete((short) 1, (byte) 2);
+
+        verify(filmCategoryService).delete((short) 1, (byte) 2);
     }
 
     @Test
