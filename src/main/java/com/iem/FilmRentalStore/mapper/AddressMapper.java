@@ -5,6 +5,7 @@ package com.iem.FilmRentalStore.mapper;
 
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
+import com.iem.FilmRentalStore.dto.address.AddressResponseDTO;
 import com.iem.FilmRentalStore.entity.Address;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,25 @@ public class AddressMapper {
         dto.setPhone(address.getPhone());
 
         dto.setCity(CityMapper.toDTO(address.getCity())); // ✅ now correct
+
+        return dto;
+    }
+
+    public static AddressResponseDTO toResponseDTO(Address address) {
+        if (address == null) {
+            return null;
+        }
+
+        AddressResponseDTO dto = new AddressResponseDTO();
+
+        dto.setAddressId(address.getAddressId()); // ✅ include ID
+        dto.setAddress(address.getAddress());
+        dto.setAddress2(address.getAddress2());
+        dto.setDistrict(address.getDistrict());
+        dto.setPostalCode(address.getPostalCode());
+        dto.setPhone(address.getPhone());
+
+        dto.setCity(CityMapper.toDTO(address.getCity())); // ✅ nested mapping
 
         return dto;
     }

@@ -1,6 +1,8 @@
 package com.iem.FilmRentalStore.repository;
 
 import com.iem.FilmRentalStore.entity.Actor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
@@ -41,7 +43,16 @@ public interface ActorRepository extends JpaRepository<Actor, Short> {
             """)
     List<Actor> findDistinctByFilmTitleContaining(@Param("title") String title);
 
-    Optional<Actor> findByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
 
+    @Query("""
+            select distinct a
+            from Actor a
+            where lower(concat(a.firstName, ' ', a.lastName)) like lower(concat('%', :name, '%'))
+               or lower(a.firstName) like lower(concat('%', :name, '%'))
+               or lower(a.lastName) like lower(concat('%', :name, '%'))
+            """)
+    Page<Actor> searchByName(@Param("name") String name, Pageable pageable);
+
+    Optional<Actor> findByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName);
 }
 

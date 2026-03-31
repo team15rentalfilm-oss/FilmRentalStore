@@ -6,6 +6,9 @@ import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,34 +20,34 @@ public class ActorController {
 
     private final ActorService actorService;
 
-    // 🔥 CREATE ACTOR
     @PostMapping
     public ActorResponseDTO createActor(@Valid @RequestBody ActorRequestDTO request) {
         return actorService.createActor(request);
     }
 
-    // 🔥 GET ACTOR BY ID
     @GetMapping("/{id}")
     public ActorResponseDTO getActorById(@PathVariable Short id) {
         return actorService.getActorById(id);
     }
 
-    // 🔥 GET ALL ACTORS
+    // ✅ PAGINATED GET ALL
     @GetMapping
-    public List<ActorResponseDTO> getAllActors() {
-        return actorService.getAllActors();
+    public Page<ActorResponseDTO> getAllActors(
+            @PageableDefault(size = 10, sort = "firstName") Pageable pageable) {
+        return actorService.getAllActors(pageable);
     }
 
-    // 🔥 SEARCH ACTOR (PARTIAL MATCH - DB LEVEL)
+    // ✅ PAGINATED SEARCH
     @GetMapping("/search")
-    public List<ActorResponseDTO> searchActors(@RequestParam String name) {
-        return actorService.searchActors(name);
+    public Page<ActorResponseDTO> searchActors(
+            @RequestParam String name,
+            @PageableDefault(size = 10, sort = "firstName") Pageable pageable) {
+        return actorService.searchActors(name, pageable);
     }
 
-    // 🔥 UPDATE ACTOR
     @PutMapping("/{id}")
     public ActorResponseDTO updateActor(@PathVariable Short id,
-                                @Valid @RequestBody ActorRequestDTO request) {
+                                        @Valid @RequestBody ActorRequestDTO request) {
         return actorService.updateActor(id, request);
     }
 }

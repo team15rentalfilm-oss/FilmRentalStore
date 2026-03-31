@@ -2,6 +2,7 @@ package com.iem.FilmRentalStore.service.impl;
 
 import com.iem.FilmRentalStore.dto.address.AddressDTO;
 import com.iem.FilmRentalStore.dto.address.AddressRequestDTO;
+import com.iem.FilmRentalStore.dto.address.AddressResponseDTO;
 import com.iem.FilmRentalStore.entity.*;
 import com.iem.FilmRentalStore.mapper.AddressMapper;
 import com.iem.FilmRentalStore.repository.*;
@@ -69,18 +70,18 @@ public class AddressServiceImpl implements AddressService {
     // ✅ GET BY ID
     @Override
     @Transactional
-    public AddressDTO getAddressById(Short id) {
+    public AddressResponseDTO getAddressById(Short id) {
         return addressRepository.findByIdWithFetch(id)
-                .map(AddressMapper::toDTO)
+                .map(AddressMapper::toResponseDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Address not found"));
     }
 
     // ✅ PAGINATION
     @Override
     @Transactional
-    public Page<AddressDTO> getAllAddresses(Pageable pageable) {
+    public Page<AddressResponseDTO> getAllAddresses(Pageable pageable) {
         return addressRepository.findAllWithFetch(pageable)
-                .map(AddressMapper::toDTO);
+                .map(AddressMapper::toResponseDTO);
     }
 
     // ✅ UPDATE
@@ -135,30 +136,30 @@ public class AddressServiceImpl implements AddressService {
     // ✅ SEARCH
     @Override
     @Transactional
-    public Page<AddressDTO> searchByAddress(String address, Pageable pageable) {
+    public Page<AddressResponseDTO> searchByAddress(String address, Pageable pageable) {
         return addressRepository.findByAddressWithFetch(address, pageable)
-                .map(AddressMapper::toDTO);
+                .map(AddressMapper::toResponseDTO);
     }
 
     @Override
     @Transactional
-    public Page<AddressDTO> searchByDistrict(String district, Pageable pageable) {
+    public Page<AddressResponseDTO> searchByDistrict(String district, Pageable pageable) {
         return addressRepository.findByDistrictWithFetch(district, pageable)
-                .map(AddressMapper::toDTO);
+                .map(AddressMapper::toResponseDTO);
     }
 
     @Override
     @Transactional
-    public Page<AddressDTO> searchByCity(String city, Pageable pageable) {
+    public Page<AddressResponseDTO> searchByCity(String city, Pageable pageable) {
         return addressRepository.findByCityWithFetch(city, pageable)
-                .map(AddressMapper::toDTO);
+                .map(AddressMapper::toResponseDTO);
     }
 
     @Override
     @Transactional
-    public Page<AddressDTO> getByCountry(String country, Pageable pageable) {
+    public Page<AddressResponseDTO> getByCountry(String country, Pageable pageable) {
         return addressRepository.findByCountryWithFetch(country, pageable)
-                .map(AddressMapper::toDTO);
+                .map(AddressMapper::toResponseDTO);
     }
 
     // ✅ REUSE

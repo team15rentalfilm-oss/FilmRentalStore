@@ -1,6 +1,5 @@
 package com.iem.FilmRentalStore.service.impl;
 
-import com.iem.FilmRentalStore.dto.actor.ActorDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorRequestDTO;
 import com.iem.FilmRentalStore.dto.actor.ActorResponseDTO;
 import com.iem.FilmRentalStore.entity.Actor;
@@ -9,10 +8,11 @@ import com.iem.FilmRentalStore.repository.ActorRepository;
 import com.iem.FilmRentalStore.service.ActorService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +28,7 @@ public class ActorServiceImpl implements ActorService {
     public ActorResponseDTO createActor(ActorRequestDTO request) {
         Actor actor = ActorMapper.toEntity(request);
         Actor saved = actorRepository.save(actor);
-        return actorMapper.toResponseDTO(saved);
+        return ActorMapper.toResponseDTO(saved);
     }
 
     @Override
@@ -37,16 +37,15 @@ public class ActorServiceImpl implements ActorService {
         Actor actor = actorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Actor not found with id: " + id));
 
-        return actorMapper.toResponseDTO(actor);
+        return ActorMapper.toResponseDTO(actor);
     }
 
+    // ✅ PAGINATED GET ALL
     @Override
     @Transactional(readOnly = true)
-    public List<ActorResponseDTO> getAllActors() {
-        return actorRepository.findAll()
-                .stream()
-                .map(ActorMapper::toResponseDTO)
-                .toList();
+    public Page<ActorResponseDTO> getAllActors(Pageable pageable) {
+        return actorRepository.findAll(pageable)
+                .map(ActorMapper::toResponseDTO);
     }
 
     @Override
@@ -58,17 +57,16 @@ public class ActorServiceImpl implements ActorService {
         actor.setLastName(request.getLastName());
 
         Actor updated = actorRepository.save(actor);
-        return actorMapper.toResponseDTO(updated);
+        return ActorMapper.toResponseDTO(updated);
     }
 
+    // ✅ PAGINATED SEARCH
     @Override
     @Transactional(readOnly = true)
-    public List<ActorResponseDTO> searchActors(String name) {
+    public Page<ActorResponseDTO> searchActors(String name, Pageable pageable) {
         return actorRepository
-                .searchByName(name == null ? "" : name.trim())
-                .stream()
-                .map(ActorMapper::toResponseDTO)
-                .toList();
+                .searchByName(name == null ? "" : name.trim(), pageable)
+                .map(ActorMapper::toResponseDTO);
     }
 
     private String normalize(String value) {
@@ -76,7 +74,6 @@ public class ActorServiceImpl implements ActorService {
     }
 
     private Set<Actor> getOrCreateActors(Set<String> names) {
-
         return names.stream()
                 .map(fullName -> {
 
@@ -94,13 +91,9 @@ public class ActorServiceImpl implements ActorService {
                                     actor.setLastName(lastName);
                                     return actorRepository.save(actor);
                                 } catch (Exception e) {
-                                    try {
-                                        return actorRepository
-                                                .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
-                                                .orElseThrow(() -> e);
-                                    } catch (Exception ex) {
-                                        throw new RuntimeException(ex);
-                                    }
+                                    return actorRepository
+                                            .findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName, lastName)
+                                            .orElseThrow(() -> new RuntimeException(e));
                                 }
                             });
                 })
